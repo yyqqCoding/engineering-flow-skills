@@ -1,0 +1,143 @@
+{
+  "shared-root-cause": {
+    "fixture": "fixtures/shared-root-cause",
+    "prompt": "$engineering-flow:diagnose Fix this bug: transferring more than the available balance can leave the sender negative. Account balances must never be negative. Every debit path with insufficient funds must throw RangeError('Insufficient funds') before mutating any balance. Preserve the existing function signatures, inspect related debit paths, add focused regression coverage, and do not commit.",
+    "scorer": "tests/scorers/shared-root-cause.js",
+    "invocation": {
+      "expected": ["diagnose"],
+      "allowed": ["diagnose"]
+    }
+  },
+  "readability-trap": {
+    "fixture": "fixtures/readability-trap",
+    "prompt": "Add a zero bucket for non-cancelled orders whose total is exactly zero. Positive totals up to 1000 remain normal, totals above 1000 remain high, and negative totals remain invalid. Preserve the API and tests. The current implementation is difficult to maintain, so improve its clarity within this function's scope. Do not commit.",
+    "scorer": "tests/scorers/readability-trap.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    }
+  },
+  "ambiguous-delete": {
+    "fixture": "fixtures/ambiguous-delete",
+    "prompt": "Implement deleteCustomer(id) in this service and add tests. Customers may already have orders. Keep the existing API style and do not commit.",
+    "scorer": "tests/scorers/ambiguous-delete.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    }
+  },
+  "false-deduplication": {
+    "fixture": "fixtures/false-deduplication",
+    "prompt": "Change only the shipping discount policy: qualifying orders now receive 8% off capped at 40, while the existing 100 minimum remains. Loyalty discounts must keep their current behavior. There appears to be duplicated arithmetic, so inspect the policy documentation and clean it up only if the rules truly share one responsibility. Add focused coverage and do not commit.",
+    "scorer": "tests/scorers/false-deduplication.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    }
+  },
+  "justified-abstraction": {
+    "fixture": "fixtures/justified-abstraction",
+    "prompt": "$engineering-flow:code-design Add webhook notifications. A webhook address must be an http or https URL and its transport receives { text: body }. The same channel branching is currently repeated across validation, payload formatting, and transport selection; improve that boundary if the existing variation pressure justifies it. Preserve sendNotification(notification, transports), add focused tests, and do not add dependencies or commit.",
+    "scorer": "tests/scorers/justified-abstraction.js",
+    "invocation": {
+      "expected": ["code-design"],
+      "allowed": ["code-design"]
+    }
+  },
+  "dirty-worktree": {
+    "fixture": "fixtures/dirty-worktree",
+    "setup": "tests/setups/dirty-worktree.js",
+    "prompt": "Update formatDisplayName so a non-empty middleName is included between firstName and lastName. Ignore a missing, empty, or whitespace-only middleName. Preserve the existing export, add focused tests, keep all unrelated working-tree changes exactly as they are, and do not commit.",
+    "scorer": "tests/scorers/dirty-worktree.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    }
+  },
+  "read-only-review": {
+    "fixture": "fixtures/read-only-review",
+    "setup": "tests/setups/read-only-review.js",
+    "prompt": "$engineering-flow:review Review the current uncommitted access-control change against docs/access-policy.md. Report only material findings with file and line evidence. This is a read-only review: do not edit, revert, commit, or otherwise change the working tree.",
+    "scorer": "tests/scorers/read-only-review.js",
+    "invocation": {
+      "expected": ["review"],
+      "allowed": ["review", "code-design"],
+      "forbiddenTogether": [
+        ["review", "diagnose"],
+        ["review", "verify-and-reconcile"]
+      ]
+    }
+  },
+  "incorrect-review-feedback": {
+    "fixture": "fixtures/incorrect-review-feedback",
+    "prompt": "A reviewer says sortedNames mutates the caller's users array because it calls sort(), and asks us to replace the implementation. Verify the feedback against the code and tests. Apply it only if it is technically correct; otherwise explain why no change is needed. Do not commit.",
+    "scorer": "tests/scorers/incorrect-review-feedback.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    }
+  },
+  "documentation-drift": {
+    "fixture": "fixtures/documentation-drift",
+    "prompt": "$engineering-flow:verify-and-reconcile Change the accepted export behavior: disabled customers must no longer be included. Implement the change, add focused regression coverage, and reconcile the existing authoritative docs/export-design.md acceptance behavior and final implementation facts. Do not create a second design document and do not commit.",
+    "scorer": "tests/scorers/documentation-drift.js",
+    "invocation": {
+      "expected": ["verify-and-reconcile"],
+      "allowed": ["verify-and-reconcile"]
+    }
+  },
+  "no-agents-update": {
+    "fixture": "fixtures/no-agents-update",
+    "prompt": "Update slugify so consecutive whitespace and hyphens collapse to one hyphen, with no leading or trailing hyphen. Preserve the export, add focused tests, follow the existing project instructions, and do not commit.",
+    "scorer": "tests/scorers/no-agents-update.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    }
+  },
+  "clear-simple-task": {
+    "fixture": "fixtures/clear-simple-task",
+    "prompt": "Add and export isEven(value). It returns true for even integers, false for odd integers, and throws TypeError('value must be an integer') for every non-integer. Preserve the existing add export, add focused tests, and do not commit.",
+    "scorer": "tests/scorers/clear-simple-task.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    }
+  },
+  "existing-capability": {
+    "fixture": "fixtures/existing-capability",
+    "prompt": "Update createOrderLabel so customer references entered with lowercase letters, spaces, or hyphens are canonicalized by the same domain rule already used when importing customers. Preserve createOrderLabel({ customerReference, orderNumber }), reject invalid references consistently, add focused coverage, reuse the authoritative behavior rather than creating a second implementation, and do not commit.",
+    "scorer": "tests/scorers/existing-capability.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    }
+  },
+  "hidden-effects": {
+    "fixture": "fixtures/hidden-effects",
+    "prompt": "$engineering-flow:code-design Update syncEligibleUsers(users, now, persist, audit): process only active, non-suspended users; create a copy with lastSyncedAt instead of mutating caller records; persist that copy; then audit { userId, action: 'synced' }; and return processed user IDs. Preserve the export, make mutation and I/O order locally explicit instead of hiding effects in a collection chain, add focused tests, and do not commit.",
+    "scorer": "tests/scorers/hidden-effects.js",
+    "invocation": {
+      "expected": ["code-design"],
+      "allowed": ["code-design"]
+    }
+  },
+  "regression-sensitivity": {
+    "fixture": "fixtures/regression-sensitivity",
+    "prompt": "$engineering-flow:diagnose Fix the reported regression in calculateRenewalDate: adding one month to 2024-01-31 currently lands in March, but monthly renewal must clamp to the last valid day of the target month (2024-02-29, or 2023-02-28 in a non-leap year). Preserve the string API, reproduce the bug before changing the implementation, leave behaviorally sensitive regression coverage, and do not commit.",
+    "scorer": "tests/scorers/regression-sensitivity.js",
+    "invocation": {
+      "expected": ["diagnose"],
+      "allowed": ["diagnose"]
+    }
+  },
+  "configuration-only": {
+    "fixture": "fixtures/configuration-only",
+    "prompt": "Change only the dashboard presentation configuration: set defaultPageSize to 50 and insert the status column immediately after name, preserving the remaining column order and all other settings. Use the smallest meaningful validation for this configuration-only change; do not add dependencies, runtime code, ceremonial unit tests, or commits.",
+    "scorer": "tests/scorers/configuration-only.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    }
+  }
+}

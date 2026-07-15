@@ -1,0 +1,5 @@
+interface:
+  display_name: "Review"
+  short_description: "Read-only review of code changes"
+policy:
+  allow_implicit_invocation: false

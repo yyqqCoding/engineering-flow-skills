@@ -1,0 +1,20 @@
+{
+  "name": "engineering-flow",
+  "interface": {
+    "displayName": "Engineering Flow"
+  },
+  "plugins": [
+    {
+      "name": "engineering-flow",
+      "source": {
+        "source": "local",
+        "path": "."
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

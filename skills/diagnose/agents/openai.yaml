@@ -1,0 +1,5 @@
+interface:
+  display_name: "Diagnose"
+  short_description: "Find root causes with reproducible evidence"
+policy:
+  allow_implicit_invocation: false

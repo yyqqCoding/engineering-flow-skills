@@ -1,0 +1,39 @@
+{
+  "name": "engineering-flow",
+  "version": "0.1.0",
+  "description": "A compact, evidence-driven development workflow for Codex CLI and Claude Code.",
+  "author": {
+    "name": "engineering-flow-skills contributors"
+  },
+  "homepage": "https://github.com/yyqqCoding/engineering-flow-skills",
+  "repository": "https://github.com/yyqqCoding/engineering-flow-skills",
+  "license": "MIT",
+  "keywords": [
+    "development",
+    "requirements",
+    "debugging",
+    "code-review",
+    "maintainability",
+    "verification"
+  ],
+  "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
+  "interface": {
+    "displayName": "Engineering Flow",
+    "shortDescription": "Compact evidence-driven development workflow",
+    "longDescription": "Align requirements, place changes at the correct boundary, write maintainable code, diagnose with evidence, review independently, verify before completion, and reconcile documentation.",
+    "developerName": "engineering-flow-skills contributors",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Instructions",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Develop this change after resolving material requirement ambiguities.",
+      "Diagnose this failure and fix the shared root cause.",
+      "Review this diff for correctness and maintainability."
+    ],
+    "websiteURL": "https://github.com/yyqqCoding/engineering-flow-skills"
+  }
+}

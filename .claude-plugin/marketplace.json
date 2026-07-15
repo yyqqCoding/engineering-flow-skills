@@ -1,0 +1,18 @@
+{
+  "name": "engineering-flow",
+  "description": "Development workflow skills for Codex CLI and Claude Code",
+  "owner": {
+    "name": "engineering-flow-skills contributors"
+  },
+  "plugins": [
+    {
+      "name": "engineering-flow",
+      "description": "Requirement alignment, maintainable implementation, diagnosis, review, and evidence-based completion.",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "engineering-flow-skills contributors"
+      }
+    }
+  ]
+}

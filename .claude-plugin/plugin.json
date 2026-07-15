@@ -1,0 +1,29 @@
+{
+  "name": "engineering-flow",
+  "version": "0.1.0",
+  "description": "A compact, evidence-driven development workflow for requirement alignment, maintainable code, diagnosis, review, verification, and documentation reconciliation.",
+  "author": {
+    "name": "engineering-flow-skills contributors"
+  },
+  "homepage": "https://github.com/yyqqCoding/engineering-flow-skills",
+  "repository": "https://github.com/yyqqCoding/engineering-flow-skills",
+  "license": "MIT",
+  "keywords": [
+    "development",
+    "requirements",
+    "debugging",
+    "code-review",
+    "maintainability",
+    "verification"
+  ],
+  "skills": [
+    "./skills/develop",
+    "./skills/clarify",
+    "./skills/diagnose",
+    "./skills/code-design",
+    "./skills/review",
+    "./skills/verify-and-reconcile",
+    "./skills/handoff"
+  ],
+  "hooks": "./hooks/hooks.json"
+}

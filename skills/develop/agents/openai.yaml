@@ -1,0 +1,5 @@
+interface:
+  display_name: "Develop"
+  short_description: "Run the complete implementation workflow"
+policy:
+  allow_implicit_invocation: false

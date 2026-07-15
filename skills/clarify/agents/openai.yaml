@@ -1,0 +1,5 @@
+interface:
+  display_name: "Clarify"
+  short_description: "Resolve requirements before implementation"
+policy:
+  allow_implicit_invocation: false

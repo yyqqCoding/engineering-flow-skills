@@ -1,0 +1,5 @@
+interface:
+  display_name: "Code Design"
+  short_description: "Improve readability, ownership, and abstraction"
+policy:
+  allow_implicit_invocation: false
