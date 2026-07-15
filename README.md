@@ -6,7 +6,176 @@
 
 本项目融合了 Superpowers、Matt Pocock 的 engineering skills 与 Ponytail 中经过验证的思想，同时避免把所有任务强制塞进需求访谈、计划文件、工作树、子代理、TDD、评审和分支收尾等固定仪式。目标不是让模型“做更多步骤”，而是让它在需要时更可靠，在简单任务上保持直接。
 
-## 当前状态
+## 🚀 30 秒理解：到底怎么用？
+
+你只需要记住两种用法。
+
+### 先分清两个输入位置
+
+| 在哪里输入？ | 用来做什么？ | 示例 |
+|---|---|---|
+| 🖥️ 系统终端（Bash、PowerShell 等） | 安装插件、进入项目、启动 Codex | `codex plugin add ...`、`cd ...`、`codex` |
+| 💬 Codex 对话输入框 | 描述开发需求、调用 workflow | `实现用户筛选功能`、`$engineering-flow:develop` |
+
+一句话记忆：**安装命令在终端执行；需求和 `$engineering-flow:...` 在 Codex 对话框输入。**
+
+### 用法 A：普通任务，直接说需求
+
+先在终端进入你的项目并启动 Codex：
+
+```bash
+cd /path/to/your-project
+codex
+```
+
+然后在 **Codex 对话输入框**中正常描述需求：
+
+```text
+给 formatDisplayName 增加可选 middleName；空白 middleName 忽略。
+保留现有导出，添加聚焦测试，不要提交。
+```
+
+安装插件并开启新会话后，你什么 skill 都不用写。Engineering Core 会自动生效，检查仓库状态、`AGENTS.md`、相关文档、现有代码和测试。
+
+### 用法 B：希望模型执行完整流程，在第一行写 workflow token
+
+仍然是在 **Codex 对话输入框**中输入：
+
+```text
+$engineering-flow:develop
+实现订单批量导出。先理解现有设计和需求，完成代码、聚焦测试，并同步权威文档。不要提交。
+```
+
+`$engineering-flow:develop` 会为当前这次请求加载完整开发 workflow。
+
+> ⚠️ `$engineering-flow:develop` 不是 Bash 命令，不要单独粘贴到终端执行。它应该和你的需求一起输入到 Codex 对话框中。
+
+### 最重要的原则
+
+- ✅ 清晰的小任务：直接说需求，不写任何 token。
+- ✅ 完整功能开发：使用 `$engineering-flow:develop`。
+- ✅ 必须先确认需求才能编码：使用 `$engineering-flow:develop confirm`。
+- ✅ 已存在的 bug 或回归：使用 `$engineering-flow:diagnose`。
+- ❌ 不要每个任务都依次调用 `clarify → develop → verify`。
+- ❌ 不要为了“更规范”而把简单修改变成复杂仪式。
+
+## 📦 3 分钟完成安装和第一次使用
+
+### 第 1 步：在终端安装插件，只需要执行一次
+
+```bash
+codex plugin marketplace add yyqqCoding/engineering-flow-skills
+codex plugin add engineering-flow@engineering-flow
+```
+
+不需要手动克隆仓库，也不需要运行 `npm install`。这是当前电脑上的 Codex 用户级安装，不必在每个项目中重复安装。
+
+### 第 2 步：确认插件已经启用
+
+```bash
+codex plugin list --json
+```
+
+输出中应该能看到类似内容：
+
+```json
+{
+  "pluginId": "engineering-flow@engineering-flow",
+  "installed": true,
+  "enabled": true
+}
+```
+
+### 第 3 步：关闭旧会话，在你的项目目录启动新会话
+
+```bash
+cd /path/to/your-project
+codex
+```
+
+必须开启新会话，SessionStart 才会加载自动 Core。
+
+### 第 4 步：在 Codex 对话框中发送第一次请求
+
+最简单的测试：
+
+```text
+检查当前仓库状态和项目规则，告诉我这个项目应该如何运行最小验证。只分析，不修改文件。
+```
+
+或者测试完整 workflow：
+
+```text
+$engineering-flow:review
+只读评审当前未提交改动，按严重程度报告问题并提供文件和行号。不要修改任何文件。
+```
+
+🎉 到这里就可以正常使用了。以后切换到其他项目，只需要在该项目目录执行 `codex`，然后直接描述需求或显式调用 workflow。
+
+### 安装后到底会自动做什么？
+
+- 🟢 每次开启新的 Codex 会话：自动加载精简的 Engineering Core，无需输入 token。
+- 🟡 每次发送请求：如果第一行有 `$engineering-flow:...`，为这一次请求加载对应的完整 workflow。
+- ⚪ 普通请求没有 token：只使用精简 Core，不会自动猜测并加载完整 workflow。
+- 🔒 项目自己的 `AGENTS.md`、权威文档和你的当前要求始终优先。
+
+## 🛟 遇到问题先看这里
+
+| 现象 | 原因和处理方式 |
+|---|---|
+| 终端提示 `$engineering-flow:develop: command not found` | 输入位置错了。`$engineering-flow:...` 应该发到 Codex 对话框，不是系统终端。 |
+| 安装后看不出变化 | 先运行 `codex plugin list --json` 确认 `installed` 和 `enabled` 都是 `true`，然后关闭旧会话并重新运行 `codex`。 |
+| 启动时没有欢迎提示 | 正常。Core 在后台注入，不要求显示额外横幅；可使用上面的只读 `review` 示例验证显式 workflow。 |
+| workflow 没有触发 | 使用完整、准确的 token，例如 `$engineering-flow:diagnose`；建议放在请求第一行，并确认插件处于启用状态。 |
+| 在 Claude Code 中使用 | 普通需求仍直接输入；workflow 前缀改成 `/engineering-flow:`。安装也使用 Claude Code 内的 `/plugin ...` 命令，不能照抄 Codex 的 `$` 前缀。 |
+| 更新后仍是旧行为 | 先按[更新](#-更新)步骤刷新并重装插件，再开启新会话。 |
+
+## 🧭 我现在应该选哪个？
+
+| 你的情况 | 应该输入什么 | 会不会编码？ |
+|---|---|---|
+| 需求清晰，只是一个小改动 | 直接描述需求，不写 token | 会直接实现 |
+| 要完成一个完整功能 | `$engineering-flow:develop` + 需求 | 会；只询问阻塞问题 |
+| 任何编码前都必须由你确认 | `$engineering-flow:develop confirm` + 需求 | 不会立即编码；先总结并等待确认 |
+| 只想把需求讨论清楚 | `$engineering-flow:clarify` + 需求 | 不会编码 |
+| 已有 bug、回归、错误输出或性能下降 | `$engineering-flow:diagnose` + 问题 | 用户要求修复时会编码；先复现和定位根因 |
+| 代码边界、状态或抽象设计很复杂 | `$engineering-flow:code-design` + 设计问题 | 按请求决定分析或实现 |
+| 只想评审当前改动 | `$engineering-flow:review` + 评审范围 | 不会编码，也不会修改文件 |
+| 功能基本完成，需要核对测试和文档 | `$engineering-flow:verify-and-reconcile` + 验收范围 | 只修正请求范围内发现的问题 |
+| 今天做不完，需要下次继续 | `$engineering-flow:handoff` + 当前任务 | 不会继续开发，只生成交接记录 |
+
+## 💬 三个最常用的完整示例
+
+### 示例 1：清晰的小需求，不调用 skill
+
+```text
+用户列表增加“状态”筛选。复用现有查询参数和下拉组件，保持当前接口风格，添加最小验证，不要提交。
+```
+
+预期行为：模型检查现有实现后直接开发；只有真正影响接口或业务口径的细节不明确时才提问。
+
+### 示例 2：必须确认需求后才能编码
+
+```text
+$engineering-flow:develop confirm
+实现客户批量删除。
+
+确保你理解所有需求细节，不确认的细节向我提问；确认无误后，才能编码。
+```
+
+预期行为：模型先返回目标、验收行为、范围、假设和阻塞问题，然后停止并等待你的确认。你回复“确认，可以编码”后才继续。
+
+### 示例 3：修复一个回归问题
+
+```text
+$engineering-flow:diagnose
+修复 calculateRenewalDate 在 1 月 31 日增加一个月后进入 3 月的问题。
+先复现问题，找到正确所有权，留下能够检测该回归的测试，然后运行聚焦验证。不要提交。
+```
+
+预期行为：模型先观察问题或失败测试，再修复根因，而不是只在表面调用点打补丁。
+
+## 📊 当前状态
 
 - Codex CLI 已完成 15 场景 A/B 行为验证。
 - Candidate 最终工程评分 47/47，通过显式路由测试 19/19，误触发为 0。
@@ -15,7 +184,7 @@
 
 当前版本适合作为 Codex CLI 的个人开发流程使用；跨平台发布结论仍需补充 Claude Code 实机验证。
 
-## 核心设计
+## 🧠 核心设计
 
 - 只有 228 词的 Engineering Core 始终自动生效。
 - 完整 workflows 只能通过用户显式 token 加载，不进行模型自动猜测。
@@ -32,7 +201,7 @@
 - [测试策略](docs/testing-strategy.md)
 - [A/B 基准记录](docs/benchmark-log.md)
 
-## 工作方式
+## ⚙️ 工作方式
 
 普通请求只接收精简 Core：
 
@@ -56,14 +225,14 @@ $engineering-flow:diagnose ...
 
 Codex 和 Claude 使用同一个确定性路由 hook；普通请求、未知 token 和未显式点名的 skills 不会加载完整 workflow。
 
-## 支持环境
+## 🖥️ 支持环境
 
 - Codex CLI
 - Claude Code
 
 其他 agent hosts 暂不在支持范围内。
 
-## 安装
+## 📦 详细安装说明
 
 ### Codex CLI
 
@@ -92,24 +261,7 @@ codex plugin add engineering-flow@engineering-flow
 
 Claude Code 文件结构和 hook 输出已通过静态测试，但上述安装和行为尚未在当前电脑上完成实机验证。
 
-## 快速开始
-
-对于清晰、局部、低风险的任务，不需要调用完整 skill，直接描述需求即可：
-
-```text
-给 formatDisplayName 增加可选 middleName；空白 middleName 忽略。保留现有导出，添加聚焦测试，不要提交。
-```
-
-Core 会自动检查仓库规则、现有实现和相关测试；只有存在会改变业务结果、接口、数据、安全或验收口径的不确定项时才会停下来提问。
-
-需要完整 workflow 时显式调用：
-
-```text
-Codex CLI:   $engineering-flow:develop 实现批量导出功能，完成测试并同步权威设计文档。
-Claude Code: /engineering-flow:develop 实现批量导出功能，完成测试并同步权威设计文档。
-```
-
-## Workflows 使用指南
+## 🧰 Workflows 详细说明
 
 | Workflow | 适用场景 | Codex 调用示例 |
 |---|---|---|
@@ -195,7 +347,7 @@ $engineering-flow:handoff
 
 未指定输出路径时只在回复中返回交接内容，不会静默创建文件。
 
-## 推荐开发流程
+## 🗺️ 推荐开发流程
 
 ```text
 需求说明
@@ -211,14 +363,14 @@ $engineering-flow:handoff
 
 这不是必须逐项执行的流水线。简单任务应保持简单，只有任务风险和复杂度需要时才升级流程。
 
-## 与项目规则协作
+## 🤝 与项目规则协作
 
 - 当前用户请求和项目内 `AGENTS.md`、`CLAUDE.md` 优先于本插件。
 - 业务口径、接口、SQL、字段和验收标准应继续放在项目自己的权威文档中。
 - 本插件不会强制项目采用新的文档目录、分支策略、提交格式或设计模式。
 - 未经用户授权，不会因为 workflow 自动获得 commit、push、发布、创建 issue、安装依赖或修改全局配置的权限。
 
-## 更新
+## 🔄 更新
 
 刷新 Codex marketplace 快照：
 
@@ -235,14 +387,14 @@ codex plugin add engineering-flow@engineering-flow
 
 更新后开启新会话。
 
-## 卸载
+## 🗑️ 卸载
 
 ```bash
 codex plugin remove engineering-flow@engineering-flow
 codex plugin marketplace remove engineering-flow
 ```
 
-## 开发与测试
+## 🧪 开发与测试
 
 要求 Node.js 20 或更高版本：
 
@@ -280,14 +432,14 @@ npm run benchmark:summary -- false-deduplication
 
 原始结果保存在已忽略的 `benchmark-results/` 中。Runner 会隔离全局 plugins 和 skills，并记录 fixture/candidate 指纹，避免不同版本的样本被混合统计。
 
-## 已知限制
+## ⚠️ 已知限制
 
 - Claude Code 真实安装与行为尚未在当前开发环境验证。
 - 当前基准使用强模型；Candidate 的主要收益是稳定关键流程边界，而不是让所有任务获得更高正确率。
 - 完整 workflow 会增加上下文、工具调用和耗时，因此保持显式调用。
 - 当前版本为 `0.1.0`，未来 workflow 名称和细节仍可能在新证据下调整。
 
-## 致谢与许可
+## 🙏 致谢与许可
 
 本项目参考并重新组织了以下项目中的部分思想：
 
