@@ -4,17 +4,54 @@
 
 > Help coding agents understand first, implement second, and finish with evidence.
 
-Engineering Flow is a complete software-development workflow for **Codex CLI** and **Claude Code**. It covers solution design, requirement and solution alignment, implementation, diagnosis, review, verification, and cross-session handoff while keeping clear tasks direct.
+![Codex CLI](https://img.shields.io/badge/Codex_CLI-supported-black)
+![Claude Code](https://img.shields.io/badge/Claude_Code-supported-D97757)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-## ✨ Highlights
+Engineering Flow is a software-development workflow plugin for **Codex CLI** and **Claude Code**. It covers solution design, requirement alignment, implementation, diagnosis, review, and cross-session handoff — while keeping clear tasks direct.
 
-- 🎯 **Align before coding** — Ask only when a decision materially changes the result.
-- 🧭 **Find the right boundary** — Discover existing capabilities, correct ownership, and shared root causes.
-- 🛠️ **Build for maintenance** — Prefer clear, explicit, locally understandable code over minimum line count.
-- 🧪 **Finish with evidence** — Select tests, compilation, linting, or integration checks based on risk, then reconcile authoritative documentation.
-- 🪶 **Stay lightweight** — Do not require plan files, worktrees, subagents, TDD, design patterns, or commit ceremony.
+## Why Engineering Flow
 
-## 🧩 One workflow, choose the right entry point
+### 📐 Every rule earned its place in a benchmark
+
+Most workflow plugins stack rules on intuition. Engineering Flow settles disputes with data: every trigger policy and load-bearing sentence passed isolated A/B benchmarks — 17 deterministic behavior scenarios, hidden scorers, contamination detection, and unauthorized-commit monitoring. Features that could not beat a strong baseline were deleted rather than kept for show: automatic skill triggering was rejected exactly this way, after the data repeatedly showed it loading workflows on unrelated tasks. The full decision trail is traceable in the [benchmark log](docs/benchmark-log.md).
+
+### 🎯 Deterministic triggering — workflows never invite themselves
+
+Full workflows load only when you name them explicitly, routed by a hook, with exactly one copy of context injected per invocation. There is no probabilistic "the model thought you needed it" — you will not be dragged into a five-step process for a one-line config change, or have a requested review silently substituted with a different workflow.
+
+### 🏛️ A software engineering core
+
+Engineering Flow translates classic software engineering principles into judgment rules an agent can execute — each with an explicit trigger signal and cost constraint, not a list of principle names:
+
+| Principle | How it appears in the workflow |
+|---|---|
+| High cohesion, low coupling | Every option comparison must weigh ownership, coupling, cohesion, and state/failure behavior |
+| Single responsibility | One rule has one authoritative owner; rules live in the module that owns the relevant data and invariant |
+| Open-closed | Extension points are introduced only under real pressure, such as repeated branching along one variation axis — speculative extension points are rejected explicitly |
+| Dependency inversion | Only an unstable external dependency earns an Adapter; proposals must state dependency direction |
+| Design patterns | Strategy, state machine, Adapter, factory/builder, and pipeline each have explicit trigger conditions — complexity removed must exceed indirection introduced |
+| Semantic reuse | Distinguish rules that must evolve together from rules that merely look alike; allow honest duplication, reject false deduplication |
+
+On top sits a **novelty tax**: any uncommon syntax, metaprogramming, new dependency, abstraction, or design pattern must pay for itself with a concrete benefit in correctness, measured performance, or total maintenance cost. A pattern name is not evidence of quality.
+
+The same standard drives both `code-design` proposals and `develop` implementation and conditional hardening, so design and coding apply one set of engineering judgment.
+
+### 🪶 A resident footprint of ~230 words
+
+The only always-on piece is a ~230-word Engineering Core — the baseline for repository discovery, requirement alignment, maintainability, safety preservation, and verified completion. When no workflow is invoked, nothing else is injected; your context and tokens stay with the actual task.
+
+### 🔒 Safety and authorization boundaries
+
+- Never commits, pushes, publishes, creates issues, installs dependencies, or modifies global configuration without authorization.
+- Destructive data decisions (such as how related data is handled) are always asked, never silently inferred.
+- `review` is strictly read-only; `code-design` produces proposals without production code; diagnosis is separated from fixing, and fixes require explicit authorization.
+
+### 🤝 Never takes over your project
+
+The current request and project-local `AGENTS.md`, `CLAUDE.md`, and authoritative documentation always take precedence. The process scales with the task: simple work stays direct, boundary testing follows real risk, and architecture changes follow demonstrated design pressure — no mandatory plan files, worktrees, subagents, TDD, or commit ceremony.
+
+## 🧩 One workflow, five entry points
 
 | Entry point | Use it for | Codex invocation |
 |---|---|---|
@@ -25,6 +62,21 @@ Engineering Flow is a complete software-development workflow for **Codex CLI** a
 | 📦 **Handoff** | Continue in another session or with another agent | `$engineering-flow:handoff` |
 
 Claude Code uses the same names with `/engineering-flow:` instead of `$engineering-flow:`.
+
+## ⚙️ How it works
+
+```text
+Session start (startup / resume / clear / compact)
+  └─► Inject the ~230-word Engineering Core — the always-on engineering and safety baseline
+
+Explicitly name a workflow
+  └─► Inject that workflow's complete SKILL.md for the turn, exactly once
+
+Every other prompt
+  └─► Zero injection; the native experience is preserved
+```
+
+Both platforms share the same skills and hooks, and static tests keep the invocation metadata in agreement.
 
 ## 🚀 Quick Start
 
@@ -75,17 +127,6 @@ Implement customer batch deletion. First confirm the requirements, related-data 
 
 See the [user guide](docs/user-guide.md) for complete scenarios and examples.
 
-## 🧠 Design Principles
-
-Engineering Flow does not take ownership away from the project. The current request and project-local `AGENTS.md`, `CLAUDE.md`, and authoritative documentation always take precedence.
-
-It provides stable engineering behavior rather than fixed ceremony:
-
-- Keep simple work direct and expand the process only when complexity requires it.
-- Add boundary coverage for real risks instead of mechanically enumerating edge cases.
-- Improve architecture under demonstrated design pressure, not to apply patterns for their own sake.
-- Never commit, push, publish, create issues, install dependencies, or modify global configuration without authorization.
-
 ## 📚 Documentation
 
 - [User guide: complete usage, installation, updates, and troubleshooting](docs/user-guide.md)
@@ -94,16 +135,6 @@ It provides stable engineering behavior rather than fixed ceremony:
 - [Trigger model](docs/trigger-model.md)
 - [Testing strategy](docs/testing-strategy.md)
 - [A/B benchmark log](docs/benchmark-log.md)
-
-## ✅ Evidence
-
-- 37/37 static and deterministic tests pass (POSIX and Windows).
-- Current Codex validation cohort: 17 scenarios, candidate 51/51.
-- Explicit workflow invocation: 51/51, with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
-- Claude Code passes strict manifest validation and explicit-invocation live samples; each explicit invocation injects exactly one copy of the workflow context.
-- Known limitation: Core-only behavior on ordinary Claude prompts is not yet validated to the Codex level, so use an explicit workflow entry for material data or permission decisions on Claude.
-
-See the [benchmark log](docs/benchmark-log.md) for complete environments, results, and cross-platform limitations.
 
 ## 🤝 Credits
 
