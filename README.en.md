@@ -97,10 +97,11 @@ It provides stable engineering behavior rather than fixed ceremony:
 
 ## ✅ Evidence
 
-- 36/36 static and deterministic tests pass.
+- 37/37 static and deterministic tests pass (POSIX and Windows).
 - Current Codex validation cohort: 17 scenarios, candidate 51/51.
 - Explicit workflow invocation: 51/51, with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
-- Claude Code passes strict manifest validation and an explicit `develop` live sample.
+- Claude Code passes strict manifest validation and explicit-invocation live samples; each explicit invocation injects exactly one copy of the workflow context.
+- Known limitation: Core-only behavior on ordinary Claude prompts is not yet validated to the Codex level, so use an explicit workflow entry for material data or permission decisions on Claude.
 
 See the [benchmark log](docs/benchmark-log.md) for complete environments, results, and cross-platform limitations.
 

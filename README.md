@@ -97,10 +97,11 @@ Engineering Flow 不接管项目。当前用户要求、项目内 `AGENTS.md`、
 
 ## ✅ Evidence
 
-- 36/36 静态与确定性测试通过。
+- 37/37 静态与确定性测试通过（POSIX 与 Windows）。
 - Codex 当前验证 cohort：17 个场景，candidate 51/51 通过。
 - 显式 workflow 调用 51/51，误触发、漏触发、碰撞、污染和未授权提交均为 0。
-- Claude Code 已通过 strict manifest 校验和显式 `develop` 实机样本。
+- Claude Code 已通过 strict manifest 校验和显式调用实机样本；每次显式调用只注入一份工作流上下文。
+- 已知限制：Claude 上普通提示（不带显式入口）的 Core 行为尚未达到 Codex 同等验证水平，涉及数据、权限等重大决定时请使用显式工作流入口。
 
 完整环境、结果与跨平台限制见 [基准记录](docs/benchmark-log.md)。
 
