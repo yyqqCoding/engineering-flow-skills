@@ -1,7 +1,7 @@
 {
   "name": "engineering-flow",
   "version": "0.1.0",
-  "description": "A compact, evidence-driven development workflow for Codex CLI and Claude Code.",
+  "description": "Compact workflows for implementation, diagnosis, solution design, review, and cross-session handoff.",
   "author": {
     "name": "engineering-flow-skills contributors"
   },
@@ -21,7 +21,7 @@
   "interface": {
     "displayName": "Engineering Flow",
     "shortDescription": "Compact evidence-driven development workflow",
-    "longDescription": "Align requirements, place changes at the correct boundary, write maintainable code, diagnose with evidence, review independently, verify before completion, and reconcile documentation.",
+    "longDescription": "Implement changes after fact and solution alignment, diagnose root causes with evidence, create or refine designs without coding, review independently, and capture safe cross-session handoffs.",
     "developerName": "engineering-flow-skills contributors",
     "category": "Developer Tools",
     "capabilities": [
@@ -32,6 +32,7 @@
     "defaultPrompt": [
       "Develop this change after resolving material requirement ambiguities.",
       "Diagnose this failure and fix the shared root cause.",
+      "Create or refine a solution design without implementing it.",
       "Review this diff for correctness and maintainability."
     ],
     "websiteURL": "https://github.com/yyqqCoding/engineering-flow-skills"

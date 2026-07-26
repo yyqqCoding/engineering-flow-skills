@@ -28,6 +28,10 @@ Failure signals:
 
 When the user explicitly requires confirmation before coding, the agent presents a concise requirement summary, assumptions, acceptance behavior, and blocking questions, then waits for approval.
 
+### REQ-04: Fact and solution alignment
+
+For an implementation task, the agent discovers repository facts and aligns material solution decisions before coding without asking the user to choose reversible internal details.
+
 ## Change placement and reuse
 
 ### CODE-01: Existing capability discovery
@@ -82,6 +86,14 @@ When multiple real variants, repeated conditionals, unstable dependencies, or di
 
 A design pattern is accepted only when the complexity and coupling it removes exceed the indirection it introduces.
 
+### DESIGN-04: Conditional maintainability hardening
+
+The agent improves ownership, cohesion, effects, state modeling, semantic reuse, or dependency isolation only when the requested change exposes demonstrated design pressure. A normal local change does not trigger a broad redesign.
+
+### DESIGN-05: Greenfield and refinement proposals
+
+When explicitly asked for `code-design`, the agent either creates a solution from an unsettled goal or refines an existing design for completeness, consistency, feasibility, ownership, and unnecessary complexity. It returns a proposal without implementing production code.
+
 ## Testing and diagnosis
 
 ### TEST-01: Valuable red-green loop
@@ -95,6 +107,14 @@ For mechanical, presentational, configuration, or framework-wiring changes, the 
 ### TEST-03: Test sensitivity
 
 A regression test fails when the fix is removed or the relevant behavior is broken. Passing tests that cannot detect the defect do not count as evidence.
+
+### TEST-04: Risk-based boundary hardening
+
+When changed or broken behavior crosses a material input, numeric/time, state, concurrency, permission, trust, resource, external-failure, migration, or compatibility boundary, the agent adds focused coverage for the applicable risk rather than mechanically enumerating every category.
+
+### TEST-05: No invented boundary behavior
+
+When expected behavior at a material boundary is not established by requirements or repository precedent, the agent asks for the product decision instead of encoding an arbitrary assertion.
 
 ### DEBUG-01: Reproduction before hypothesis
 

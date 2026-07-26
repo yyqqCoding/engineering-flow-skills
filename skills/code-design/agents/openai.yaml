@@ -1,5 +1,6 @@
 interface:
   display_name: "Code Design"
-  short_description: "Improve readability, ownership, and abstraction"
+  short_description: "Create or refine an implementation-ready design"
+  default_prompt: "Use $engineering-flow:code-design to produce a solution proposal without implementing it."
 policy:
   allow_implicit_invocation: false

@@ -30,6 +30,12 @@ test('skill names, Claude policy, and Codex policy stay synchronized', () => {
     const openai = fs.readFileSync(openaiPath, 'utf8');
     assert.match(openai, /display_name:/, `${name} needs a Codex display name`);
     assert.match(openai, /short_description:/, `${name} needs a Codex short description`);
+    assert.match(openai, /default_prompt:/, `${name} needs a Codex default prompt`);
+    assert.match(
+      openai,
+      new RegExp(`\\$engineering-flow:${name}\\b`),
+      `${name} default prompt must use the plugin namespace`,
+    );
 
     const expectedUserInvoked = skillConfig[name].invocation === 'user';
     const claudeUserInvoked = frontmatter['disable-model-invocation'] === true;
@@ -62,11 +68,12 @@ test('the current release keeps every full skill explicitly invoked', () => {
   assert.deepEqual(implicitSkills, []);
 });
 
-test('skill dependency graph is complete and acyclic', () => {
+test('skill reference graph is complete and acyclic', () => {
   for (const [name, config] of Object.entries(skillConfig)) {
-    for (const dependency of config.dependencies) {
-      assert.ok(skillConfig[dependency], `${name} references unknown dependency ${dependency}`);
-      assert.notEqual(dependency, name, `${name} cannot depend on itself`);
+    assert.ok(Array.isArray(config.references), `${name} must declare workflow references`);
+    for (const reference of config.references) {
+      assert.ok(skillConfig[reference], `${name} references unknown workflow ${reference}`);
+      assert.notEqual(reference, name, `${name} cannot reference itself`);
     }
   }
 
@@ -75,13 +82,13 @@ test('skill dependency graph is complete and acyclic', () => {
 
   function visit(name, chain = []) {
     if (visiting.has(name)) {
-      assert.fail(`skill dependency cycle: ${[...chain, name].join(' -> ')}`);
+      assert.fail(`skill reference cycle: ${[...chain, name].join(' -> ')}`);
     }
     if (visited.has(name)) return;
 
     visiting.add(name);
-    for (const dependency of skillConfig[name].dependencies) {
-      visit(dependency, [...chain, name]);
+    for (const reference of skillConfig[name].references) {
+      visit(reference, [...chain, name]);
     }
     visiting.delete(name);
     visited.add(name);
@@ -101,7 +108,11 @@ test('Claude and Codex manifests expose the released skills', () => {
   assert.equal(codex.skills, './skills/');
   assert.equal(claude.version, codex.version);
   assert.equal(claude.version, packageJson.version);
-  assert.equal(claude.hooks, './hooks/hooks.json');
+  assert.equal(
+    Object.hasOwn(claude, 'hooks'),
+    false,
+    'Claude automatically loads hooks/hooks.json; declaring it duplicates the hook file',
+  );
   assert.equal(codex.hooks, './hooks/hooks.json');
   assert.equal(marketplace.plugins[0].source.source, 'local');
   assert.equal(marketplace.plugins[0].source.path, '.');
@@ -112,7 +123,7 @@ test('relative Markdown links resolve', () => {
 
   function collect(directory) {
     for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-      if (entry.name === '.git' || entry.name === 'node_modules') continue;
+      if (entry.name === '.git' || entry.name === 'node_modules' || entry.name === 'baseline') continue;
       const fullPath = path.join(directory, entry.name);
       if (entry.isDirectory()) collect(fullPath);
       else if (entry.name.endsWith('.md')) markdownFiles.push(fullPath);

@@ -39,10 +39,9 @@ project instructions and authoritative docs
        +------------+-------------+
        |                          |
 explicit workflows          automatic context
-develop / clarify /       minimal Core only
-diagnose / code-design /
-review / verify-and-
-reconcile / handoff
+develop / diagnose /      minimal Core only
+code-design / review /
+handoff
        |                          |
        +------------+-------------+
                     |
@@ -74,6 +73,8 @@ Ask questions only when different answers materially change user-visible behavio
 
 An explicit confirmation mode may require user approval before coding. The normal mode asks only blocking questions and otherwise proceeds.
 
+For implementation work, align the solution boundary as well as the behavior: identify the likely owner, interfaces, data/state effects, compatibility constraints, and any decision that would materially change the result. Reversible internal details remain the agent's responsibility.
+
 ### 3. Choose the change boundary
 
 - Search by domain concept, type, behavior, and call sites, not only by the wording of the request.
@@ -88,6 +89,11 @@ An explicit confirmation mode may require user approval before coding. The norma
 - For valuable behavior seams, use a red-green-refactor loop one vertical slice at a time.
 - For mechanical, presentation-only, configuration, or framework-wiring changes, use the smallest meaningful compile/lint/integration check instead of ceremonial unit tests.
 - Refactor while green when it improves clarity, locality, or removes proven semantic duplication.
+
+Apply two conditional hardening passes only when evidence justifies them:
+
+- **Boundary hardening:** add targeted cases for applicable input, numeric/time, state/lifecycle, concurrency/idempotency, permission/trust, resource/external-failure, migration, or compatibility risks. Do not invent undefined product behavior.
+- **Maintainability hardening:** improve ownership, cohesion, explicit effects, semantic reuse, state modeling, or dependency isolation when the change exposes real design pressure. Design patterns are optional techniques, never the objective.
 
 ### 5. Review independently
 
@@ -110,6 +116,16 @@ Re-read the accepted requirements and review the diff from a fixed point. Check 
 - Update authoritative documentation only for changed facts and decisions.
 - Do not modify accepted requirements after implementation without explicit confirmation.
 - Update project instructions only when a durable rule applies across future tasks.
+
+Focused verification and reconciliation are completion responsibilities of `develop` and `diagnose`, not a separate mandatory workflow.
+
+## User-visible workflows
+
+- **develop:** implement features, refactors, and test-only changes after aligning facts and solution details; optionally require confirmation before coding.
+- **diagnose:** reproduce broken existing behavior, find the supported root cause, and fix it only when authorized.
+- **code-design:** create a greenfield solution proposal or refine an existing design without implementing production code.
+- **review:** perform an evidence-backed read-only review from a fixed point.
+- **handoff:** capture the minimum durable state needed by another session.
 
 ## Maintainable-code standard
 

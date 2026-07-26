@@ -1,5 +1,0 @@
-interface:
-  display_name: "Verify and Reconcile"
-  short_description: "Verify changes and align docs before completion"
-policy:
-  allow_implicit_invocation: false

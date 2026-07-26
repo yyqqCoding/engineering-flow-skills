@@ -1,5 +1,6 @@
 interface:
   display_name: "Develop"
-  short_description: "Run the complete implementation workflow"
+  short_description: "Implement changes with aligned requirements and evidence"
+  default_prompt: "Use $engineering-flow:develop to implement this change through focused verification."
 policy:
   allow_implicit_invocation: false

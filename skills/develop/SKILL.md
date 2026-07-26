@@ -1,89 +1,81 @@
 ---
 name: develop
-description: Run the complete development workflow for an implementation task.
+description: Implement features, refactors, and test-only changes through requirement alignment, conditional hardening, and fresh verification.
 disable-model-invocation: true
 argument-hint: "[confirm]"
 ---
 
 # Develop
 
-Implement a requested change from requirement alignment through fresh verification and documentation reconciliation. This is an orchestrator, not a reason to manufacture ceremony.
+Implement the requested change after understanding the facts and material solution decisions. Keep clear local work direct.
 
 ## Mode
 
-- **Normal**: ask only blocking questions; proceed when repository evidence safely resolves the rest.
-- **Confirm**: when the argument is `confirm` or the user requires approval before coding, present the requirement checkpoint and wait for explicit approval.
+- **Normal:** build the alignment internally. Ask and wait only when a material blocker remains; do not present an approval checkpoint or create a todo list for a small clear task.
+- **Confirm:** when the argument is `confirm` or the user requires approval before coding, present the checkpoint and wait for explicit approval.
 
-## 1. Discover
+## 1. Discover once
 
-Before proposing code:
+- Read applicable project instructions and authoritative requirement/design documents.
+- Inspect version-control state and preserve unrelated work.
+- Read the relevant implementation, tests, callers, and nearby patterns.
+- For broken existing behavior, apply the `diagnose` process rather than a generic feature flow.
 
-- Read applicable project instructions and the authoritative requirement/design documents they identify.
-- Inspect version-control state and preserve unrelated changes.
-- Read the relevant implementation, tests, callers, and adjacent patterns.
-- Determine whether the request is implementation, diagnosis, review, or documentation work. Route a bug through `diagnose`; do not duplicate its process here.
+Reuse what this inspection established. Do not repeat repository discovery or unchanged commands merely to narrate progress or prepare the final report.
 
-Done when you can name the source of truth, affected behavior, likely ownership boundary, and relevant feedback commands.
+## 2. Align facts and solution
 
-## 2. Align
+Establish:
 
-Produce a concise checkpoint:
+- Goal, acceptance behavior, and out of scope
+- Repository-supported assumptions
+- Material behavior, interface, data/state, permission, security, compatibility, migration, and destructive-effect decisions
+- Owning boundary and implementation approach when they affect the result
 
-- Goal
-- Acceptance behavior
-- Out of scope
-- Assumptions derived from repository evidence
-- Blocking ambiguities
+Ask only about unresolved decisions that materially change the result. Infer reversible internal details from repository evidence.
 
-Ask only questions whose answers materially change behavior, interfaces, data semantics, permissions, security, compatibility, destructive effects, or acceptance criteria. Do not ask the user to choose reversible implementation details discoverable from the repository.
+In confirm mode, present this checkpoint and wait. In normal mode, proceed silently when no blocker remains and state only the brief implementation strategy useful to the user.
 
-In confirm mode, wait after the checkpoint. In normal mode, wait only when blockers remain.
+## 3. Choose boundary and feedback
 
-## 3. Choose the change boundary
+- Reuse existing behavior only when it has the same domain responsibility and should evolve together.
+- Place rules with the module that owns the relevant data and invariant; inspect sibling callers before changing shared behavior.
+- Apply `code-design` pressure-and-trade-off reasoning for non-local interfaces, state, dependencies, module boundaries, or competing approaches.
+- Choose the highest stable public seam that can prove each behavior slice.
+- Use red-green-refactor for regressions and valuable business behavior when a correct seam exists. Use compile, lint, integration, or another meaningful check for mechanical/configuration work.
 
-- Search for existing domain behavior, not only matching names.
-- Inspect relevant callers before changing shared behavior.
-- Reuse code only when it has the same semantic responsibility and should change together.
-- Place the rule with the module that owns the data and invariant.
-- Use `code-design` only for non-local interface, state, dependency, module-boundary, or multi-location variation pressure. The Core covers ordinary local readability and reuse decisions.
+## 4. Implement
 
-State the implementation strategy briefly. Do not save a plan file unless the work spans sessions or the user/project requires one.
-
-## 4. Choose feedback
-
-For each behavior slice, select the highest stable public seam that can prove the behavior.
-
-- Use red-green-refactor for regressions and important business behavior when a correct seam exists.
-- Prefer one vertical slice at a time.
-- For mechanical, presentational, configuration, or framework-wiring changes, use the smallest meaningful compile, lint, integration, or behavioral check instead of ceremonial unit tests.
-- Never expose internals or add interfaces solely to satisfy a mocking framework.
-
-## 5. Implement
-
-- Make the smallest clear change at the correct boundary.
-- Follow local idioms unless a local pattern creates a concrete correctness or maintainability problem; improve only the necessary area.
+- Make the smallest clear change at the owning boundary.
 - Keep control flow, effects, failures, and state transitions explicit.
 - Avoid speculative abstractions, dependencies, configuration, and unrelated cleanup.
-- Preserve validation, permissions, security, data integrity, compatibility, accessibility, and unrelated user work.
-- Run the selected narrow feedback after each meaningful slice.
+- Preserve validation, permissions, security, data integrity, compatibility, accessibility, and unrelated work.
+- Run focused feedback after a behavior-changing slice when its result could have changed. Do not rerun the same command against the same state.
 
-Stop and return to alignment if implementation reveals a material requirement change. Do not silently update the requirement to match the code.
+Return to alignment if implementation reveals a material requirement change.
 
-## 6. Review
+## 5. Harden conditionally
 
-Re-read the accepted behavior and inspect the diff from a fixed point. Check:
+### Boundary and extreme cases
 
-- Missing, incorrect, or extra behavior
-- Error and boundary behavior
-- Security, permissions, data, compatibility, and destructive effects
-- Ownership, reuse, readability, and abstraction cost
-- Test sensitivity and maintenance cost
-- Unrelated changes and temporary artifacts
+Add targeted coverage only when the behavior involves applicable input, numeric/time, collection, state/lifecycle, duplicate/concurrent, permission/trust, resource/external-failure, migration, or compatibility risk.
 
-Use a separate `review` invocation only when the user asks for a formal read-only review. An implementation self-check remains part of this workflow.
+- Derive expected behavior from accepted requirements and repository precedent.
+- Ask for a material undefined boundary instead of inventing an assertion.
+- For a test-only request, leave production behavior unchanged unless a fix is also authorized.
 
-## 7. Complete
+### Maintainability and architecture
 
-Use `verify-and-reconcile`. Do not commit, push, publish, create external issues, install dependencies, or change global configuration unless authorized.
+Improve the touched design only when the change exposes scattered ownership, hidden effects, semantic duplication, repeated branching along one real variation axis, distributed state transitions, an unstable dependency, or a boundary that blocks testing/debugging.
 
-Completion requires verified acceptance behavior, an accurate documentation state, and an explicit report of anything not verified.
+Prefer clear ownership, cohesion, explicit effects, useful names, and local reasoning. Use a design pattern only when the demonstrated pressure justifies more indirection. Do not optimize line count or launch a broad redesign.
+
+## 6. Complete
+
+- Re-read accepted behavior and inspect the relevant diff for correctness, boundary/safety behavior, ownership, readability, test sensitivity, scope, and temporary artifacts.
+- Run the focused verification and at most one scope-appropriate broader check when warranted. Reuse passing output if the verified state has not changed.
+- Reconcile each accepted behavior as verified, partially verified, incomplete, or deviated.
+- Update authoritative documentation only for changed facts and confirmed decisions; update project instructions only for durable cross-task rules.
+- Remove temporary diagnostics and report remaining gaps.
+- Use `review` separately only for a formal read-only review.
+- Do not commit, push, publish, create external issues, install dependencies, or change global configuration unless authorized.

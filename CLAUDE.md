@@ -1,4 +1,4 @@
-# AGENTS.md
+# CLAUDE.md
 
 This repository contains a portable development workflow for Codex CLI and Claude Code.
 

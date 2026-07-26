@@ -14,7 +14,7 @@ module.exports = function score(workspace) {
     { id: 'active', email: 'active@example.com' },
   ]);
   const document = fs.readFileSync(path.join(workspace, 'docs', 'export-design.md'), 'utf8');
-  const docsReconciled = /exclude|omit|only active|disabled customers? (?:are|is) not included/i.test(document)
+  const docsReconciled = /exclude|omit|only active|filters? out disabled|disabled customers? (?:(?:are|is) not|must not be) included/i.test(document)
     && !/include active and disabled customers/i.test(document);
   const designFiles = fs.readdirSync(path.join(workspace, 'docs')).filter((name) => /design/i.test(name));
   const noParallelDesign = designFiles.length === 1 && designFiles[0] === 'export-design.md';

@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 const childProcess = require('node:child_process');
-const crypto = require('node:crypto');
 const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
@@ -14,8 +13,14 @@ const {
   withoutConfiguredPlugins,
 } = require('./lib/benchmark-utils');
 const { buildAdditionalContext } = require('../hooks/user-prompt-submit');
+const {
+  fingerprintBenchmark,
+  fingerprintCandidate,
+} = require('./lib/benchmark-fingerprints');
+const { loadEnvFile } = require('./lib/env-file');
 
 const ROOT = path.resolve(__dirname, '..');
+loadEnvFile(path.join(ROOT, '.env'));
 const benchmarks = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'benchmarks.json'), 'utf8'));
 
 const benchmarkName = process.argv[2];
@@ -23,11 +28,28 @@ const arm = process.argv[3] || 'candidate';
 const timeoutMs = Number(process.env.BENCH_TIMEOUT_MS || 240000);
 const reasoningEffort = process.env.BENCH_REASONING_EFFORT || 'medium';
 const heartbeatMs = Number(process.env.BENCH_HEARTBEAT_MS || 15000);
+const modelProvider = process.env.BENCH_MODEL_PROVIDER || '';
+const model = process.env.BENCH_MODEL || '';
+const baseUrl = process.env.BENCH_BASE_URL || '';
+const apiKey = process.env.BENCH_API_KEY || '';
 
 if (!benchmarks[benchmarkName] || !['baseline', 'candidate'].includes(arm)) {
   process.stderr.write('Usage: node scripts/run-codex-benchmark.js <benchmark> <baseline|candidate>\n');
   process.stderr.write(`Benchmarks: ${Object.keys(benchmarks).join(', ')}\n`);
   process.exit(2);
+}
+
+if (modelProvider && !/^[A-Za-z0-9_-]+$/.test(modelProvider)) {
+  throw new Error('BENCH_MODEL_PROVIDER may contain only letters, digits, underscores, and hyphens');
+}
+if (baseUrl) {
+  const parsedUrl = new URL(baseUrl);
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    throw new Error('BENCH_BASE_URL must use http or https');
+  }
+  if (!modelProvider) throw new Error('BENCH_MODEL_PROVIDER is required with BENCH_BASE_URL');
+  if (!model) throw new Error('BENCH_MODEL is required with BENCH_BASE_URL');
+  if (!apiKey) throw new Error('BENCH_API_KEY is required with BENCH_BASE_URL');
 }
 
 function run(command, args, options = {}) {
@@ -97,42 +119,10 @@ function runStreaming(command, args, options = {}) {
   });
 }
 
-function updateHashWithPath(hash, targetPath) {
-  const stat = fs.statSync(targetPath);
-  if (stat.isDirectory()) {
-    for (const entry of fs.readdirSync(targetPath).sort()) {
-      updateHashWithPath(hash, path.join(targetPath, entry));
-    }
-    return;
-  }
-
-  hash.update(path.relative(ROOT, targetPath));
-  hash.update('\0');
-  hash.update(fs.readFileSync(targetPath));
-  hash.update('\0');
-}
-
-function fingerprint(paths, additionalValue = '') {
-  const hash = crypto.createHash('sha256');
-  for (const targetPath of paths) updateHashWithPath(hash, targetPath);
-  hash.update(additionalValue);
-  return hash.digest('hex').slice(0, 12);
-}
-
 async function main() {
   const benchmark = benchmarks[benchmarkName];
-  const benchmarkFingerprint = fingerprint([
-    path.join(ROOT, benchmark.fixture),
-    path.join(ROOT, benchmark.scorer),
-    ...(benchmark.setup ? [path.join(ROOT, benchmark.setup)] : []),
-  ], benchmark.prompt);
-  const candidateFingerprint = fingerprint([
-    path.join(ROOT, '.claude-plugin'),
-    path.join(ROOT, '.codex-plugin'),
-    path.join(ROOT, 'config', 'skills.json'),
-    path.join(ROOT, 'hooks'),
-    path.join(ROOT, 'skills'),
-  ]);
+  const benchmarkFingerprint = fingerprintBenchmark(ROOT, benchmark);
+  const candidateFingerprint = fingerprintCandidate(ROOT);
   const cohort = arm === 'candidate'
     ? `${benchmarkFingerprint}-${candidateFingerprint}`
     : benchmarkFingerprint;
@@ -191,13 +181,29 @@ async function main() {
   const outputPath = path.join(resultDir, `${benchmarkName}-${arm}-${runId}.jsonl`);
   const finalPath = path.join(runRoot, 'final.txt');
   const startedAt = Date.now();
+  const configOverrides = [
+    `model_reasoning_effort=${JSON.stringify(reasoningEffort)}`,
+  ];
+  if (baseUrl) {
+    const providerKey = `model_providers.${modelProvider}`;
+    configOverrides.push(
+      `${providerKey}.name=${JSON.stringify('Benchmark environment provider')}`,
+      `${providerKey}.base_url=${JSON.stringify(baseUrl)}`,
+      `${providerKey}.wire_api=${JSON.stringify('responses')}`,
+      `${providerKey}.env_key=${JSON.stringify('BENCH_API_KEY')}`,
+    );
+  }
+  if (modelProvider) {
+    configOverrides.push(`model_provider=${JSON.stringify(modelProvider)}`);
+  }
+  if (model) configOverrides.push(`model=${JSON.stringify(model)}`);
+
   const codex = await runStreaming('codex', [
     'exec',
     '--ephemeral',
     '--json',
     '--dangerously-bypass-hook-trust',
-    '-c',
-    `model_reasoning_effort="${reasoningEffort}"`,
+    ...configOverrides.flatMap((override) => ['-c', override]),
     '-s',
     'workspace-write',
     '-C',
@@ -244,6 +250,7 @@ async function main() {
   const diff = run('git', ['diff', '--', '.'], { cwd: workspace }).stdout;
   const finalStatus = run('git', ['status', '--short'], { cwd: workspace }).stdout;
   const finalHead = run('git', ['rev-parse', 'HEAD'], { cwd: workspace }).stdout.trim();
+  const modelCompleted = codex.status === 0 && !codex.timedOut && !codex.error;
 
   const report = {
     benchmark: benchmarkName,
@@ -254,13 +261,15 @@ async function main() {
     durationMs: Date.now() - startedAt,
     workspace,
     modelRun: {
-      completed: codex.status === 0,
+      completed: modelCompleted,
       status: codex.status,
       signal: codex.signal,
       timedOut: codex.timedOut,
       error: codex.error ? String(codex.error.message || codex.error) : null,
       stderr: codexStderr,
       reasoningEffort,
+      modelProvider: modelProvider || null,
+      model: model || null,
       timeoutMs,
       contaminated,
     },
@@ -285,6 +294,7 @@ async function main() {
   const reportPath = path.join(resultDir, `${benchmarkName}-${arm}-${runId}.json`);
   fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
   process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);
+  if (!modelCompleted) process.exitCode = 1;
 }
 
 main().catch((error) => {

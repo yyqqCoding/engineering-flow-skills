@@ -1,5 +1,6 @@
 interface:
   display_name: "Handoff"
   short_description: "Create a compact continuation record"
+  default_prompt: "Use $engineering-flow:handoff to capture the current task for a new session."
 policy:
   allow_implicit_invocation: false

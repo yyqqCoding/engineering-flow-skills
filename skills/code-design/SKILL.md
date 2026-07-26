@@ -1,21 +1,28 @@
 ---
 name: code-design
-description: Evaluate non-local module boundaries, interfaces, state models, dependencies, variation points, and justified abstractions.
+description: Create a greenfield solution design or refine an existing design into an implementation-ready proposal without coding.
 disable-model-invocation: true
 ---
 
 # Code Design
 
-Choose the lowest necessary complexity that keeps behavior clear, local, testable, and easy to change. Do not optimize for line count or the appearance of sophistication.
+Produce a solution proposal without implementing production code. Update a design document only when the user explicitly asks; otherwise return the proposal in the response.
 
-## 1. Establish the local language
+## 1. Select the design mode
 
-- Read project conventions and representative nearby code.
-- Identify normal language/framework idioms and existing module boundaries.
-- Separate local conventions from accidental legacy problems.
-- Improve only the area required by the task; do not launch an unrelated style rewrite.
+- **Greenfield/discovery**: the user has a goal or problem but no settled solution.
+- **Refinement**: the user supplies an existing proposal or design document that needs correction, completion, or simplification.
 
-## 2. Map the design pressure
+If the task is to implement an already accepted design, use `develop`. If existing behavior is broken, use `diagnose`.
+
+## 2. Establish the problem and local context
+
+- Clarify the user problem, desired outcome, acceptance behavior, constraints, and out of scope.
+- Read applicable project instructions, authoritative documents, existing capabilities, representative code, and tests when a repository exists.
+- Ask only about unresolved decisions that materially change product behavior or the viable solution space.
+- Distinguish accepted requirements, repository facts, reversible design choices, and open product decisions.
+
+## 3. Explore the design pressure
 
 Name the actual problem before choosing a technique:
 
@@ -31,7 +38,17 @@ Name the actual problem before choosing a technique:
 
 No observed pressure means no new abstraction.
 
-## 3. Prefer maintainable expression
+For greenfield work, propose the smallest coherent architecture that satisfies known behavior and credible near-term variation. For refinement, identify missing behavior, contradictions, unclear ownership, infeasible assumptions, accidental complexity, and decisions that lack evidence.
+
+## 4. Develop and compare options
+
+- Produce alternatives only when they represent materially different trade-offs.
+- Compare ownership, coupling, cohesion, state and failure behavior, compatibility, testability, operability, migration cost, and expected change pressure.
+- Prefer existing repository language, frameworks, and boundaries unless a concrete problem justifies change.
+- Recommend one option and state why it is the lowest necessary complexity.
+- Reject speculative extension points and unnecessary dependencies explicitly when they are tempting.
+
+## 5. Apply the maintainability standard
 
 Prefer code that is:
 
@@ -42,11 +59,9 @@ Prefer code that is:
 - Easy to debug at meaningful steps
 - Structured so one rule has one authoritative owner
 
-Use conditional expressions only for simple, side-effect-free value choices. Avoid nested conditionals, dense Boolean expressions, chains that mix transformation and effects, exceptions as normal flow, and advanced language machinery used only to save lines.
+Use the standard to shape module boundaries and contracts, not to prescribe internal classes prematurely. Do not ask the user to design methods, patterns, or framework plumbing.
 
-Useful intermediate variables and small intent-revealing methods are clarity, not bloat.
-
-## 4. Apply the novelty tax
+### Apply the novelty tax
 
 An uncommon construct, reflection, metaprogramming, dense expression, implicit runtime behavior, new dependency, abstraction, or design pattern must provide a concrete benefit in correctness, measured performance, framework alignment, or total maintenance cost.
 
@@ -55,10 +70,10 @@ When justified:
 - Localize it behind a clear boundary.
 - Name the intent.
 - Keep effects and failure behavior observable.
-- Add behaviorally sensitive tests.
+- Specify behaviorally sensitive evidence.
 - Explain why it exists, not how the syntax works.
 
-## 5. Reuse and abstract by semantics
+### Reuse and abstract by semantics
 
 Before sharing code, ask:
 
@@ -70,7 +85,7 @@ Before sharing code, ask:
 
 Allow duplication when rules only happen to look alike and will evolve independently.
 
-## 6. Use patterns only under real pressure
+### Use patterns only under real pressure
 
 Examples of legitimate signals:
 
@@ -82,6 +97,16 @@ Examples of legitimate signals:
 
 The pattern is acceptable only when complexity removed exceeds the indirection introduced. A pattern name is not evidence of quality.
 
-## Output
+## 6. Produce the proposal
 
-For design/review requests, report the pressure, recommended boundary, trade-offs, and rejected unnecessary abstractions. For implementation requests, apply the design within task scope and verify behavior.
+Include only relevant sections:
+
+- Problem, goals, accepted behavior, constraints, and out of scope
+- Existing context and reusable capabilities
+- Recommended boundaries, responsibilities, contracts, data/state ownership, and dependency direction
+- Failure, security, compatibility, migration, and operational behavior when material
+- Decisions, trade-offs, alternatives considered, and rejected unnecessary abstractions
+- Open questions and assumptions
+- Acceptance evidence and an implementation sequence
+
+Do not claim decisions are accepted when they remain assumptions. Do not implement the design in this invocation.

@@ -1,9 +1,9 @@
 # Engineering Core
 
-These rules apply to code changes. Project instructions and the current user request take precedence.
+These rules apply to code changes. Project instructions and the user request take precedence.
 
 - Before editing, inspect once in-repository: status, applicable instructions/docs, relevant code, tests, callers. Preserve unrelated work; avoid broad parent searches.
-- Confirm goal, acceptance, scope, assumptions. Ask only about details materially changing behavior, interfaces, data, permissions, security, compatibility, destructive effects, or acceptance. Infer reversible choices from repository precedent.
+- Confirm goal, scope, assumptions. Ask and wait on choices materially changing behavior, interfaces, data, permissions, security, compatibility, or acceptance. For destructive operations, never infer how related data is handled without explicit requirements or authoritative repository precedent. Infer other reversible choices from repository precedent.
 - Find existing domain behavior. Put rules with their owning module; fix a shared root cause when sibling callers should change together.
 - Prefer familiar, explicit, local, debuggable code—not minimum lines. Uncommon syntax, dense expressions, hidden effects, metaprogramming, dependencies, abstractions, or patterns require concrete benefit. Reuse only identical domain behavior that should evolve together; avoid speculative extensions.
 - Preserve validation, permissions, security, data integrity, compatibility, accessibility, and unrelated work.

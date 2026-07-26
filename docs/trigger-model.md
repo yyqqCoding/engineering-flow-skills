@@ -6,7 +6,7 @@
 2. All full workflows are currently user-invoked because they change the shape and cost of the session.
 3. A minimal core is injected at session boundaries so common engineering, completion, and safety rules remain automatic.
 4. A full skill may become model-invoked only after isolated positive, negative, and overlap benchmarks demonstrate acceptable precision, recall, and ceremony cost.
-5. Skill dependencies are one-way. Leaf skills never invoke orchestration skills.
+5. Workflow references are one-way guidance. They do not imply automatic skill injection.
 
 ## Layers
 
@@ -20,13 +20,11 @@ It must not contain full TDD, planning, worktree, review, subagent, commit, or r
 
 | Skill | Purpose |
 |---|---|
-| `develop` | Run the complete implementation lifecycle; optional confirmation mode |
-| `clarify` | Deep requirement alignment without implementation |
+| `develop` | Implement features, refactors, and test-only changes; optional confirmation mode |
 | `review` | Read-only review of a diff, branch, or work in progress |
 | `handoff` | Produce a compact durable continuation record |
-| `code-design` | Evaluate non-local architecture, state, dependency, variation, or abstraction pressure |
+| `code-design` | Create a greenfield solution proposal or refine an existing design without coding |
 | `diagnose` | Diagnose an existing bug, failure, regression, intermittent fault, or slowdown |
-| `verify-and-reconcile` | Audit complex completion evidence, authoritative docs, and durable instructions |
 
 Claude metadata: `disable-model-invocation: true`.
 
@@ -46,33 +44,36 @@ The invocation corpus remains in place so future host/model versions can re-eval
 
 ## Priority
 
-When the user explicitly names overlapping workflows, use this order:
+When the user explicitly names overlapping workflows, preserve the strictest authority boundary:
 
-1. `clarify`
-2. `develop`
-3. `review`
-4. `diagnose`
-5. `code-design`
-6. `verify-and-reconcile`
+1. `review` remains read-only.
+2. `code-design` produces a proposal without production-code implementation.
+3. `diagnose` is used for broken existing behavior.
+4. `develop` is used for authorized implementation.
+5. `handoff` captures state rather than continuing work.
 
 Examples:
 
 - Supplied reviewer comments are verified by Core before routing a valid behavioral defect to diagnosis.
 - A clear bug begins with diagnosis rather than generic development orchestration.
 - A read-only review never transitions to implementation without a new user request.
+- A design proposal never transitions to production-code implementation without a new user request.
 
-## Dependency graph
+## Reference graph
 
 ```text
 develop
-  -> clarify (only when required)
-  -> code-design (only when pressure exists)
-  -> tdd reference (only when valuable)
-  -> verify-and-reconcile
+  -> diagnose process (when the request is broken existing behavior)
+  -> design-pressure analysis (when non-local pressure exists)
+  -> boundary hardening (only when applicable risk exists)
+  -> maintainability hardening (only when demonstrated pressure exists)
+  -> focused verification and reconciliation
 
 diagnose
-  -> tdd reference (when a correct regression seam exists)
-  -> verify-and-reconcile
+  -> regression evidence (when a correct seam exists)
+  -> adjacent boundary hardening (when supported by the root cause)
+  -> owning-boundary improvement (when structure caused the defect)
+  -> focused verification and reconciliation
 
 review
   -> code-design reference
@@ -82,6 +83,8 @@ handoff
 ```
 
 Cycles are forbidden.
+
+Registry references document allowable one-way guidance. The deterministic prompt hook injects only workflows explicitly named by the user; it never recursively injects referenced workflows.
 
 ## Description rules
 

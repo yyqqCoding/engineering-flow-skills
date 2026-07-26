@@ -3,8 +3,10 @@
 const childProcess = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const { loadEnvFile } = require('./lib/env-file');
 
 const ROOT = path.resolve(__dirname, '..');
+loadEnvFile(path.join(ROOT, '.env'));
 const benchmarks = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'benchmarks.json'), 'utf8'));
 const requestedNames = process.argv.slice(2);
 const benchmarkNames = requestedNames.length > 0 ? requestedNames : Object.keys(benchmarks);

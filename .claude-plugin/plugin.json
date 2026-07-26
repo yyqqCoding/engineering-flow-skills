@@ -1,7 +1,7 @@
 {
   "name": "engineering-flow",
   "version": "0.1.0",
-  "description": "A compact, evidence-driven development workflow for requirement alignment, maintainable code, diagnosis, review, verification, and documentation reconciliation.",
+  "description": "Compact workflows for implementation, diagnosis, solution design, review, and cross-session handoff.",
   "author": {
     "name": "engineering-flow-skills contributors"
   },
@@ -18,12 +18,9 @@
   ],
   "skills": [
     "./skills/develop",
-    "./skills/clarify",
     "./skills/diagnose",
     "./skills/code-design",
     "./skills/review",
-    "./skills/verify-and-reconcile",
     "./skills/handoff"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }

@@ -1,5 +1,7 @@
 # Engineering Flow Skills 深度优化分析 - 索引
 
+> **状态：已归档。** 本目录记录了架构决策前的分析过程，其中关于删除 `review`、新增独立 `optimize`/`boundary-test`、强制测试/提交以及放宽 Core 搜索约束的内容未被采纳。当前产品真相以 `docs/product-design.md`、`docs/behavior-spec.md` 和 `docs/trigger-model.md` 为准。
+
 ## 📚 文档导航
 
 本目录包含 engineering-flow-skills 项目的完整深度分析，共 7 份文档，约 50,000 词。

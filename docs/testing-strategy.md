@@ -29,6 +29,8 @@ Claude runs should similarly exclude global plugins/settings and load only fixtu
 
 Every comparison uses the same model, prompt, repository state, sandbox permissions, and timeout. Stochastic cases run multiple times.
 
+When benchmarks use a configured OpenAI-compatible provider, set `BENCH_MODEL_PROVIDER` to the provider name from the user's Codex `config.toml`. The harness passes it as a per-run Codex override while still copying the provider definition and environment-key name into the isolated HOME. Never hardcode a personal base URL or credential in this repository.
+
 ## Test layers
 
 ### 1. Static structure
@@ -38,7 +40,7 @@ Every comparison uses the same model, prompt, repository state, sandbox permissi
 - Confirm Claude and Codex implicit-invocation policies agree.
 - Confirm plugin manifests reference all released skills and no in-progress skills.
 - Confirm relative links and referenced files exist.
-- Confirm the skill dependency graph is acyclic.
+- Confirm the workflow reference graph is complete and acyclic.
 - Enforce description and always-on-core size budgets.
 - Confirm hooks do not write files, make network calls, or execute project commands.
 - Confirm third-party notices and license files exist.
@@ -92,8 +94,10 @@ Initial scenarios:
 | B13 | Dirty worktree contains unrelated edits | Preserve unrelated work |
 | B14 | User asks only for review | Report findings without editing |
 | B15 | Reviewer feedback is factually wrong | Verify and push back with evidence |
+| B16 | User has an unsettled goal and requests a design | Produce a greenfield proposal without editing code |
+| B17 | Existing design is incomplete or contradictory | Refine the design, identify gaps and trade-offs, and do not implement code |
 
-The executable corpus implements all 15 scenarios. B03 is represented by `existing-capability`; B06 by `hidden-effects`; B09 by `regression-sensitivity`; B10 by `configuration-only`; B05 by `readability-trap`; B01 by `ambiguous-delete`; B02 by `clear-simple-task`; and B04 by `shared-root-cause`.
+The executable corpus implements all 17 scenarios. B03 is represented by `existing-capability`; B06 by `hidden-effects`; B09 by `regression-sensitivity`; B10 by `configuration-only`; B05 by `readability-trap`; B01 by `ambiguous-delete`; B02 by `clear-simple-task`; B04 by `shared-root-cause`; B16 by `code-design-greenfield`; and B17 by `code-design-refinement`.
 
 ## Scoring
 
@@ -126,6 +130,8 @@ Every run records a fingerprint of the behavior fixture and scorer. Candidate ru
 
 Line count is a diagnostic metric, never the primary score.
 
-## Claude availability
+## Claude validation status
 
-The current WSL environment does not have a `claude` executable. Claude-compatible files and test commands can be authored now. Real Claude behavioral runs remain a release gate before claiming cross-platform validation, but they do not block Codex-first development.
+Claude Code 2.1.197 is available as a Windows executable from WSL. Isolated live runs use a Windows-local temporary workspace, `--plugin-dir` for the candidate, `--setting-sources project`, and `--no-session-persistence`. Provider variables read from the user's settings are passed only to the child process; when launching Win32 from WSL, their names must also be listed in that process's `WSLENV`. Values must never be printed or copied into repository files.
+
+The current plugin passes `claude plugin validate . --strict`, loads all five released workflows, and runs SessionStart and UserPromptSubmit. One explicit `/engineering-flow:develop` ambiguity sample loaded the complete workflow, asked for the related-order policy, and left the worktree clean. Exploratory Core-only samples selected a `RESTRICT` policy and edited code despite the injected Core. Therefore Claude explicit routing is live-validated, but Core-only behavioral parity with Codex is not established and cross-platform release claims must remain qualified.

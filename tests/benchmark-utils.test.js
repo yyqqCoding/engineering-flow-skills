@@ -1,4 +1,7 @@
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
 const test = require('node:test');
 
 const {
@@ -8,6 +11,69 @@ const {
   parseJsonl,
   withoutConfiguredPlugins,
 } = require('../scripts/lib/benchmark-utils');
+const { isUsable } = require('../scripts/fill-codex-cohort');
+const { loadEnvFile } = require('../scripts/lib/env-file');
+
+test('benchmark provider override stays configurable and credential-free', () => {
+  const source = fs.readFileSync(
+    path.join(__dirname, '..', 'scripts', 'run-codex-benchmark.js'),
+    'utf8',
+  );
+
+  assert.match(source, /BENCH_MODEL_PROVIDER/);
+  assert.match(source, /BENCH_BASE_URL/);
+  assert.match(source, /BENCH_MODEL/);
+  assert.match(source, /env_key=.*BENCH_API_KEY/);
+  assert.match(source, /model_provider=/);
+  assert.doesNotMatch(source, /localhost:8317|WONG_API_KEY|GW2_API_KEY/);
+  assert.match(source, /codex\.status === 0 && !codex\.timedOut && !codex\.error/);
+  assert.match(source, /if \(!modelCompleted\) process\.exitCode = 1/);
+});
+
+test('loads local benchmark environment without overriding explicit variables', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'engineering-flow-env-'));
+  const filename = path.join(directory, '.env');
+  fs.writeFileSync(filename, [
+    '# local values',
+    'BENCH_BASE_URL=https://example.test/v1',
+    'BENCH_API_KEY="key#with-symbol"',
+    'BENCH_MODEL=file-model',
+    'export BENCH_REASONING_EFFORT=low',
+    '',
+  ].join('\n'));
+  const environment = { BENCH_MODEL: 'cli-model' };
+
+  loadEnvFile(filename, environment);
+
+  assert.deepEqual(environment, {
+    BENCH_BASE_URL: 'https://example.test/v1',
+    BENCH_API_KEY: 'key#with-symbol',
+    BENCH_MODEL: 'cli-model',
+    BENCH_REASONING_EFFORT: 'low',
+  });
+});
+
+test('keeps the local secret file ignored', () => {
+  const gitignore = fs.readFileSync(path.join(__dirname, '..', '.gitignore'), 'utf8');
+  assert.match(gitignore, /(?:^|\n)\.env(?:\r?\n|$)/);
+});
+
+test('cohort filling accepts only completed uncontaminated model turns', () => {
+  const usable = {
+    modelRun: {
+      status: 0,
+      timedOut: false,
+      error: null,
+      contaminated: false,
+    },
+    metrics: { turns: 1 },
+  };
+
+  assert.equal(isUsable(usable), true);
+  assert.equal(isUsable({ ...usable, modelRun: { ...usable.modelRun, timedOut: true } }), false);
+  assert.equal(isUsable({ ...usable, modelRun: { ...usable.modelRun, status: 1 } }), false);
+  assert.equal(isUsable({ ...usable, metrics: { turns: 0 } }), false);
+});
 
 test('removes configured plugin tables without removing later config', () => {
   const source = [
@@ -94,18 +160,20 @@ test('assesses expected and unexpected skill invocation', () => {
 test('recognizes direct and option-list clarification questions', () => {
   assert.equal(looksLikeQuestion('Should existing orders be deleted?'), true);
   assert.equal(looksLikeQuestion('When orders exist, should deletion:\n\n1. Reject\n2. Cascade'), true);
+  assert.equal(looksLikeQuestion('Please confirm the deletion policy.'), true);
   assert.equal(looksLikeQuestion('请确认已有订单时是否拒绝删除。'), true);
+  assert.equal(looksLikeQuestion('I am confirming the final diff and test output.'), false);
   assert.equal(looksLikeQuestion('Implemented the focused change and tests pass.'), false);
 });
 
 test('reports scenario-defined incompatible skill collisions', () => {
-  const result = assessInvocation(['review', 'verify-and-reconcile'], {
+  const result = assessInvocation(['review', 'develop'], {
     expected: ['review'],
-    allowed: ['review', 'verify-and-reconcile'],
-    forbiddenTogether: [['review', 'verify-and-reconcile']],
+    allowed: ['review', 'develop'],
+    forbiddenTogether: [['review', 'develop']],
   });
 
-  assert.deepEqual(result.collisions, [['review', 'verify-and-reconcile']]);
+  assert.deepEqual(result.collisions, [['develop', 'review']]);
   assert.equal(result.passed, false);
 });
 

@@ -38,7 +38,7 @@ If no specification exists, state that the review can assess correctness risks a
 - **Documentation:** stale or contradictory facts and requirements rewritten to fit implementation
 - **Scope:** unrelated edits, temporary diagnostics, generated artifacts, and unauthorized operations
 
-Use `code-design` as the design/readability reference when needed. Do not flag preferences already enforced by tooling or purely subjective alternatives with no maintenance impact.
+Apply the `code-design` pressure, ownership, and abstraction-cost standards when needed. Do not flag preferences already enforced by tooling or purely subjective alternatives with no maintenance impact.
 
 ## 4. Report findings
 

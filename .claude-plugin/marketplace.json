@@ -7,7 +7,7 @@
   "plugins": [
     {
       "name": "engineering-flow",
-      "description": "Requirement alignment, maintainable implementation, diagnosis, review, and evidence-based completion.",
+      "description": "Aligned implementation, root-cause diagnosis, solution design, read-only review, and handoff.",
       "version": "0.1.0",
       "source": "./",
       "author": {

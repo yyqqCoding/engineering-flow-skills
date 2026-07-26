@@ -152,3 +152,82 @@ The standalone `review-feedback` skill was removed. Its full-workflow cohort pro
 - The candidate closes one observed regression-process gap and preserves 100% engineering correctness, but carries measurable context and tool cost.
 - Full workflows therefore remain explicit and should be used when the user wants the deeper process, not as routine automatic ceremony.
 - Codex behavior is validated locally. Claude metadata and hook output are statically tested, but a real Claude Code run remains required before claiming cross-platform behavioral validation.
+
+## 2026-07-25 — Five-workflow architecture revision
+
+Accepted architecture:
+
+- User-visible workflows are `develop`, `diagnose`, `code-design`, `review`, and `handoff`.
+- Requirement clarification and completion reconciliation are responsibilities inside `develop` and `diagnose` rather than standalone workflows.
+- Boundary/extreme testing and maintainability improvement are conditional hardening passes, not standalone skills and not mandatory stages for every task.
+- `code-design` now creates a greenfield proposal or refines an existing design without implementing production code.
+
+Deterministic evidence from the revised working tree:
+
+- `npm test`: 31/31 static, hook, registry, fixture, scorer, and invocation tests passed.
+- Claude and Codex explicit-invocation policies agree for all five released skills.
+- Both plugin manifests expose every released skill; removed workflow tokens route nothing.
+- The behavior corpus now contains 17 scenarios. New `code-design-greenfield` and `code-design-refinement` fixtures have passing public baselines and hidden scorers that are red before a model response.
+
+Behavior smoke evidence:
+
+- Local model execution works through the configured `Wong` provider when the runner sets `BENCH_MODEL_PROVIDER=Wong`. The runner does not require or modify the user's global default provider.
+- At candidate fingerprint `b3da9994a223`, single candidate smokes passed for `code-design-greenfield`, `code-design-refinement`, `hidden-effects`, `justified-abstraction`, and `regression-sensitivity`.
+- All five candidate runs completed without contamination, routed exactly the requested workflow with invocation precision/recall 1.0, passed public tests, and passed their hidden engineering scorers.
+- One baseline smoke for each scenario also passed. Across these single samples, candidate cost was directionally higher: 55 versus 47 tool calls, 509,418 versus 313,809 input tokens, and 505 versus 410 seconds total wall time. These unpaired single runs are too noisy for comparative claims.
+- This establishes executable routing and engineering-behavior smoke coverage for the five-workflow revision. Release-level comparison still requires at least three clean current-cohort samples per arm and scenario. Old seven-workflow results must not be averaged into the new cohort, and a real Claude Code run remains required for cross-platform claims.
+
+## 2026-07-26 — Five-workflow release cohort and Claude live validation
+
+Codex environment and protocol:
+
+- Codex CLI with `gpt-5.6-luna`, low reasoning, and the OpenAI-compatible provider loaded from ignored local `.env`
+- Seventeen behavior scenarios, exactly three completed uncontaminated samples per arm and current benchmark fingerprint
+- Candidate fingerprint `ba813f8b0aae`
+- Temporary HOME/CODEX_HOME, isolated fixture workspaces, baseline without the plugin, and candidate with only this plugin
+
+Harness corrections made before the final cohort:
+
+- Incomplete and timed-out model runs exit non-zero and are excluded from behavioral rates and cost metrics.
+- `fill-codex-cohort.js` fills only current-fingerprint, current-provider, current-model, and current-reasoning gaps.
+- The ambiguity scorer accepts equivalent decision-request wording such as “please choose.”
+- The readability scorer no longer mistakes JavaScript `??`, `??=`, or `?.` for nested conditional expressions; a focused regression test preserves that distinction while the unmodified nested-ternary fixture remains red.
+
+### Final Codex aggregate
+
+| Metric | Baseline | Candidate |
+|---|---:|---:|
+| Engineering pass rate | 45/51 (88.2%) | 51/51 (100%) |
+| Explicit invocation checks | n/a | 51/51 |
+| False routes / missed routes / collisions | n/a | 0 / 0 / 0 |
+| Average duration | 57.9 s | 62.9 s |
+| Median duration | 56.4 s | 64.3 s |
+| Average tool calls | 7.47 | 8.78 |
+| Average input tokens | 75,956 | 88,525 |
+| Average output tokens | 1,766 | 1,927 |
+| Average question messages | 0.06 | 0.12 |
+| Contaminated runs | 0 | 0 |
+| Unauthorized commits | 0 | 0 |
+
+Fifteen scenarios were 3/3 in both arms. The two stable differences were:
+
+- `ambiguous-delete`: baseline 0/3, candidate 3/3. Baseline silently chose cascade deletion; candidate identified the related-order policy, asked, and left the workspace unchanged.
+- `regression-sensitivity`: baseline 0/3, candidate 3/3. Both arms fixed behavior and left sensitive tests, but only candidate evidence observed red before green.
+
+The candidate adds about 17.6% tool calls and 16.5% input tokens on average. This supports the current policy: retain a compact Core and keep all five full workflows user-invoked.
+
+### Claude Code evidence
+
+- Claude Code 2.1.197 passed `claude plugin validate . --strict`.
+- A session-only `--plugin-dir` run loaded `engineering-flow`, exposed all five released workflows, and ran SessionStart and UserPromptSubmit successfully without changing user-global plugin configuration.
+- Explicit `/engineering-flow:develop` loaded the full workflow, read the fixture, presented refuse/cascade/orphan choices, asked for the material policy, and left the worktree clean. The deterministic ambiguity scorer passed.
+- Four exploratory ordinary-prompt runs across Core wording/output experiments chose a `RESTRICT` policy and edited code. Stronger wording and structured SessionStart output did not correct that current provider/model behavior, so those no-op experiments were reverted.
+
+Claude explicit workflow routing is therefore live-validated, while Core-only parity with Codex is not. Documentation and release claims must preserve that distinction.
+
+### Final deterministic gates
+
+- `npm test`: 36/36 passed.
+- Claude strict plugin validation passed.
+- All five released skills remain user-invoked on both platforms, and both manifests expose the same released set.
+- The generic skill/plugin creator validators do not accept this package's shared Claude frontmatter or current Codex hooks manifest shape; repository metadata tests, repeated Codex installation/behavior runs, and Claude's official validator are the applicable gates.

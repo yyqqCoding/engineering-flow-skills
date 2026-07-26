@@ -37,11 +37,11 @@
   },
   "justified-abstraction": {
     "fixture": "fixtures/justified-abstraction",
-    "prompt": "$engineering-flow:code-design Add webhook notifications. A webhook address must be an http or https URL and its transport receives { text: body }. The same channel branching is currently repeated across validation, payload formatting, and transport selection; improve that boundary if the existing variation pressure justifies it. Preserve sendNotification(notification, transports), add focused tests, and do not add dependencies or commit.",
+    "prompt": "$engineering-flow:develop Add webhook notifications. A webhook address must be an http or https URL and its transport receives { text: body }. The same channel branching is currently repeated across validation, payload formatting, and transport selection; improve that boundary only if the existing variation pressure justifies it. Preserve sendNotification(notification, transports), add focused tests, and do not add dependencies or commit.",
     "scorer": "tests/scorers/justified-abstraction.js",
     "invocation": {
-      "expected": ["code-design"],
-      "allowed": ["code-design"]
+      "expected": ["develop"],
+      "allowed": ["develop", "code-design"]
     }
   },
   "dirty-worktree": {
@@ -64,7 +64,7 @@
       "allowed": ["review", "code-design"],
       "forbiddenTogether": [
         ["review", "diagnose"],
-        ["review", "verify-and-reconcile"]
+        ["review", "develop"]
       ]
     }
   },
@@ -79,11 +79,11 @@
   },
   "documentation-drift": {
     "fixture": "fixtures/documentation-drift",
-    "prompt": "$engineering-flow:verify-and-reconcile Change the accepted export behavior: disabled customers must no longer be included. Implement the change, add focused regression coverage, and reconcile the existing authoritative docs/export-design.md acceptance behavior and final implementation facts. Do not create a second design document and do not commit.",
+    "prompt": "$engineering-flow:develop Change the accepted export behavior: disabled customers must no longer be included. Implement the change, add focused regression coverage, and reconcile the existing authoritative docs/export-design.md acceptance behavior and final implementation facts. Do not create a second design document and do not commit.",
     "scorer": "tests/scorers/documentation-drift.js",
     "invocation": {
-      "expected": ["verify-and-reconcile"],
-      "allowed": ["verify-and-reconcile"]
+      "expected": ["develop"],
+      "allowed": ["develop"]
     }
   },
   "no-agents-update": {
@@ -115,11 +115,11 @@
   },
   "hidden-effects": {
     "fixture": "fixtures/hidden-effects",
-    "prompt": "$engineering-flow:code-design Update syncEligibleUsers(users, now, persist, audit): process only active, non-suspended users; create a copy with lastSyncedAt instead of mutating caller records; persist that copy; then audit { userId, action: 'synced' }; and return processed user IDs. Preserve the export, make mutation and I/O order locally explicit instead of hiding effects in a collection chain, add focused tests, and do not commit.",
+    "prompt": "$engineering-flow:develop Update syncEligibleUsers(users, now, persist, audit): process only active, non-suspended users; create a copy with lastSyncedAt instead of mutating caller records; persist that copy; then audit { userId, action: 'synced' }; and return processed user IDs. Preserve the export, make mutation and I/O order locally explicit instead of hiding effects in a collection chain, add focused tests, and do not commit.",
     "scorer": "tests/scorers/hidden-effects.js",
     "invocation": {
-      "expected": ["code-design"],
-      "allowed": ["code-design"]
+      "expected": ["develop"],
+      "allowed": ["develop", "code-design"]
     }
   },
   "regression-sensitivity": {
@@ -138,6 +138,24 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    }
+  },
+  "code-design-greenfield": {
+    "fixture": "fixtures/code-design-greenfield",
+    "prompt": "$engineering-flow:code-design Design a multi-channel notification capability for this repository. Email and webhooks are required first; SMS is a credible later variant. Users must be able to query delivery status, transient failures should be retried safely, and the current context does not justify adding a message broker without evidence. Produce the recommended boundaries, contracts, state ownership, failure behavior, trade-offs, open questions, acceptance evidence, and implementation sequence. Do not modify files or implement code.",
+    "scorer": "tests/scorers/code-design-greenfield.js",
+    "invocation": {
+      "expected": ["code-design"],
+      "allowed": ["code-design"]
+    }
+  },
+  "code-design-refinement": {
+    "fixture": "fixtures/code-design-refinement",
+    "prompt": "$engineering-flow:code-design Refine docs/export-design.md. Identify its contradictory execution model and permission rules, fill material gaps such as job lifecycle and retention, and propose one coherent implementation-ready design with trade-offs and acceptance evidence. Return the refined proposal and change summary in the response, but do not edit files or implement code.",
+    "scorer": "tests/scorers/code-design-refinement.js",
+    "invocation": {
+      "expected": ["code-design"],
+      "allowed": ["code-design"]
     }
   }
 }

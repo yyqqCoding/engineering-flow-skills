@@ -2,3 +2,4 @@ benchmark-results/
 node_modules/
 .idea/
 *.log
+.env

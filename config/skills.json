@@ -1,30 +1,22 @@
 {
   "develop": {
     "invocation": "user",
-    "dependencies": ["diagnose", "code-design", "verify-and-reconcile"]
-  },
-  "clarify": {
-    "invocation": "user",
-    "dependencies": []
+    "references": ["diagnose", "code-design"]
   },
   "diagnose": {
     "invocation": "user",
-    "dependencies": ["verify-and-reconcile"]
+    "references": []
   },
   "code-design": {
     "invocation": "user",
-    "dependencies": []
+    "references": []
   },
   "review": {
     "invocation": "user",
-    "dependencies": ["code-design"]
-  },
-  "verify-and-reconcile": {
-    "invocation": "user",
-    "dependencies": []
+    "references": ["code-design"]
   },
   "handoff": {
     "invocation": "user",
-    "dependencies": []
+    "references": []
   }
 }

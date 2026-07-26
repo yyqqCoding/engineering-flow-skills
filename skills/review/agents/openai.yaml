@@ -1,5 +1,6 @@
 interface:
   display_name: "Review"
   short_description: "Read-only review of code changes"
+  default_prompt: "Use $engineering-flow:review to review this change without modifying files."
 policy:
   allow_implicit_invocation: false

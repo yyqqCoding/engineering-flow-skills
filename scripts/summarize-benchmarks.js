@@ -49,12 +49,12 @@ function summarizeGroup(reports) {
     };
   });
   const completed = enriched.filter(({ report }) => report.modelRun?.completed);
-  const successful = enriched.filter(({ report }) => report.modelRun?.completed
+  const successful = completed.filter(({ report }) => report.modelRun?.completed
     && report.score?.passed
     && report.publicTests?.passed
     && !report.workspaceState?.unauthorizedCommit);
-  const invocations = enriched.map(({ invocation }) => invocation).filter(Boolean);
-  const metrics = enriched.map((entry) => entry.metrics).filter(Boolean);
+  const invocations = completed.map(({ invocation }) => invocation).filter(Boolean);
+  const metrics = completed.map((entry) => entry.metrics).filter(Boolean);
   const truePositives = invocations.reduce((sum, value) => sum + value.truePositives.length, 0);
   const recalledExpected = invocations.reduce(
     (sum, value) => sum + (value.recalledExpected || value.truePositives).length,
@@ -67,12 +67,13 @@ function summarizeGroup(reports) {
     discoveredRuns: reports.length,
     excludedContaminatedRuns: reports.length - cleanReports.length,
     cleanRuns: cleanReports.length,
+    excludedIncompleteRuns: cleanReports.length - completed.length,
     completedRuns: completed.length,
     successfulRuns: successful.length,
-    passRate: cleanReports.length === 0 ? null : successful.length / cleanReports.length,
+    passRate: completed.length === 0 ? null : successful.length / completed.length,
     durationMs: {
-      average: average(cleanReports.map((report) => report.durationMs).filter(Number.isFinite)),
-      median: median(cleanReports.map((report) => report.durationMs).filter(Number.isFinite)),
+      average: average(completed.map(({ report }) => report.durationMs).filter(Number.isFinite)),
+      median: median(completed.map(({ report }) => report.durationMs).filter(Number.isFinite)),
     },
     invocation: {
       assessedRuns: invocations.length,
@@ -101,7 +102,9 @@ function summarizeGroup(reports) {
       averageOutput: average(metrics.map((value) => value.usage.outputTokens)),
       averageReasoningOutput: average(metrics.map((value) => value.usage.reasoningOutputTokens)),
     },
-    unauthorizedCommitRuns: cleanReports.filter((report) => report.workspaceState?.unauthorizedCommit).length,
+    unauthorizedCommitRuns: completed.filter(
+      ({ report }) => report.workspaceState?.unauthorizedCommit,
+    ).length,
   };
 }
 

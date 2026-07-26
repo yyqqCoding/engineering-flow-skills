@@ -59,6 +59,35 @@ test('hidden scorers reject the unmodified fixtures', () => {
   }
 });
 
+test('readability scorer does not mistake nullish assignment for a nested conditional', () => {
+  const temporaryRoot = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'engineering-flow-readability-'));
+  const workspace = path.join(temporaryRoot, 'workspace');
+  fs.cpSync(path.join(ROOT, benchmarks['readability-trap'].fixture), workspace, { recursive: true });
+  fs.writeFileSync(path.join(workspace, 'src', 'order-summary.js'), [
+    'function summarizeOrders(orders) {',
+    '  const summary = { high: [], normal: [], invalid: [] };',
+    '  for (const order of orders) {',
+    '    if (order.cancelled) continue;',
+    '    if (order.total < 0) summary.invalid.push(order.id);',
+    '    else if (order.total === 0) (summary.zero ??= []).push(order.id);',
+    '    else if (order.total > 1000) summary.high.push(order.id);',
+    '    else summary.normal.push(order.id);',
+    '  }',
+    '  return summary;',
+    '}',
+    'module.exports = { summarizeOrders };',
+    '',
+  ].join('\n'));
+
+  const scorerPath = path.join(ROOT, benchmarks['readability-trap'].scorer);
+  delete require.cache[require.resolve(scorerPath)];
+  const score = require(scorerPath)(workspace);
+
+  assert.equal(score.passed, true);
+  assert.equal(score.checks.avoidsNestedConditional, true);
+  fs.rmSync(temporaryRoot, { recursive: true, force: true });
+});
+
 test('benchmark setup hooks create valid pre-existing worktree state', () => {
   for (const [name, benchmark] of Object.entries(benchmarks)) {
     if (!benchmark.setup) continue;

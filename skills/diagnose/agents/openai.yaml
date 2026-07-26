@@ -1,5 +1,6 @@
 interface:
   display_name: "Diagnose"
-  short_description: "Find root causes with reproducible evidence"
+  short_description: "Find and fix root causes with reproducible evidence"
+  default_prompt: "Use $engineering-flow:diagnose to reproduce this failure, find its root cause, and fix it if authorized."
 policy:
   allow_implicit_invocation: false

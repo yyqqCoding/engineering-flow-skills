@@ -38,7 +38,9 @@ function visitStrings(value, visitor) {
 function looksLikeQuestion(message) {
   const text = String(message || '');
   if (/[?？]/.test(text)) return true;
-  if (/\b(?:please\s+)?(?:clarify|confirm)\b/i.test(text)) return true;
+  if (/\b(?:please|could you|can you|would you)\s+(?:clarify|confirm)\b/i.test(text)) return true;
+  if (/\bI need (?:you|the user) to (?:clarify|confirm)\b/i.test(text)) return true;
+  if (/^\s*(?:clarify|confirm)\b/i.test(text)) return true;
   if (/(?:是否|哪一|哪种|如何|请确认|需要.{0,8}确认)/.test(text)) return true;
 
   return text.split(/\r?\n/).some((line) => {
