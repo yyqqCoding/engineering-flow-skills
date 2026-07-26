@@ -5,6 +5,7 @@ const path = require('node:path');
 
 const EVENT = 'UserPromptSubmit';
 const TOKEN_PATTERN = /(?:\$|\/)engineering-flow:([a-z0-9-]+)\b/g;
+const NATIVE_COMMAND_PATTERN = /^\/engineering-flow:([a-z0-9-]+)\b/;
 const ROOT = path.resolve(__dirname, '..');
 
 function readRegistry() {
@@ -16,10 +17,16 @@ function readRegistry() {
 }
 
 function extractRequestedSkills(prompt, registry = readRegistry()) {
+  const text = String(prompt || '');
   const requested = [];
   const seen = new Set();
 
-  for (const match of String(prompt || '').matchAll(TOKEN_PATTERN)) {
+  // A prompt-leading slash command is expanded by the host itself (verified live on
+  // Claude Code); injecting that workflow again would duplicate it in context.
+  const nativeCommand = text.match(NATIVE_COMMAND_PATTERN);
+  if (nativeCommand) seen.add(nativeCommand[1]);
+
+  for (const match of text.matchAll(TOKEN_PATTERN)) {
     const name = match[1];
     if (!registry[name] || seen.has(name)) continue;
     seen.add(name);

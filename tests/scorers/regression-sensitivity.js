@@ -48,8 +48,11 @@ module.exports = function score(workspace, context = {}) {
       cwd: workspace,
       encoding: 'utf8',
       timeout: 60 * 1000,
+      // npm resolves to npm.cmd on Windows, which spawnSync only runs through a shell.
+      shell: process.platform === 'win32',
     });
-    regressionTestIsSensitive = mutationRun.status !== 0;
+    // A spawn failure (status null) must not count as a sensitive regression test.
+    regressionTestIsSensitive = mutationRun.status !== null && mutationRun.status !== 0;
   } finally {
     fs.writeFileSync(modulePath, fixedSource);
     delete require.cache[require.resolve(modulePath)];

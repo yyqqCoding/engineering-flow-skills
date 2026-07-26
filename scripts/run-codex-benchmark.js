@@ -246,6 +246,8 @@ async function main() {
     cwd: workspace,
     encoding: 'utf8',
     timeout: 60 * 1000,
+    // npm resolves to npm.cmd on Windows, which spawnSync only runs through a shell.
+    shell: process.platform === 'win32',
   });
   const diff = run('git', ['diff', '--', '.'], { cwd: workspace }).stdout;
   const finalStatus = run('git', ['status', '--short'], { cwd: workspace }).stdout;

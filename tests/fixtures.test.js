@@ -12,6 +12,8 @@ function run(command, args, cwd) {
   return childProcess.spawnSync(command, args, {
     cwd,
     encoding: 'utf8',
+    // npm resolves to npm.cmd on Windows, which spawnSync only runs through a shell.
+    shell: command === 'npm' && process.platform === 'win32',
   });
 }
 
@@ -42,10 +44,7 @@ test('Codex explicit-skill benchmarks use the plugin namespace', () => {
 
 test('fixture public tests pass before model changes', () => {
   for (const [name, benchmark] of Object.entries(benchmarks)) {
-    const result = childProcess.spawnSync('npm', ['test'], {
-      cwd: path.join(ROOT, benchmark.fixture),
-      encoding: 'utf8',
-    });
+    const result = run('npm', ['test'], path.join(ROOT, benchmark.fixture));
     assert.equal(result.status, 0, `${name} fixture baseline tests failed\n${result.stdout}\n${result.stderr}`);
   }
 });

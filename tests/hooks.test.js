@@ -88,8 +88,14 @@ test('explicit Codex skill tokens inject the complete requested workflow', () =>
   assert.match(output.hookSpecificOutput.additionalContext, /observe red before the fix/i);
 });
 
-test('explicit Claude skill tokens use the same deterministic router', () => {
+test('prompt-leading Claude slash commands rely on native expansion and are not re-injected', () => {
   const result = runPromptHook('/engineering-flow:review Review this diff.');
+  assert.equal(result.status, 0, result.stderr);
+  assert.equal(result.stdout, '', 'leading slash command must not be duplicated by the hook');
+});
+
+test('mid-prompt Claude skill tokens use the same deterministic router', () => {
+  const result = runPromptHook('Please apply /engineering-flow:review to this diff.');
   assert.equal(result.status, 0, result.stderr);
   const output = JSON.parse(result.stdout);
   assert.match(output.hookSpecificOutput.additionalContext, /# Review/);

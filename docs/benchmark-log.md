@@ -231,3 +231,18 @@ Claude explicit workflow routing is therefore live-validated, while Core-only pa
 - Claude strict plugin validation passed.
 - All five released skills remain user-invoked on both platforms, and both manifests expose the same released set.
 - The generic skill/plugin creator validators do not accept this package's shared Claude frontmatter or current Codex hooks manifest shape; repository metadata tests, repeated Codex installation/behavior runs, and Claude's official validator are the applicable gates.
+
+## 2026-07-26 — Claude duplicate-injection fix and Windows harness portability
+
+Duplicate-injection evidence and fix:
+
+- A live headless Claude Code run (`--plugin-dir`, prompt-leading `/engineering-flow:handoff`) placed the full `SKILL.md` in context twice: once from native slash-command expansion in the user message and once from the UserPromptSubmit hook as `hook_additional_context`.
+- The hook now skips the skill named by a prompt-leading `/engineering-flow:<skill>` token because the host expands it natively. Re-run evidence on Claude: leading command produced exactly one workflow copy with zero hook injections; a mid-prompt `/engineering-flow:handoff` reference produced exactly one copy via one hook injection.
+- `$engineering-flow:<skill>` tokens are unaffected, so documented Codex invocation is unchanged. A prompt-leading `/engineering-flow:<skill>` on Codex now relies on host expansion instead of hook injection; documented Codex usage remains `$engineering-flow:<skill>`, and a Codex smoke of the leading-slash form is still pending.
+
+Windows portability corrections:
+
+- The `npm test` script used a glob (`node --test tests/*.test.js`) that cmd.exe does not expand and Node 20 does not resolve; it now runs `node --test tests/`.
+- `spawnSync('npm', …)` in the fixture tests, the regression-sensitivity scorer, and the Codex runner now uses a shell on Windows, where `npm` resolves to `npm.cmd`.
+- The regression-sensitivity scorer treated a failed spawn (`status === null`) as a mutation-sensitive test; a spawn failure no longer counts as sensitivity evidence.
+- Full deterministic suite on Windows after these corrections: 37/37 (36 prior tests plus the new leading-slash routing test).

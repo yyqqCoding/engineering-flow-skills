@@ -10,7 +10,7 @@
   },
   "homepage": "https://github.com/yyqqCoding/engineering-flow-skills#readme",
   "scripts": {
-    "test": "node --test tests/*.test.js",
+    "test": "node --test tests/",
     "benchmark": "node scripts/run-codex-benchmark.js",
     "benchmark:ab": "node scripts/run-codex-ab.js",
     "benchmark:fill": "node scripts/fill-codex-cohort.js",

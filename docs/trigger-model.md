@@ -34,6 +34,8 @@ Codex plugin skills are referenced as `$engineering-flow:<skill>`. Claude Code p
 
 The `UserPromptSubmit` hook parses only these explicit tokens and injects the complete requested `SKILL.md` content for that turn. Ordinary prompts receive no full workflow. This makes user invocation deterministic without reopening model-triggered workflow selection.
 
+A prompt-leading `/engineering-flow:<skill>` command is expanded natively by the host, so the hook skips that skill to avoid injecting a second copy of the same workflow. All other explicit tokens, including `$engineering-flow:<skill>` anywhere and `/engineering-flow:<skill>` after other text, are injected by the hook.
+
 ### Model-invoked skills
 
 None in the current release. Codex behavior runs showed workflow substitution: after broader automatic skills were disabled, the model selected the remaining implicit skill for an unrelated local policy change. Negative description wording did not provide a deterministic boundary.
@@ -107,7 +109,7 @@ User-facing descriptions:
 
 - User-invoked: set `disable-model-invocation: true`.
 - Core: SessionStart hook emits static additional context.
-- Explicit routing: UserPromptSubmit injects only `/engineering-flow:<skill>` requests.
+- Explicit routing: a prompt-leading `/engineering-flow:<skill>` command loads the skill natively; UserPromptSubmit injects only non-leading explicit tokens. Live transcripts confirm exactly one workflow copy per invocation on both paths.
 
 ### Codex CLI
 
