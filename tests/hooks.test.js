@@ -27,6 +27,7 @@ test('core stays compact and contains no workflow takeover language', () => {
   assert.doesNotMatch(core, /brainstorm|worktree|subagent|must write a plan|commit your work/i);
   assert.match(core, /minimum lines/i);
   assert.match(core, /never infer how related data is handled/i);
+  assert.match(core, /workflow remains active for the same task/i);
   assert.match(core, /fresh scope-appropriate verification/i);
 });
 
@@ -84,6 +85,7 @@ test('explicit Codex skill tokens inject the complete requested workflow', () =>
   const output = JSON.parse(result.stdout);
   assert.equal(output.hookSpecificOutput.hookEventName, 'UserPromptSubmit');
   assert.match(output.hookSpecificOutput.additionalContext, /ENGINEERING_FLOW:EXPLICIT_WORKFLOWS/);
+  assert.match(output.hookSpecificOutput.additionalContext, /active task/i);
   assert.match(output.hookSpecificOutput.additionalContext, /# Diagnose/);
   assert.match(output.hookSpecificOutput.additionalContext, /observe red before the fix/i);
 });

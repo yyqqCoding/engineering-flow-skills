@@ -14,7 +14,9 @@ Engineering Flow is a software-development workflow plugin for **Codex CLI** and
 
 ### 📐 Every rule earned its place in a benchmark
 
-Most workflow plugins stack rules on intuition. Engineering Flow settles disputes with data: every trigger policy and load-bearing sentence passed isolated A/B benchmarks — 17 deterministic behavior scenarios, hidden scorers, contamination detection, and unauthorized-commit monitoring. Features that could not beat a strong baseline were deleted rather than kept for show: automatic skill triggering was rejected exactly this way, after the data repeatedly showed it loading workflows on unrelated tasks. The full decision trail is traceable in the [benchmark log](docs/benchmark-log.md).
+Most workflow plugins stack rules on intuition. Engineering Flow settles disputes with data: every trigger policy and load-bearing sentence passed isolated A/B benchmarks — a 17-scenario general cohort, separate task-level multi-turn suites, hidden scorers, contamination detection, and unauthorized-commit monitoring. Features that could not beat a strong baseline were deleted rather than kept for show: automatic skill triggering was rejected exactly this way, after the data repeatedly showed it loading workflows on unrelated tasks. The full decision trail is traceable in the [benchmark log](docs/benchmark-log.md).
+
+The latest task-level paired A/B used matching model, reasoning, and scenario fingerprints across question batching, Develop continuity, requirement-record lifecycle, and Diagnose continuity: the current-release control passed `0/12`, while the final candidate passed `12/12`. This demonstrates improvement in those isolated scenarios; it is not a universal guarantee across every model or repository.
 
 ### 🎯 Deterministic triggering — workflows never invite themselves
 
@@ -115,15 +117,16 @@ For a complete development lifecycle, explicitly choose an entry point:
 
 ```text
 $engineering-flow:develop
-Implement order batch export. First understand the existing design and ownership boundaries, then complete the implementation, focused tests, and necessary documentation updates. Do not commit.
+Implement order batch export. Understand the existing design and ownership boundaries, clarify until implementation is safe, then present the checkpoint and pause. After I approve it, complete the implementation, focused tests, and necessary documentation updates. Do not commit.
 ```
 
-When coding must wait for approval:
+After Develop finishes clarification, reply directly:
 
 ```text
-$engineering-flow:develop confirm
-Implement customer batch deletion. First confirm the requirements, related-data policy, and acceptance behavior. Do not code until I approve them.
+Proceed with the plan above.
 ```
+
+Answers, approval, corrections, and omitted original acceptance items continue the same workflow without repeating the token.
 
 See the [user guide](docs/user-guide.md) for complete scenarios and examples.
 

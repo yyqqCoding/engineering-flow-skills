@@ -21,6 +21,9 @@ const concurrency = Number(process.env.BENCH_CONCURRENCY || 1);
 const maxAttempts = Number(process.env.BENCH_MAX_ATTEMPTS || 6);
 const retryDelayMs = Number(process.env.BENCH_RETRY_DELAY_MS || 15000);
 const arms = (process.env.BENCH_ARMS || 'baseline,candidate').split(',').filter(Boolean);
+const baselinePluginRoot = process.env.BENCH_BASELINE_PLUGIN_ROOT
+  ? path.resolve(process.env.BENCH_BASELINE_PLUGIN_ROOT)
+  : null;
 
 function validateOptions() {
   const unknown = benchmarkNames.filter((name) => !benchmarks[name]);
@@ -62,6 +65,7 @@ function matchesEnvironment(report) {
 
 function buildMissingJobs(reports) {
   const candidateFingerprint = fingerprintCandidate(ROOT);
+  const baselineFingerprint = baselinePluginRoot ? fingerprintCandidate(baselinePluginRoot) : null;
   const jobs = [];
 
   for (const benchmarkName of benchmarkNames) {
@@ -70,7 +74,8 @@ function buildMissingJobs(reports) {
       const completed = reports.filter((report) => report.benchmark === benchmarkName
         && report.arm === arm
         && report.benchmarkFingerprint === benchmarkFingerprint
-        && (arm === 'baseline' || report.candidateFingerprint === candidateFingerprint)
+        && (report.pluginFingerprint || null)
+          === (arm === 'candidate' ? candidateFingerprint : baselineFingerprint)
         && matchesEnvironment(report)
         && isUsable(report)).length;
       const missing = Math.max(0, targetCompleted - completed);

@@ -38,6 +38,7 @@
   "justified-abstraction": {
     "fixture": "fixtures/justified-abstraction",
     "prompt": "$engineering-flow:develop Add webhook notifications. A webhook address must be an http or https URL and its transport receives { text: body }. The same channel branching is currently repeated across validation, payload formatting, and transport selection; improve that boundary only if the existing variation pressure justifies it. Preserve sendNotification(notification, transports), add focused tests, and do not add dependencies or commit.",
+    "followUps": ["Proceed with the plan above. Do not commit."],
     "scorer": "tests/scorers/justified-abstraction.js",
     "invocation": {
       "expected": ["develop"],
@@ -80,6 +81,7 @@
   "documentation-drift": {
     "fixture": "fixtures/documentation-drift",
     "prompt": "$engineering-flow:develop Change the accepted export behavior: disabled customers must no longer be included. Implement the change, add focused regression coverage, and reconcile the existing authoritative docs/export-design.md acceptance behavior and final implementation facts. Do not create a second design document and do not commit.",
+    "followUps": ["Proceed with the plan above. Do not commit."],
     "scorer": "tests/scorers/documentation-drift.js",
     "invocation": {
       "expected": ["develop"],
@@ -116,6 +118,7 @@
   "hidden-effects": {
     "fixture": "fixtures/hidden-effects",
     "prompt": "$engineering-flow:develop Update syncEligibleUsers(users, now, persist, audit): process only active, non-suspended users; create a copy with lastSyncedAt instead of mutating caller records; persist that copy; then audit { userId, action: 'synced' }; and return processed user IDs. Preserve the export, make mutation and I/O order locally explicit instead of hiding effects in a collection chain, add focused tests, and do not commit.",
+    "followUps": ["Proceed with the plan above. Do not commit."],
     "scorer": "tests/scorers/hidden-effects.js",
     "invocation": {
       "expected": ["develop"],
@@ -156,6 +159,58 @@
     "invocation": {
       "expected": ["code-design"],
       "allowed": ["code-design"]
+    }
+  },
+  "develop-question-batching": {
+    "fixture": "fixtures/ambiguous-delete",
+    "prompt": "$engineering-flow:develop Implement deleteCustomer(id) and add focused tests. A successful deletion returns true. Customers may have existing orders, the behavior for an unknown customer is undefined, and it is not established whether this operation needs an audit event. These decisions are independent. Clarify only what materially changes behavior, preserve the existing API style, and do not commit.",
+    "followUps": [
+      "Answers: reject deletion with RangeError('Customer has orders') when orders exist; return false for an unknown customer; no audit event is required."
+    ],
+    "scorer": "tests/scorers/develop-question-batching.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    }
+  },
+  "develop-lifecycle": {
+    "fixture": "fixtures/clear-simple-task",
+    "prompt": "$engineering-flow:develop Add and export isEven(value). It returns true for even integers, false for odd integers, and throws TypeError('value must be an integer') for every non-integer. Preserve the existing add export, add focused tests, fully align the task before implementation, and do not commit.",
+    "followUps": [
+      "按上述方案执行。不要提交。",
+      "原验收项还有遗漏：0 必须返回 true，并由自动化测试明确覆盖；负奇数也必须返回 false。继续完成，不要提交。",
+      "新增范围：也接受格式严格匹配 ^-?(0|[1-9]\\d*)$ 的十进制整数字符串，例如 '2'、'-3' 和 '0'，按其整数值返回奇偶性；空白、加号、小数、前导零、空字符串及其他非整数仍按原规则抛出 TypeError('value must be an integer')。这是完整的新增验收范围，请只对齐这个增量并等待批准，不要实施。"
+    ],
+    "scorer": "tests/scorers/develop-lifecycle.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    }
+  },
+  "develop-requirement-lifecycle": {
+    "fixture": "fixtures/requirement-lifecycle",
+    "prompt": "$engineering-flow:develop Implement the substantial customer export requirement described here. Add and export buildCustomerExport(customers, options): customers must be an array or it throws TypeError('customers must be an array'); input records have finite numeric ids and invalid-id behavior is out of scope; rows are sorted by id in numeric ascending order without mutating input; default options exclude records with status 'disabled', while { includeDisabled: true } includes them; output is CSV with the exact header id,name,status and RFC 4180 escaping for commas, quotes, and newlines. Serialize the original id, name, and status field values directly; do not normalize export fields first. Preserve the separate normalizeCustomerName function and add focused tests. This fixture has no project documentation convention, so use docs/requirements/customer-export.md with an exact Status: Draft line for the checkpoint. Do not implement or change tests before later approval. Do not commit.",
+    "followUps": [
+      "I approve the requirement record, but do not implement yet. Update only its status to Accepted and pause.",
+      "Now implement the accepted requirement, add focused tests, verify every accepted behavior, and mark the requirement Implemented only after verification. Do not commit."
+    ],
+    "scorer": "tests/scorers/develop-requirement-lifecycle.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    }
+  },
+  "diagnose-continuation": {
+    "fixture": "fixtures/regression-sensitivity",
+    "prompt": "$engineering-flow:diagnose Diagnose why calculateRenewalDate('2024-01-31', 1) lands in March instead of clamping to 2024-02-29. Establish the supported root cause and evidence, but do not modify files or fix it yet. Do not commit.",
+    "followUps": [
+      "这个诊断还不够可靠：不要把结论停留在笼统的 Date API 问题；请用区分性证据重新验证月份设置和日期溢出的先后关系，仍然只诊断，不要修改文件。",
+      "现在根因确凿，可以修复了。保留字符串 API，留下能检测闰年和非闰年月底回归的测试，不要提交。"
+    ],
+    "scorer": "tests/scorers/diagnose-continuation.js",
+    "invocation": {
+      "expected": ["diagnose"],
+      "allowed": ["diagnose"]
     }
   }
 }

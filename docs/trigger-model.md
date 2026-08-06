@@ -20,7 +20,7 @@ It must not contain full TDD, planning, worktree, review, subagent, commit, or r
 
 | Skill | Purpose |
 |---|---|
-| `develop` | Implement features, refactors, and test-only changes; optional confirmation mode |
+| `develop` | Clarify and approve features, refactors, and test-only changes before implementation |
 | `review` | Read-only review of a diff, branch, or work in progress |
 | `handoff` | Produce a compact durable continuation record |
 | `code-design` | Create a greenfield solution proposal or refine an existing design without coding |
@@ -32,7 +32,7 @@ Codex metadata: `policy.allow_implicit_invocation: false`.
 
 Codex plugin skills are referenced as `$engineering-flow:<skill>`. Claude Code plugin skills use `/engineering-flow:<skill>`.
 
-The `UserPromptSubmit` hook parses only these explicit tokens and injects the complete requested `SKILL.md` content for that turn. Ordinary prompts receive no full workflow. This makes user invocation deterministic without reopening model-triggered workflow selection.
+The `UserPromptSubmit` hook parses only these explicit tokens and injects the complete requested `SKILL.md` content when the workflow starts or is explicitly resumed. Ordinary prompts receive no new full-workflow injection. The workflow remains active at the task level through conversation history and the compact Core continuity rule, so same-task answers, approvals, corrections, and repair authority do not require another token.
 
 A prompt-leading `/engineering-flow:<skill>` command is expanded natively by the host, so the hook skips that skill to avoid injecting a second copy of the same workflow. All other explicit tokens, including `$engineering-flow:<skill>` anywhere and `/engineering-flow:<skill>` after other text, are injected by the hook.
 
@@ -51,15 +51,27 @@ When the user explicitly names overlapping workflows, preserve the strictest aut
 1. `review` remains read-only.
 2. `code-design` produces a proposal without production-code implementation.
 3. `diagnose` is used for broken existing behavior.
-4. `develop` is used for authorized implementation.
+4. `develop` aligns non-defect implementation, pauses for approval, and then owns implementation.
 5. `handoff` captures state rather than continuing work.
 
 Examples:
 
 - Supplied reviewer comments are verified by Core before routing a valid behavioral defect to diagnosis.
-- A clear bug begins with diagnosis rather than generic development orchestration.
+- A clear bug begins with diagnosis rather than generic development orchestration. If the original request or a later same-task message authorizes a fix, Diagnose continues through repair and verification without switching to Develop.
 - A read-only review never transitions to implementation without a new user request.
 - A design proposal never transitions to production-code implementation without a new user request.
+
+## Task continuity and termination
+
+Workflow selection is explicit; workflow continuation is contextual. Once selected, a workflow remains active only while follow-up messages concern that task:
+
+- Develop answers continue clarification, action language approves its checkpoint, and omissions reopen implementation.
+- A material Develop scope change returns only the increment to alignment and approval.
+- A rejected diagnosis remains read-only Diagnose; later repair authority continues into the fix.
+- An explicit cancellation or workflow switch ends the active workflow.
+- An unrelated new task starts from Core and does not inherit stale workflow authority.
+
+The first implementation relies on the transcript, Core, and durable requirement status rather than persistent hook state. This avoids stale state leaking into unrelated work. Stateful `PLUGIN_DATA` storage is reserved for a demonstrated resume/compaction failure that cannot be corrected by these smaller surfaces.
 
 ## Reference graph
 
@@ -73,6 +85,7 @@ develop
 
 diagnose
   -> regression evidence (when a correct seam exists)
+  -> authorized owning-boundary repair (without a develop dependency)
   -> adjacent boundary hardening (when supported by the root cause)
   -> owning-boundary improvement (when structure caused the defect)
   -> focused verification and reconciliation
@@ -86,7 +99,7 @@ handoff
 
 Cycles are forbidden.
 
-Registry references document allowable one-way guidance. The deterministic prompt hook injects only workflows explicitly named by the user; it never recursively injects referenced workflows.
+Registry references document allowable one-way guidance. The deterministic prompt hook injects only workflows explicitly named by the user; it never recursively injects referenced workflows. Diagnose does not reference Develop, avoiding a cycle with Develop's Diagnose guidance.
 
 ## Description rules
 

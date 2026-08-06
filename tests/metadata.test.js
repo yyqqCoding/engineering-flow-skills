@@ -68,6 +68,15 @@ test('the current release keeps every full skill explicitly invoked', () => {
   assert.deepEqual(implicitSkills, []);
 });
 
+test('develop exposes one approval-gated entry point without a confirm argument', () => {
+  const frontmatter = parseFrontmatter(read('skills/develop/SKILL.md'));
+  const source = read('skills/develop/SKILL.md');
+  assert.equal(frontmatter['argument-hint'], undefined);
+  assert.doesNotMatch(source, /develop confirm|confirm mode/i);
+  assert.match(source, /Only action language sent after this checkpoint/i);
+  assert.match(source, /initial request, answers to clarification questions.*do not grant approval/i);
+});
+
 test('skill reference graph is complete and acyclic', () => {
   for (const [name, config] of Object.entries(skillConfig)) {
     assert.ok(Array.isArray(config.references), `${name} must declare workflow references`);

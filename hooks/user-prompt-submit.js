@@ -60,7 +60,7 @@ function buildAdditionalContext(prompt) {
     requestedSkills: loaded.map(({ name }) => name),
     additionalContext: [
       'ENGINEERING_FLOW:EXPLICIT_WORKFLOWS',
-      'The user explicitly requested the following workflow instructions for this turn.',
+      'The user explicitly started or resumed these workflows for the active task. Keep each workflow active across same-task follow-ups until cancellation, an explicit switch, or an unrelated task.',
       ...sections,
     ].join('\n\n'),
   };

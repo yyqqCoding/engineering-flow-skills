@@ -9,7 +9,7 @@ This project aims to correct a smaller set of high-value failure modes without t
 ## Goals
 
 1. Align on behavior before code when ambiguity would materially change the result.
-2. Proceed autonomously when requirements are clear or details are safely inferable from the repository.
+2. Proceed autonomously when requirements are clear or details are safely inferable from the repository, except when an explicitly invoked workflow defines a user checkpoint.
 3. Locate existing behavior and the correct ownership boundary before adding code.
 4. Prefer familiar, idiomatic, explicit, locally understandable code over compressed or clever code.
 5. Apply test-first development when it creates valuable behavioral evidence.
@@ -23,7 +23,7 @@ This project aims to correct a smaller set of high-value failure modes without t
 
 - Owning issue tracking, branching, pull requests, or release management.
 - Requiring worktrees, subagents, saved plans, or commits for every task.
-- Installing a new project documentation layout.
+- Replacing an established project documentation layout.
 - Enforcing a universal language style guide.
 - Optimizing for minimum lines of code.
 - Requiring unit tests for changes where they provide no useful feedback.
@@ -48,7 +48,30 @@ handoff
        verify behavior and reconcile docs
 ```
 
-The project repository remains the source of domain truth. Skills discover and consume its conventions; they do not impose `CONTEXT.md`, ADR, issue-tracker, or directory layouts.
+The project repository remains the source of domain truth. Skills discover and consume its conventions; they do not replace established `CONTEXT.md`, ADR, issue-tracker, or documentation layouts. When substantial Develop alignment needs a durable record and the project has no applicable convention, the portable fallback is `docs/requirements/<feature-slug>.md`.
+
+## Task-level workflow lifecycle
+
+An explicitly invoked workflow owns the active task, not only the message that named it. Answers, approvals, corrections, reports of omitted acceptance behavior, and continuation requests remain in that workflow while they concern the same task. This continuity survives normal follow-up turns and session resume or compaction when the transcript remains available.
+
+The active workflow ends when the user explicitly cancels it, switches workflows, or starts an unrelated task. An agent's completion claim does not prevent a same-task correction from reopening the appropriate phase. A new unrelated task must not inherit a stale workflow or approval.
+
+`develop` uses these task phases:
+
+```text
+discover and clarify -> awaiting approval -> implement and verify -> complete
+          ^                    |                    |              |
+          |                    |                    |              +-- omitted accepted behavior reopens implementation
+          +-- changed scope ---+--------------------+-- material scope change returns to alignment
+```
+
+`diagnose` owns the complete defect lifecycle:
+
+```text
+reproduce -> locate root cause -> await fix authority when needed -> fix -> regression verification -> complete
+```
+
+A rejected diagnosis remains in read-only diagnosis. A later same-task authorization such as "fix it" enters repair without requiring a separate `develop` invocation. Repair applies the same boundary, code, testing, documentation, and completion standards as development. Undefined product behavior or materially expanded scope still requires requirement alignment and approval before implementation.
 
 ## Development lifecycle
 
@@ -71,9 +94,19 @@ Summarize only what must be checked:
 
 Ask questions only when different answers materially change user-visible behavior, interfaces, data semantics, permissions, security, compatibility, destructive effects, or acceptance criteria. Infer reversible implementation details from the repository.
 
-An explicit confirmation mode may require user approval before coding. The normal mode asks only blocking questions and otherwise proceeds.
+For an explicitly invoked `develop` task, collect independent material questions into one compact batch. Ask dependent questions only after the prerequisite answer is known. Stop when the task is understood well enough for safe implementation; do not exhaustively enumerate hypothetical edge cases, architectures, or future variants.
 
-For implementation work, align the solution boundary as well as the behavior: identify the likely owner, interfaces, data/state effects, compatibility constraints, and any decision that would materially change the result. Reversible internal details remain the agent's responsibility.
+Structured question tools are optional presentation mechanisms. When one is unavailable, material questions are asked together in plain text; their absence does not authorize inference.
+
+Words such as "undefined", "intentional", and "not specified" describe an unresolved behavior when different answers change the result; they do not silently choose a product rule or move it out of scope. In particular, an explicitly undefined unknown-resource result for a delete or write operation is not established by the successful return value, the absence of precedent, or a neighboring read API.
+
+After the user answers the independent clarification batch, ask another question only when an answer created a genuinely dependent decision or newly discovered authoritative evidence contradicts the request. Repository mechanics and independently conceivable edge cases do not reopen clarification; otherwise proceed directly to the checkpoint.
+
+After clarification, present one final alignment checkpoint and pause without changing production code, tests, or configuration. A short checkpoint stays in the conversation. A substantial checkpoint uses an existing authoritative project document when available, or `docs/requirements/<feature-slug>.md` when no applicable documentation convention exists. When the initial substantial request already provides a complete contract, create and verify that `Draft` record in the first turn; hypothetical optional inputs outside the contract cannot delay it. The durable record contains the same goal, acceptance behavior, out of scope, assumptions, and solution boundary as the checkpoint, not only a status and acceptance list. Only clear action language sent after this checkpoint, such as "implement this", "start", or "proceed with the plan above", approves implementation. The initial request, clarification answers, and reading acknowledgements do not.
+
+For implementation work, align the solution boundary as well as the behavior: identify the likely owner, interfaces, data/state effects, compatibility constraints, and any decision that would materially change the result. Reversible internal details remain the agent's responsibility. Ordinary clear requests that did not invoke `develop` still proceed without a ceremonial approval checkpoint.
+
+An explicit complete predicate plus the semantic operation to apply resolves every value covered by that predicate. Unusual covered values do not become new product questions unless repository evidence reveals a contradiction.
 
 ### 3. Choose the change boundary
 
@@ -85,7 +118,7 @@ For implementation work, align the solution boundary as well as the behavior: id
 
 ### 4. Implement with feedback
 
-- For regressions, first build the narrowest reliable reproduction available.
+- For regressions, first build the narrowest reliable reproduction available. When a stable automated seam exists, materialize it as a regression test and observe that test fail before editing production code; earlier diagnostic probes do not replace this red observation.
 - For valuable behavior seams, use a red-green-refactor loop one vertical slice at a time.
 - For mechanical, presentation-only, configuration, or framework-wiring changes, use the smallest meaningful compile/lint/integration check instead of ceremonial unit tests.
 - Refactor while green when it improves clarity, locality, or removes proven semantic duplication.
@@ -121,8 +154,8 @@ Focused verification and reconciliation are completion responsibilities of `deve
 
 ## User-visible workflows
 
-- **develop:** implement features, refactors, and test-only changes after aligning facts and solution details; optionally require confirmation before coding.
-- **diagnose:** reproduce broken existing behavior, find the supported root cause, and fix it only when authorized.
+- **develop:** align features, refactors, and test-only changes, pause for explicit approval, then implement and verify within the same task.
+- **diagnose:** reproduce broken existing behavior, find the supported root cause, and continue into a repair when the original request or a later same-task message authorizes it.
 - **code-design:** create a greenfield solution proposal or refine an existing design without implementing production code.
 - **review:** perform an evidence-backed read-only review from a fixed point.
 - **handoff:** capture the minimum durable state needed by another session.
@@ -185,7 +218,18 @@ Long-lived design documents should distinguish:
 
 Temporary execution plans normally stay in the session. Save them only when work spans sessions or needs durable coordination.
 
-At completion, compare accepted behavior, documentation, code, and test evidence. Updating documentation must not be used to legitimize an implementation that failed to meet the accepted requirement.
+Develop requirement records use an explicit status:
+
+- **Draft:** clarification or the approval checkpoint is still open.
+- **Accepted:** the user approved implementation, including clear phrases such as "proceed with the plan above".
+- **Implemented:** every accepted behavior is reconciled with fresh implementation and verification evidence.
+- **Superseded:** a newer authoritative record replaces this one.
+
+If an `Implemented` record is found to have omitted an original acceptance item, return it to `Accepted` until the omission is implemented and verified. A material scope change returns to alignment and approval; it is not silently absorbed under the old acceptance.
+
+Before a record becomes `Implemented`, stale prospective statements are reconciled too: deferred tests, planned files, assumptions, and other provisional language must be updated to the actual diff and fresh evidence. A status-only edit is not sufficient.
+
+At completion, compare accepted behavior, documentation, code, and test evidence. Before a requirement record becomes `Implemented`, reconcile its stated files, boundaries, and evidence with the actual diff and verification results. Updating documentation must not be used to legitimize an implementation that failed to meet the accepted requirement.
 
 ## Project-instruction promotion
 

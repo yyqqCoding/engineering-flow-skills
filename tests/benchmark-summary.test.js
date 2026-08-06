@@ -108,6 +108,19 @@ test('excludes incomplete infrastructure runs from behavioral rates and costs', 
   assert.equal(summary.tools.averageToolCalls, 2);
 });
 
+test('assesses recorded control-plugin invocation but skips a no-plugin baseline', () => {
+  const control = summarizeGroup([
+    report({ arm: 'baseline', pluginFingerprint: 'control-plugin' }),
+  ]);
+  const noPlugin = summarizeGroup([
+    report({ arm: 'baseline', invocation: null }),
+  ]);
+
+  assert.equal(control.invocation.assessedRuns, 1);
+  assert.equal(control.invocation.passingRuns, 1);
+  assert.equal(noPlugin.invocation.assessedRuns, 0);
+});
+
 test('keeps different benchmark cohorts separate', () => {
   const { summarize } = require('../scripts/summarize-benchmarks');
   const result = summarize([

@@ -32,8 +32,8 @@ function reportMetrics(report) {
 }
 
 function reportInvocation(report, metrics) {
-  if (report.arm === 'baseline') return null;
   if (report.invocation) return report.invocation;
+  if (report.arm === 'baseline') return null;
   const policy = benchmarks[report.benchmark]?.invocation;
   return metrics && policy ? assessInvocation(metrics.invokedSkills, policy) : null;
 }

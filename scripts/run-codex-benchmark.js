@@ -12,7 +12,13 @@ const {
   redactSecrets,
   withoutConfiguredPlugins,
 } = require('./lib/benchmark-utils');
-const { buildAdditionalContext } = require('../hooks/user-prompt-submit');
+const {
+  buildCodexArgs,
+  extractThreadId,
+  extractTurnFailure,
+  promptsForBenchmark,
+  readRequirementStates,
+} = require('./lib/benchmark-conversation');
 const {
   fingerprintBenchmark,
   fingerprintCandidate,
@@ -32,6 +38,9 @@ const modelProvider = process.env.BENCH_MODEL_PROVIDER || '';
 const model = process.env.BENCH_MODEL || '';
 const baseUrl = process.env.BENCH_BASE_URL || '';
 const apiKey = process.env.BENCH_API_KEY || '';
+const baselinePluginRoot = process.env.BENCH_BASELINE_PLUGIN_ROOT
+  ? path.resolve(process.env.BENCH_BASELINE_PLUGIN_ROOT)
+  : null;
 
 if (!benchmarks[benchmarkName] || !['baseline', 'candidate'].includes(arm)) {
   process.stderr.write('Usage: node scripts/run-codex-benchmark.js <benchmark> <baseline|candidate>\n');
@@ -50,6 +59,9 @@ if (baseUrl) {
   if (!modelProvider) throw new Error('BENCH_MODEL_PROVIDER is required with BENCH_BASE_URL');
   if (!model) throw new Error('BENCH_MODEL is required with BENCH_BASE_URL');
   if (!apiKey) throw new Error('BENCH_API_KEY is required with BENCH_BASE_URL');
+}
+if (baselinePluginRoot && !fs.existsSync(path.join(baselinePluginRoot, '.codex-plugin', 'plugin.json'))) {
+  throw new Error(`BENCH_BASELINE_PLUGIN_ROOT is not a Codex plugin: ${baselinePluginRoot}`);
 }
 
 function run(command, args, options = {}) {
@@ -70,12 +82,13 @@ function run(command, args, options = {}) {
 
 function runStreaming(command, args, options = {}) {
   return new Promise((resolve) => {
+    const { outputPath, label, ...spawnOptions } = options;
     const startedAt = Date.now();
     const child = childProcess.spawn(command, args, {
-      ...options,
+      ...spawnOptions,
       stdio: ['ignore', 'pipe', 'pipe'],
     });
-    const outputFd = fs.openSync(options.outputPath, 'w');
+    const outputFd = fs.openSync(outputPath, 'w');
     const stdout = [];
     const stderr = [];
     let spawnError = null;
@@ -93,7 +106,9 @@ function runStreaming(command, args, options = {}) {
 
     const heartbeat = heartbeatMs > 0 ? setInterval(() => {
       const elapsedSeconds = Math.round((Date.now() - startedAt) / 1000);
-      process.stderr.write(`[benchmark] ${benchmarkName}/${arm} still running (${elapsedSeconds}s)\n`);
+      process.stderr.write(
+        `[benchmark] ${benchmarkName}/${arm}${label ? `/${label}` : ''} still running (${elapsedSeconds}s)\n`,
+      );
     }, heartbeatMs) : null;
 
     const timeout = setTimeout(() => {
@@ -119,12 +134,43 @@ function runStreaming(command, args, options = {}) {
   });
 }
 
+function runPublicTests(workspace) {
+  const result = childProcess.spawnSync('npm', ['test'], {
+    cwd: workspace,
+    encoding: 'utf8',
+    timeout: 60 * 1000,
+    // npm resolves to npm.cmd on Windows, which spawnSync only runs through a shell.
+    shell: process.platform === 'win32',
+  });
+  return {
+    passed: result.status === 0,
+    status: result.status,
+    stdout: result.stdout,
+    stderr: result.stderr,
+  };
+}
+
+function routePrompt(pluginRoot, prompt) {
+  if (!pluginRoot) return [];
+  const routerPath = path.join(pluginRoot, 'hooks', 'user-prompt-submit.js');
+  try {
+    delete require.cache[require.resolve(routerPath)];
+    const routing = require(routerPath).buildAdditionalContext(prompt);
+    return routing?.requestedSkills || [];
+  } catch {
+    return [];
+  }
+}
+
 async function main() {
   const benchmark = benchmarks[benchmarkName];
+  const prompts = promptsForBenchmark(benchmark);
+  const pluginRoot = arm === 'candidate' ? ROOT : baselinePluginRoot;
   const benchmarkFingerprint = fingerprintBenchmark(ROOT, benchmark);
   const candidateFingerprint = fingerprintCandidate(ROOT);
-  const cohort = arm === 'candidate'
-    ? `${benchmarkFingerprint}-${candidateFingerprint}`
+  const pluginFingerprint = pluginRoot ? fingerprintCandidate(pluginRoot) : null;
+  const cohort = pluginFingerprint
+    ? `${benchmarkFingerprint}-${pluginFingerprint}`
     : benchmarkFingerprint;
   const runId = `${Date.now()}-${process.pid}`;
   const runRoot = fs.mkdtempSync(path.join(os.tmpdir(), `engineering-flow-${benchmarkName}-${arm}-`));
@@ -173,13 +219,12 @@ async function main() {
     CODEX_HOME: codexHome,
   };
 
-  if (arm === 'candidate') {
-    run('codex', ['plugin', 'marketplace', 'add', ROOT, '--json'], { env: codexEnv });
+  if (pluginRoot) {
+    run('codex', ['plugin', 'marketplace', 'add', pluginRoot, '--json'], { env: codexEnv });
     run('codex', ['plugin', 'add', 'engineering-flow@engineering-flow', '--json'], { env: codexEnv });
   }
 
   const outputPath = path.join(resultDir, `${benchmarkName}-${arm}-${runId}.jsonl`);
-  const finalPath = path.join(runRoot, 'final.txt');
   const startedAt = Date.now();
   const configOverrides = [
     `model_reasoning_effort=${JSON.stringify(reasoningEffort)}`,
@@ -198,61 +243,124 @@ async function main() {
   }
   if (model) configOverrides.push(`model=${JSON.stringify(model)}`);
 
-  const codex = await runStreaming('codex', [
-    'exec',
-    '--ephemeral',
-    '--json',
-    '--dangerously-bypass-hook-trust',
-    ...configOverrides.flatMap((override) => ['-c', override]),
-    '-s',
-    'workspace-write',
-    '-C',
-    workspace,
-    '-o',
-    finalPath,
-    benchmark.prompt,
-  ], {
-    cwd: workspace,
-    env: codexEnv,
-    outputPath,
-  });
-  const codexStdout = codex.stdout || '';
-  const codexStderr = redactSecrets(codex.stderr);
+  const turnResults = [];
+  const eventStreams = [];
+  let threadId = null;
+  let continuationError = null;
+
+  for (let index = 0; index < prompts.length; index += 1) {
+    const prompt = prompts[index];
+    const turnNumber = index + 1;
+    const turnOutputPath = path.join(
+      resultDir,
+      `${benchmarkName}-${arm}-${runId}-turn-${turnNumber}.jsonl`,
+    );
+    const turnFinalPath = path.join(runRoot, `final-turn-${turnNumber}.txt`);
+    const turnStartedAt = Date.now();
+    const args = buildCodexArgs({
+      prompt,
+      threadId,
+      persistent: prompts.length > 1,
+      configOverrides,
+      workspace,
+      finalPath: turnFinalPath,
+    });
+    const codex = await runStreaming('codex', args, {
+      cwd: workspace,
+      env: codexEnv,
+      outputPath: turnOutputPath,
+      label: `turn-${turnNumber}`,
+    });
+    const events = codex.stdout || '';
+    const stderr = redactSecrets(codex.stderr);
+    const turnFailure = extractTurnFailure(events);
+    eventStreams.push(events);
+
+    if (index === 0) threadId = extractThreadId(events);
+
+    const finalMessage = fs.existsSync(turnFinalPath)
+      ? fs.readFileSync(turnFinalPath, 'utf8')
+      : '';
+    const diff = run('git', ['diff', '--', '.'], { cwd: workspace }).stdout;
+    const status = run('git', ['status', '--short'], { cwd: workspace }).stdout;
+    const head = run('git', ['rev-parse', 'HEAD'], { cwd: workspace }).stdout.trim();
+    const turnMetrics = parseJsonl(events);
+    const routedSkills = routePrompt(pluginRoot, prompt);
+    turnMetrics.skillFileReads = turnMetrics.invokedSkills;
+    turnMetrics.routedSkills = routedSkills;
+    turnMetrics.invokedSkills = [
+      ...new Set([...turnMetrics.skillFileReads, ...routedSkills]),
+    ].sort();
+
+    turnResults.push({
+      index: turnNumber,
+      prompt,
+      durationMs: Date.now() - turnStartedAt,
+      modelRun: {
+        completed: codex.status === 0 && !codex.timedOut && !codex.error && !turnFailure,
+        status: codex.status,
+        signal: codex.signal,
+        timedOut: codex.timedOut,
+        error: codex.error ? String(codex.error.message || codex.error) : turnFailure,
+        stderr,
+      },
+      finalMessage,
+      metrics: turnMetrics,
+      publicTests: runPublicTests(workspace),
+      requirementDocuments: readRequirementStates(workspace),
+      workspaceState: {
+        status,
+        head,
+        unauthorizedCommit: head !== initialHead,
+      },
+      diff,
+      events: turnOutputPath,
+    });
+
+    if (!turnResults.at(-1).modelRun.completed) break;
+    if (prompts.length > 1 && index === 0 && !threadId) {
+      continuationError = 'The first turn did not emit thread.started.thread_id';
+      break;
+    }
+  }
+
+  const codexStdout = eventStreams.join('\n');
+  fs.writeFileSync(outputPath, codexStdout);
+  const codexStderr = turnResults.map((turn) => turn.modelRun.stderr).filter(Boolean).join('\n');
   const contaminated = detectContamination(`${codexStdout}\n${codexStderr}`);
   const metrics = parseJsonl(codexStdout);
-  const routedSkills = arm === 'candidate'
-    ? (buildAdditionalContext(benchmark.prompt)?.requestedSkills || [])
-    : [];
+  const routedSkills = [...new Set(turnResults.flatMap((turn) => turn.metrics.routedSkills))].sort();
   metrics.skillFileReads = metrics.invokedSkills;
   metrics.routedSkills = routedSkills;
-  metrics.invokedSkills = [...new Set([...metrics.skillFileReads, ...routedSkills])];
-  const invocation = arm === 'candidate'
+  metrics.invokedSkills = [...new Set([...metrics.skillFileReads, ...routedSkills])].sort();
+  const invocation = pluginRoot
     ? assessInvocation(metrics.invokedSkills, benchmark.invocation)
     : null;
 
-  const finalMessage = fs.existsSync(finalPath) ? fs.readFileSync(finalPath, 'utf8') : '';
+  const finalMessage = turnResults.at(-1)?.finalMessage || '';
   const scorerPath = path.join(ROOT, benchmark.scorer);
   let score;
   try {
     delete require.cache[require.resolve(scorerPath)];
-    score = require(scorerPath)(workspace, { finalMessage, events: codexStdout });
+    score = require(scorerPath)(workspace, {
+      finalMessage,
+      events: codexStdout,
+      turns: turnResults,
+    });
   } catch (error) {
     score = {
       passed: false,
       error: String(error.stack || error.message || error),
     };
   }
-  const publicTests = childProcess.spawnSync('npm', ['test'], {
-    cwd: workspace,
-    encoding: 'utf8',
-    timeout: 60 * 1000,
-    // npm resolves to npm.cmd on Windows, which spawnSync only runs through a shell.
-    shell: process.platform === 'win32',
-  });
+  const publicTests = turnResults.at(-1)?.publicTests || runPublicTests(workspace);
   const diff = run('git', ['diff', '--', '.'], { cwd: workspace }).stdout;
   const finalStatus = run('git', ['status', '--short'], { cwd: workspace }).stdout;
   const finalHead = run('git', ['rev-parse', 'HEAD'], { cwd: workspace }).stdout.trim();
-  const modelCompleted = codex.status === 0 && !codex.timedOut && !codex.error;
+  const lastModelRun = turnResults.at(-1)?.modelRun || {};
+  const modelCompleted = !continuationError
+    && turnResults.length === prompts.length
+    && turnResults.every((turn) => turn.modelRun.completed);
 
   const report = {
     benchmark: benchmarkName,
@@ -260,14 +368,17 @@ async function main() {
     cohort,
     benchmarkFingerprint,
     candidateFingerprint: arm === 'candidate' ? candidateFingerprint : null,
+    pluginFingerprint,
+    pluginRoot,
     durationMs: Date.now() - startedAt,
     workspace,
+    threadId,
     modelRun: {
       completed: modelCompleted,
-      status: codex.status,
-      signal: codex.signal,
-      timedOut: codex.timedOut,
-      error: codex.error ? String(codex.error.message || codex.error) : null,
+      status: lastModelRun.status ?? null,
+      signal: lastModelRun.signal ?? null,
+      timedOut: turnResults.some((turn) => turn.modelRun.timedOut),
+      error: continuationError || lastModelRun.error || null,
       stderr: codexStderr,
       reasoningEffort,
       modelProvider: modelProvider || null,
@@ -278,11 +389,7 @@ async function main() {
     metrics,
     invocation,
     score,
-    publicTests: {
-      passed: publicTests.status === 0,
-      stdout: publicTests.stdout,
-      stderr: publicTests.stderr,
-    },
+    publicTests,
     workspaceState: {
       initialStatus,
       finalStatus,
@@ -290,6 +397,7 @@ async function main() {
     },
     finalMessage,
     diff,
+    turns: turnResults,
     events: outputPath,
   };
 

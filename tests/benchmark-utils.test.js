@@ -13,6 +13,13 @@ const {
 } = require('../scripts/lib/benchmark-utils');
 const { isUsable } = require('../scripts/fill-codex-cohort');
 const { loadEnvFile } = require('../scripts/lib/env-file');
+const {
+  buildCodexArgs,
+  extractThreadId,
+  extractTurnFailure,
+  promptsForBenchmark,
+  readRequirementStates,
+} = require('../scripts/lib/benchmark-conversation');
 
 test('benchmark provider override stays configurable and credential-free', () => {
   const source = fs.readFileSync(
@@ -25,9 +32,81 @@ test('benchmark provider override stays configurable and credential-free', () =>
   assert.match(source, /BENCH_MODEL/);
   assert.match(source, /env_key=.*BENCH_API_KEY/);
   assert.match(source, /model_provider=/);
+  assert.match(source, /BENCH_BASELINE_PLUGIN_ROOT/);
+  assert.match(source, /extractThreadId/);
   assert.doesNotMatch(source, /localhost:8317|WONG_API_KEY|GW2_API_KEY/);
   assert.match(source, /codex\.status === 0 && !codex\.timedOut && !codex\.error/);
   assert.match(source, /if \(!modelCompleted\) process\.exitCode = 1/);
+});
+
+test('builds persistent first turns and targeted resume commands for multi-turn benchmarks', () => {
+  const common = {
+    configOverrides: ['model_reasoning_effort="low"'],
+    workspace: '/tmp/workspace',
+    finalPath: '/tmp/final.txt',
+  };
+  const singleTurn = buildCodexArgs({ ...common, prompt: 'single', persistent: false });
+  const firstTurn = buildCodexArgs({ ...common, prompt: 'first', persistent: true });
+  const resumedTurn = buildCodexArgs({
+    ...common,
+    prompt: 'second',
+    persistent: true,
+    threadId: '0199a213-81c0-7800-8aa1-bbab2a035a53',
+  });
+
+  assert.ok(singleTurn.includes('--ephemeral'));
+  assert.ok(!firstTurn.includes('--ephemeral'));
+  assert.deepEqual(resumedTurn.slice(0, 2), ['exec', 'resume']);
+  assert.ok(resumedTurn.includes('0199a213-81c0-7800-8aa1-bbab2a035a53'));
+  assert.ok(!resumedTurn.includes('--ephemeral'));
+  assert.ok(!resumedTurn.includes('-C'));
+  assert.ok(!resumedTurn.includes('-s'));
+});
+
+test('extracts the session id and validates configured follow-up prompts', () => {
+  const events = [
+    JSON.stringify({ type: 'thread.started', thread_id: 'thread-123' }),
+    JSON.stringify({ type: 'turn.completed', usage: {} }),
+  ].join('\n');
+
+  assert.equal(extractThreadId(events), 'thread-123');
+  assert.equal(extractThreadId('{not-json}\n'), null);
+  assert.equal(extractTurnFailure([
+    JSON.stringify({ type: 'error', message: 'retrying' }),
+    JSON.stringify({ type: 'turn.failed', error: { message: 'provider unavailable' } }),
+  ].join('\n')), 'provider unavailable');
+  assert.equal(extractTurnFailure([
+    JSON.stringify({ type: 'error', message: 'retrying' }),
+    JSON.stringify({ type: 'turn.completed', usage: {} }),
+  ].join('\n')), null);
+  assert.equal(extractTurnFailure([
+    JSON.stringify({ type: 'turn.completed', usage: {} }),
+    JSON.stringify({ type: 'error', message: 'stream ended badly' }),
+  ].join('\n')), 'stream ended badly');
+  assert.deepEqual(
+    promptsForBenchmark({ prompt: 'first', followUps: ['second', 'third'] }),
+    ['first', 'second', 'third'],
+  );
+  assert.throws(
+    () => promptsForBenchmark({ prompt: 'first', followUps: [''] }),
+    /non-empty strings/,
+  );
+});
+
+test('captures requirement document lifecycle states', () => {
+  const workspace = fs.mkdtempSync(path.join(os.tmpdir(), 'engineering-flow-requirements-'));
+  const requirements = path.join(workspace, 'docs', 'requirements');
+  fs.mkdirSync(requirements, { recursive: true });
+  fs.writeFileSync(path.join(requirements, 'batch-export.md'), '# Batch export\n\nStatus: Accepted\n');
+  fs.writeFileSync(path.join(requirements, 'draft.md'), '# Draft\n\n**Status:** Draft\n');
+  fs.writeFileSync(path.join(requirements, 'done.md'), '# Done\n\nStatus: **Implemented**\n');
+  fs.writeFileSync(path.join(workspace, 'docs', 'notes.md'), '# Notes\n');
+
+  assert.deepEqual(readRequirementStates(workspace), [
+    { path: 'docs/requirements/batch-export.md', status: 'Accepted' },
+    { path: 'docs/requirements/done.md', status: 'Implemented' },
+    { path: 'docs/requirements/draft.md', status: 'Draft' },
+  ]);
 });
 
 test('loads local benchmark environment without overriding explicit variables', () => {

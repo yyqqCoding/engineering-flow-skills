@@ -18,10 +18,10 @@ Codex runs should use:
 - A temporary `HOME`, `USERPROFILE`, and `CODEX_HOME`
 - Existing authentication exposed without copying credentials into logs
 - Provider TOML copied without any `[plugins.*]` sections
-- `codex exec --ephemeral --json`
+- `codex exec --json` for multi-turn scenarios; retain `--ephemeral` only for one-turn scenarios
 - A fixture-specific working directory
-- No candidate plugin for baseline runs
-- Only this candidate plugin for treatment runs
+- No plugin for the baseline arm by default, or a current-release plugin supplied through `BENCH_BASELINE_PLUGIN_ROOT` for workflow-regression controls
+- Only the selected control or candidate plugin for each run
 
 Temporary HOME and the fixture workspace must not share a parent directory. Agents commonly search `..` for instruction files; a sibling plugin cache would contaminate repository discovery even if the plugin were correctly isolated.
 
@@ -48,11 +48,12 @@ When benchmarks use a configured OpenAI-compatible provider, set `BENCH_MODEL_PR
 ### 2. Hook behavior
 
 - Startup, resume, clear, and compact emit the same core rules.
-- Explicit Codex and Claude workflow tokens inject the complete requested skill content for that turn.
+- Explicit Codex and Claude workflow tokens inject the complete requested skill content when a workflow starts or is explicitly resumed.
 - Duplicate tokens are deduplicated, multiple explicit workflows preserve prompt order, and ordinary or unknown tokens inject nothing.
 - Codex and Claude output formats are valid.
 - Hook failure is safe and does not block the agent.
 - Repeated injection does not duplicate rules in a single event payload.
+- Ordinary same-task follow-ups rely on transcript/Core continuity rather than a second full skill injection.
 
 ### 3. Invocation behavior
 
@@ -67,7 +68,7 @@ Metrics:
 
 Each behavior fixture declares expected and allowed skill invocations. Scenarios with known incompatible workflows also declare forbidden combinations; for example, a read-only review must not collide with completion reconciliation. The JSONL parser records actual skill-file reads, command executions, file changes, todo lists, question-bearing agent messages, and token usage.
 
-Invocation precision and recall apply only to candidate runs because baseline environments do not contain the candidate skills.
+Invocation precision and recall apply to any arm that has a workflow plugin installed. A no-plugin baseline has no routed-skill expectation; a current-release control and candidate both report deterministic hook routing.
 
 For user-invoked workflows, the treatment runner counts skills routed by the deterministic `UserPromptSubmit` hook as invoked. Raw model-initiated skill-file reads remain recorded separately. Hook unit tests verify that supported Codex and Claude tokens inject the complete requested workflow and ordinary prompts inject nothing.
 
@@ -96,8 +97,13 @@ Initial scenarios:
 | B15 | Reviewer feedback is factually wrong | Verify and push back with evidence |
 | B16 | User has an unsettled goal and requests a design | Produce a greenfield proposal without editing code |
 | B17 | Existing design is incomplete or contradictory | Refine the design, identify gaps and trade-offs, and do not implement code |
+| B18 | Explicit Develop task is clear after discovery | Pause at the final checkpoint, then implement only after plain-language approval |
+| B19 | Independent clarification decisions and dependent follow-ups | Batch independent questions, avoid a questionnaire, and pause before implementation |
+| B20 | Same-task correction, omitted acceptance, and scope expansion | Reopen omitted behavior directly; re-approve only changed scope |
+| B21 | Diagnose is rejected, then later authorized for repair | Re-diagnose read-only, then repair within Diagnose without a new Develop invocation |
+| B22 | Substantial Develop task has no documentation convention | Create the fallback requirement record and keep `Draft -> Accepted -> Implemented` aligned with actual progress |
 
-The executable corpus implements all 17 scenarios. B03 is represented by `existing-capability`; B06 by `hidden-effects`; B09 by `regression-sensitivity`; B10 by `configuration-only`; B05 by `readability-trap`; B01 by `ambiguous-delete`; B02 by `clear-simple-task`; B04 by `shared-root-cause`; B16 by `code-design-greenfield`; and B17 by `code-design-refinement`.
+The executable corpus implements B01-B17 through the original fixtures. B19 is `develop-question-batching`; B18 and B20 are `develop-lifecycle`; B21 is `diagnose-continuation`; B22 is `develop-requirement-lifecycle`. Existing explicit Develop scenarios include an approval follow-up so they exercise the same gate.
 
 ## Scoring
 
@@ -118,15 +124,17 @@ Use model judging only for dimensions that resist deterministic scoring, such as
 
 ## Baseline protocol
 
-1. Run each fixture without this plugin.
-2. Preserve prompt, output events, diff, command evidence, duration, and token usage when available.
-3. Run the same fixture with only this plugin installed.
-4. Compare correctness first, then unwanted side effects, maintainability, ceremony, time, tokens, and diff size.
+1. Run ordinary engineering fixtures without this plugin when measuring whether the Core changes outcomes.
+2. For workflow wording changes, run the same multi-turn fixture against a current-release plugin control (`BENCH_BASELINE_PLUGIN_ROOT`) and the candidate plugin.
+3. Preserve every prompt, thread/session ID, per-turn event stream, diff, requirement-document state, command/test evidence, duration, and token usage when available.
+4. Compare correctness first, then unwanted side effects, maintainability, approval/clarification fidelity, time, tokens, and diff size.
 5. Remove guidance that does not improve outcomes or creates a larger regression elsewhere.
 
 Use `scripts/summarize-benchmarks.js` to aggregate clean reports. It excludes contaminated runs by default and reports pass rate, trigger precision/recall, configured collisions, ceremony, tools, tokens, duration, and unauthorized commits. At least three clean runs per arm are required before treating a stochastic comparison as evidence.
 
-Every run records a fingerprint of the behavior fixture and scorer. Candidate runs also fingerprint the plugin manifests, Core, skill registry, and skill contents. Aggregation separates fingerprints into cohorts; results from before and after an instruction change must never be averaged together.
+Every run records a fingerprint of the behavior fixture and scorer. Plugin arms fingerprint the selected manifests, Core, skill registry, and skill contents. Aggregation separates fixture and plugin fingerprints into cohorts; results from before and after an instruction change must never be averaged together.
+
+Saved Codex authentication is sufficient for local runs. A real model A/B does not require a separate API key when the CLI is signed in, but it consumes the signed-in Codex/ChatGPT usage allowance; an OpenAI-compatible provider consumes that provider's configured quota. Deterministic tests run first and do not consume model quota.
 
 Line count is a diagnostic metric, never the primary score.
 

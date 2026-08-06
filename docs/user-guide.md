@@ -50,8 +50,7 @@ Enter these tokens in the Codex or Claude Code conversation, not in Bash or Powe
 
 | Scenario | Workflow | Edits code? |
 |---|---|---|
-| Feature, refactor, tests, or maintainability work | `develop` | Yes |
-| Material decisions require approval before coding | `develop confirm` | After approval |
+| Feature, refactor, tests, or maintainability work | `develop` | After approval |
 | Bug, regression, incorrect output, intermittent fault, or slowdown | `diagnose` | When a fix is requested |
 | Create a solution from scratch or refine an existing design | `code-design` | No |
 | Review a diff, branch, or uncommitted work | `review` | No, strictly read-only |
@@ -65,26 +64,30 @@ Enter these tokens in the Codex or Claude Code conversation, not in Bash or Powe
 
 1. Inspects project instructions, authoritative docs, Git state, relevant code, tests, and callers.
 2. Aligns the goal, acceptance behavior, scope, facts, and material solution decisions.
-3. Asks only blocking questions and infers reversible internal details from repository precedent.
-4. Implements the smallest complete change and gathers focused feedback.
-5. Adds boundary coverage for applicable risk and improves structure under demonstrated design pressure.
-6. Verifies with fresh evidence and updates authoritative documentation only for changed facts.
+3. Batches independent material questions, asks dependent questions in order, and stops when implementation is safe.
+4. Returns the final checkpoint and pauses for explicit implementation approval.
+5. Implements the smallest complete change and gathers focused feedback after approval.
+6. Adds boundary coverage for applicable risk and improves structure under demonstrated design pressure.
+7. Verifies with fresh evidence and updates authoritative documentation only for changed facts.
 
-Normal mode proceeds autonomously:
+There is one Develop mode:
 
 ```text
 $engineering-flow:develop
 Implement device alarm contacts. Inspect the existing design and ownership boundaries, add focused tests, and reconcile the authoritative documentation.
 ```
 
-Use confirmation mode when coding must wait:
+Even for a clear request, the model first returns the final goal, acceptance behavior, scope, assumptions, and material solution boundary, then stops. A short checkpoint stays in the conversation. A substantial checkpoint follows the project's existing authoritative-document convention or, when none applies, uses `docs/requirements/<feature-slug>.md`. If the initial request already supplies a complete contract, the model creates and verifies the `Draft` in that turn; hypothetical optional inputs outside the contract cannot block it.
 
 ```text
-$engineering-flow:develop confirm
-Implement customer batch deletion. First confirm the goal, acceptance behavior, related-data policy, and scope. Do not code until I explicitly approve them.
+Proceed with the plan above.
 ```
 
-The model should return a requirement summary, assumptions, and blockers, then wait.
+This and equivalent action language approve implementation only after the checkpoint has been shown. The initial request, answers to clarification questions, and a reading acknowledgement alone do not. Requirement records move through `Draft -> Accepted -> Implemented`, with `Superseded` available when replaced.
+
+Answers, approval, corrections, and omitted original acceptance items remain in the same Develop task without repeating the token. An omitted original item reopens implementation directly. New or changed scope gets an incremental checkpoint and another approval. An unrelated task does not inherit the old workflow.
+
+A result explicitly described as `undefined`, unknown, or not established does not silently become out of scope. For delete and write operations in particular, unknown-resource behavior cannot be inferred from the success result, absent precedent, or a neighboring read API; it belongs in the independent question batch. After that batch is answered, the next response is the checkpoint unless an answer creates a dependent question or authoritative evidence exposes a contradiction.
 
 Maintainability work and extreme tests also belong to `develop`:
 
@@ -104,7 +107,7 @@ $engineering-flow:diagnose
 Fix calculateRenewalDate moving January 31 into March. Reproduce it first, locate the root cause, and leave a test that detects the regression.
 ```
 
-Diagnosis is read-only unless the user also requests a fix. When a correct test seam exists, it observes failure before applying the fix.
+Diagnosis is read-only until the initial request or a later same-task message authorizes a fix. If the diagnosis is rejected, an ordinary follow-up keeps Diagnose active and read-only. Once the user says "fix it" or equivalent, Diagnose continues through the owning-boundary repair and regression verification without a separate Develop invocation. When a correct test seam exists, it observes failure before applying the fix.
 
 ### `code-design`
 
@@ -201,12 +204,16 @@ ordinary request
   └─ uses only the Core
 
 explicitly named workflow
-  └─ loads the complete workflow for that request only
+  └─ loads the complete workflow and owns that task
+
+same-task follow-up
+  └─ continues its active phase without repeating the token
 ```
 
 - The current user request and project-local `AGENTS.md`, `CLAUDE.md`, and authoritative docs always take precedence.
 - Unnamed full workflows do not load automatically.
 - Unknown tokens do not trigger a workflow.
+- Explicit cancellation, a workflow switch, or an unrelated new task ends workflow inheritance.
 - Workflows never grant permission to commit, push, publish, create issues, install dependencies, or modify global configuration.
 
 See the [trigger model](trigger-model.md) for the design details.
@@ -245,8 +252,9 @@ codex plugin marketplace remove engineering-flow
 
 ## Validation and limitations
 
-- Static and deterministic tests: 36/36 passed.
-- Current Codex cohort: 17 scenarios, candidate 51/51; explicit invocation 51/51, with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
+- Static and deterministic tests: 49/49 passed.
+- Current general Codex cohort: 17 scenarios, candidate 51/51; explicit invocation 51/51, with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
+- Latest task-level paired A/B: under matching model, reasoning, and final scenario fingerprints, the current-release control passed 0/12 and the candidate passed 12/12; all 24 counted runs passed invocation, public-test, contamination, and unauthorized-commit guards.
 - Claude Code 2.1.197 passed strict manifest validation and an explicit `/engineering-flow:develop` live sample.
 - Claude Core-only ambiguity behavior does not yet match Codex. Explicitly invoke the full workflow for material data, permission, or policy decisions.
 - Full workflows add context, tool calls, and latency, so they do not load for every request.
@@ -286,4 +294,15 @@ BENCH_TARGET_COMPLETED=3 BENCH_CONCURRENCY=2 npm run benchmark:fill
 npm run benchmark:summary
 ```
 
-The runner isolates global plugins and skills and fingerprints fixture/candidate contents so different versions are not mixed. Raw results are stored in the ignored `benchmark-results/` directory.
+Scenarios may define follow-up turns. The runner persists the first `codex exec` session, captures its thread ID, and uses `codex exec resume` for later turns while recording each message, event stream, workspace diff, requirement-document state, and public-test result.
+
+For workflow-regression A/B, compare the candidate with a checkout of the current released plugin rather than only with no plugin:
+
+```bash
+BENCH_BASELINE_PLUGIN_ROOT=/absolute/path/to/current-release \
+  npm run benchmark:ab -- develop-lifecycle diagnose-continuation
+```
+
+Saved Codex login is sufficient; an API key is optional. Real model runs consume the selected provider's quota or the signed-in Codex/ChatGPT usage allowance. Deterministic `npm test` checks do not consume model quota.
+
+The runner isolates global plugins and skills and fingerprints fixture, control, and candidate contents so different versions are not mixed. Raw results are stored in the ignored `benchmark-results/` directory.

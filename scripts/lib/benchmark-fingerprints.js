@@ -29,7 +29,7 @@ function fingerprintBenchmark(root, benchmark) {
     path.join(root, benchmark.fixture),
     path.join(root, benchmark.scorer),
     ...(benchmark.setup ? [path.join(root, benchmark.setup)] : []),
-  ], benchmark.prompt);
+  ], JSON.stringify({ prompt: benchmark.prompt, followUps: benchmark.followUps || [] }));
 }
 
 function fingerprintCandidate(root) {

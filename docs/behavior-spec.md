@@ -24,13 +24,85 @@ Failure signals:
 - Produces a long design interview for a local mechanical change.
 - Asks the user to choose implementation details discoverable from the codebase.
 
-### REQ-03: Explicit confirmation mode
+### REQ-03: Develop approval gate
 
-When the user explicitly requires confirmation before coding, the agent presents a concise requirement summary, assumptions, acceptance behavior, and blocking questions, then waits for approval.
+When the user explicitly invokes `develop`, the agent presents the final goal, acceptance behavior, scope, assumptions, and material solution boundary, then pauses before changing production code, tests, or configuration even when no ambiguity remains.
 
-### REQ-04: Fact and solution alignment
+Failure signals:
+
+- Treats `develop` as permission to implement immediately.
+- Requires a second user command to enable clarification or approval.
+- Codes in the same turn that presents the final checkpoint.
+
+### REQ-04: Efficient clarification
+
+The agent batches independent material questions, asks dependent questions only after prerequisite answers, and stops when the requirement is understood well enough for safe implementation.
+
+Failure signals:
+
+- Asks independently answerable questions one turn at a time.
+- Produces an exhaustive questionnaire about hypothetical edge cases or future architecture.
+- Asks the user to choose reversible implementation details supported by repository precedent.
+- Omits an explicitly unresolved material behavior from the clarification batch and proceeds to the checkpoint.
+- Invents questions for malformed, absent, or hypothetical inputs that neither the request nor same-domain evidence places in the contract.
+- Infers a command's user-visible outcome from a semantically different read operation.
+- Treats an "undefined" or "not established" behavior in the request as permission to choose silently.
+- Reopens an edge case already resolved by the request's complete predicate and stated semantic operation.
+- Invents a blocking question for a conceivable input or malformed optional argument that the request and repository do not identify as part of the contract.
+- Treats an unavailable structured-question tool as permission to infer answers or skip material questions instead of asking in plain text.
+- Accepts labels such as "undefined" or "intentional" as if they resolved a material product decision.
+- Moves an explicitly undefined behavior out of scope without user authority or an authoritative same-domain contract.
+- Infers an undefined unknown-resource result for a delete or write operation from its success return value, absent precedent, or a neighboring read API.
+- After the independent answers are complete, introduces another independent implementation or hypothetical question instead of presenting the checkpoint.
+
+### REQ-05: Requirement checkpoint location
+
+A concise alignment checkpoint stays in the conversation. A substantial checkpoint uses the project's existing authoritative documentation convention or, when none applies, `docs/requirements/<feature-slug>.md` with status `Draft`. The durable record carries the checkpoint's goal, acceptance behavior, out of scope, assumptions, and material solution boundary.
+
+When the initial substantial request already supplies a complete contract, the `Draft` record is created and verified in that first turn. Optional or malformed inputs outside the stated contract do not block the checkpoint.
+
+Failure signals:
+
+- Mentions or promises the requirement path in the checkpoint response without actually creating the required `Draft` record.
+- Creates the record after the checkpoint turn or with a state other than `Draft`.
+
+### REQ-06: Approval semantics
+
+Only clear implementation authority sent after the final checkpoint, such as "start implementation", "implement this", or "proceed with the plan above", moves an active Develop task to implementation and a durable requirement record to `Accepted`. The initial request, answers to clarification questions, and a reading acknowledgement alone do not.
+
+### REQ-07: Fact and solution alignment
 
 For an implementation task, the agent discovers repository facts and aligns material solution decisions before coding without asking the user to choose reversible internal details.
+
+## Workflow continuity
+
+### FLOW-01: Same-task continuation
+
+After an explicit workflow invocation, later answers, approvals, corrections, and continuation requests for the same task retain that workflow without repeating its token.
+
+### FLOW-02: Completion can reopen
+
+If the user reports an omitted original acceptance item after completion, the agent reopens implementation and verification without repeating the full clarification or approval ceremony. An `Implemented` requirement record returns to `Accepted` until verification succeeds again.
+
+Failure signals:
+
+- Treats an omitted original acceptance item as added scope and asks for another approval before completing it.
+
+### FLOW-03: Scope changes require incremental approval
+
+If a follow-up materially changes acceptance behavior or scope, the agent aligns only the increment, presents an updated checkpoint, and pauses. Prior approval does not authorize the added scope.
+
+Failure signals:
+
+- Asks whether an explicitly requested behavior change is intentional instead of treating it as the increment and presenting its approval checkpoint.
+
+### FLOW-04: Workflow termination
+
+Explicit cancellation, an explicit workflow switch, or an unrelated new task ends inheritance. A stale workflow or approval does not carry into the unrelated task.
+
+### FLOW-05: Resume and compact
+
+When the transcript or a durable requirement record identifies an active task and phase after resume or compaction, the agent continues that phase instead of restarting or silently implementing.
 
 ## Change placement and reuse
 
@@ -124,6 +196,16 @@ For a diagnosable bug, the agent builds the tightest practical feedback signal b
 
 Temporary logs, probes, fixtures, and debug-only code are removed before completion unless deliberately retained and documented.
 
+### DEBUG-03: Diagnosis correction
+
+When the user rejects a diagnosis, the same Diagnose task remains read-only and tests new falsifiable hypotheses. The agent does not require another Diagnose token or continue into a fix based on the rejected cause.
+
+### DEBUG-04: Diagnose-to-repair authority
+
+When the initial Diagnose request asks for a fix, or a later same-task message clearly authorizes repair, the agent continues through the owning-boundary fix and regression verification without requiring a Develop invocation. Undefined product behavior or material scope expansion still enters a requirement approval checkpoint.
+
+When a stable automated regression seam exists, repair authority first converts the reproduction into a test and observes that test fail before production code changes. Earlier diagnostic probes do not substitute for this red observation.
+
 ## Review and completion
 
 ### REVIEW-01: Read-only review
@@ -141,6 +223,13 @@ The agent does not claim completion, correctness, or passing tests without fresh
 ### DONE-02: Requirement-to-evidence reconciliation
 
 Each accepted behavior is either supported by implementation and evidence or explicitly reported as incomplete.
+
+### DONE-03: Requirement status truth
+
+A durable requirement record is marked `Implemented` only after every accepted behavior is reconciled with fresh evidence. `Draft`, `Accepted`, `Implemented`, and `Superseded` reflect the actual task state.
+
+Before marking the record `Implemented`, its stated files, boundaries, and evidence are reconciled with the actual diff and verification results.
+Provisional statements made false by the accepted implementation, such as deferred tests or files "to be added", are replaced with actual implementation and verification facts rather than left behind under an updated status.
 
 ### DOC-01: Documentation reflects facts
 
