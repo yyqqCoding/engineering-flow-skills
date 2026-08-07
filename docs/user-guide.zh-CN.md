@@ -220,20 +220,28 @@ Claude Code 使用 `/engineering-flow:<workflow>`。
 
 ## 更新与卸载
 
-刷新 Codex marketplace：
+### Codex CLI
+
+刷新 marketplace、重装插件，然后开启新会话：
 
 ```bash
 codex plugin marketplace upgrade engineering-flow
-```
-
-发布版本变化后重新安装，并开启新会话：
-
-```bash
 codex plugin remove engineering-flow@engineering-flow
 codex plugin add engineering-flow@engineering-flow
 ```
 
-卸载：
+Codex 当前没有独立的 `plugin update` 命令。重新安装会从已刷新的 marketplace 读取新版本。
+
+### Claude Code
+
+在 Claude Code 对话中刷新 marketplace 并更新插件，然后开启新会话：
+
+```text
+/plugin marketplace update engineering-flow
+/plugin update engineering-flow@engineering-flow
+```
+
+### 卸载 Codex 插件
 
 ```bash
 codex plugin remove engineering-flow@engineering-flow

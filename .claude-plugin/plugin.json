@@ -1,6 +1,6 @@
 {
   "name": "engineering-flow",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Compact workflows for implementation, diagnosis, solution design, review, and cross-session handoff.",
   "author": {
     "name": "engineering-flow-skills contributors"

@@ -220,20 +220,29 @@ See the [trigger model](trigger-model.md) for the design details.
 
 ## Updating and uninstalling
 
-Refresh the Codex marketplace:
+### Codex CLI
+
+Refresh the marketplace, reinstall the plugin, and then start a new session:
 
 ```bash
 codex plugin marketplace upgrade engineering-flow
-```
-
-After a released version changes, reinstall and start a new session:
-
-```bash
 codex plugin remove engineering-flow@engineering-flow
 codex plugin add engineering-flow@engineering-flow
 ```
 
-Uninstall:
+Codex does not currently provide a separate `plugin update` command. Reinstalling reads the new
+version from the refreshed marketplace.
+
+### Claude Code
+
+Refresh the marketplace and update the plugin inside Claude Code, then start a new session:
+
+```text
+/plugin marketplace update engineering-flow
+/plugin update engineering-flow@engineering-flow
+```
+
+### Uninstall from Codex
 
 ```bash
 codex plugin remove engineering-flow@engineering-flow

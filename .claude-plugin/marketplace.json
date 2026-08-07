@@ -8,7 +8,7 @@
     {
       "name": "engineering-flow",
       "description": "Aligned implementation, root-cause diagnosis, solution design, read-only review, and handoff.",
-      "version": "0.1.0",
+      "version": "1.0.0",
       "source": "./",
       "author": {
         "name": "engineering-flow-skills contributors"

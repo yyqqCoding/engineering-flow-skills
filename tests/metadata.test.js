@@ -108,15 +108,21 @@ test('skill reference graph is complete and acyclic', () => {
 
 test('Claude and Codex manifests expose the released skills', () => {
   const claude = readJson('.claude-plugin/plugin.json');
+  const claudeMarketplace = readJson('.claude-plugin/marketplace.json');
   const codex = readJson('.codex-plugin/plugin.json');
   const marketplace = readJson('.agents/plugins/marketplace.json');
   const packageJson = readJson('package.json');
+  const claudeMarketplacePlugin = claudeMarketplace.plugins.find(
+    (plugin) => plugin.name === claude.name,
+  );
 
   const claudeSkills = claude.skills.map((skillPath) => path.basename(skillPath)).sort();
   assert.deepEqual(claudeSkills, skillNames);
   assert.equal(codex.skills, './skills/');
   assert.equal(claude.version, codex.version);
   assert.equal(claude.version, packageJson.version);
+  assert.ok(claudeMarketplacePlugin, 'Claude marketplace must expose the released plugin');
+  assert.equal(claudeMarketplacePlugin.version, packageJson.version);
   assert.equal(
     Object.hasOwn(claude, 'hooks'),
     false,
