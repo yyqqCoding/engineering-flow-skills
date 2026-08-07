@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="300" viewBox="0 0 1200 300" role="img" aria-labelledby="title desc">
+  <title id="title">Engineering Flow validation results</title>
+  <desc id="desc">General behavior improved from 45 of 51 to 51 of 51. Task continuity improved from 0 of 12 to 12 of 12. Deterministic tests passed 49 of 49 and explicit routing passed 51 of 51.</desc>
+  <rect width="1200" height="300" rx="8" fill="#0B0E11"/>
+  <path d="M400 42V258M800 42V258" stroke="#293038"/>
+
+  <g font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" letter-spacing="0">
+    <text x="48" y="55" fill="#89949E" font-size="12" font-weight="700">GENERAL BEHAVIOR</text>
+    <text x="48" y="101" fill="#F3F5F7" font-size="32" font-weight="720">45/51</text>
+    <text x="178" y="101" fill="#69747E" font-size="20">→</text>
+    <text x="220" y="101" fill="#71D8B2" font-size="32" font-weight="720">51/51</text>
+    <rect x="48" y="132" width="288" height="10" rx="4" fill="#293038"/>
+    <rect x="48" y="132" width="254" height="10" rx="4" fill="#69747E"/>
+    <rect x="48" y="158" width="288" height="10" rx="4" fill="#293038"/>
+    <rect x="48" y="158" width="288" height="10" rx="4" fill="#39C792"/>
+    <text x="48" y="202" fill="#89949E" font-size="13">17 isolated development scenarios</text>
+
+    <text x="448" y="55" fill="#89949E" font-size="12" font-weight="700">TASK CONTINUITY</text>
+    <text x="448" y="101" fill="#F3F5F7" font-size="32" font-weight="720">0/12</text>
+    <text x="554" y="101" fill="#69747E" font-size="20">→</text>
+    <text x="596" y="101" fill="#8DBCF8" font-size="32" font-weight="720">12/12</text>
+    <rect x="448" y="132" width="288" height="10" rx="4" fill="#293038"/>
+    <rect x="448" y="158" width="288" height="10" rx="4" fill="#293038"/>
+    <rect x="448" y="158" width="288" height="10" rx="4" fill="#5EA2F7"/>
+    <text x="448" y="202" fill="#89949E" font-size="13">4 multi-turn workflows · 3 runs each</text>
+
+    <text x="848" y="55" fill="#89949E" font-size="12" font-weight="700">DETERMINISTIC GATES</text>
+    <circle cx="866" cy="100" r="18" fill="#15382D"/>
+    <path d="M857 100L863 106L875 93" fill="none" stroke="#71D8B2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="898" y="108" fill="#F3F5F7" font-size="28" font-weight="720">49/49</text>
+    <text x="848" y="144" fill="#89949E" font-size="13">Static, hooks, fixtures, scorers</text>
+    <circle cx="866" cy="184" r="18" fill="#162B43"/>
+    <path d="M857 184L863 190L875 177" fill="none" stroke="#8DBCF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="898" y="192" fill="#F3F5F7" font-size="28" font-weight="720">51/51</text>
+    <text x="848" y="228" fill="#89949E" font-size="13">Explicit workflow routing</text>
+  </g>
+</svg>

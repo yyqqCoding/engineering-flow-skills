@@ -1,86 +1,83 @@
-# Engineering Flow Skills
+<div align="center">
+  <picture>
+    <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="assets/readme/hero-mobile-dark.svg">
+    <source media="(max-width: 640px) and (prefers-color-scheme: light)" srcset="assets/readme/hero-mobile-light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/readme/hero-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/readme/hero-light.svg">
+    <img alt="Engineering Flow: a task-level workflow from repository discovery and clarification through approval, implementation, and verification" src="assets/readme/hero-light.svg" width="100%">
+  </picture>
+  <br><br>
+  <strong>Task-level development workflows and evaluation for Codex CLI and Claude Code</strong>
+  <br><br>
+  <a href="#quick-start"><strong>Quick start</strong></a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#five-workflows">Workflows</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="#validation">Validation</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="docs/user-guide.md">User guide</a>
+  <br><br>
+  <a href="README.md">简体中文</a>&nbsp;·&nbsp;<a href="README.en.md">English</a>
+  <br><br>
+  <img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-supported-111820?style=flat-square">
+  <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-supported-D97757?style=flat-square">
+  <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-4C5D6B?style=flat-square">
+</div>
 
-[简体中文](README.md) | [English](README.en.md)
+---
 
-> Help coding agents understand first, implement second, and finish with evidence.
+## Core idea
 
-![Codex CLI](https://img.shields.io/badge/Codex_CLI-supported-black)
-![Claude Code](https://img.shields.io/badge/Claude_Code-supported-D97757)
-![License](https://img.shields.io/badge/license-MIT-blue)
+> Understand the requirement well enough to implement safely. Make the smallest clear change at the right boundary. Prove it with useful feedback. Reconcile documentation with facts, and promote only durable lessons into project rules.
 
-Engineering Flow is a software-development workflow plugin for **Codex CLI** and **Claude Code**. It covers solution design, requirement alignment, implementation, diagnosis, review, and cross-session handoff — while keeping clear tasks direct.
+| Understand | Align | Implement | Prove |
+|---|---|---|---|
+| Read project rules, authoritative docs, code, and tests | Clarify only unresolved behavior that changes acceptance, then present one checkpoint | Reuse the right domain capability and change the owning module | Verify with risk-matched tests and fresh evidence, then reconcile facts |
 
-## Why Engineering Flow
+Engineering Flow addresses three recurring Coding Agent failures:
 
-### 📐 Every rule earned its place in a benchmark
+- **Mismatched process:** clear tasks stay direct; full workflows load only when explicitly selected.
+- **Broken multi-turn continuity:** answers, approval, corrections, and omissions remain in the same task without repeating the invocation.
+- **Confused clarification and authority:** independent questions are batched, dependent questions are sequenced, and answers do not authorize implementation.
 
-Most workflow plugins stack rules on intuition. Engineering Flow settles disputes with data: every trigger policy and load-bearing sentence passed isolated A/B benchmarks — a 17-scenario general cohort, separate task-level multi-turn suites, hidden scorers, contamination detection, and unauthorized-commit monitoring. Features that could not beat a strong baseline were deleted rather than kept for show: automatic skill triggering was rejected exactly this way, after the data repeatedly showed it loading workflows on unrelated tasks. The full decision trail is traceable in the [benchmark log](docs/benchmark-log.md).
+## Five workflows
 
-The latest task-level paired A/B used matching model, reasoning, and scenario fingerprints across question batching, Develop continuity, requirement-record lifecycle, and Diagnose continuity: the current-release control passed `0/12`, while the final candidate passed `12/12`. This demonstrates improvement in those isolated scenarios; it is not a universal guarantee across every model or repository.
-
-### 🎯 Deterministic triggering — workflows never invite themselves
-
-Full workflows load only when you name them explicitly, routed by a hook, with exactly one copy of context injected per invocation. There is no probabilistic "the model thought you needed it" — you will not be dragged into a five-step process for a one-line config change, or have a requested review silently substituted with a different workflow.
-
-### 🏛️ A software engineering core
-
-Engineering Flow translates classic software engineering principles into judgment rules an agent can execute — each with an explicit trigger signal and cost constraint, not a list of principle names:
-
-| Principle | How it appears in the workflow |
-|---|---|
-| High cohesion, low coupling | Every option comparison must weigh ownership, coupling, cohesion, and state/failure behavior |
-| Single responsibility | One rule has one authoritative owner; rules live in the module that owns the relevant data and invariant |
-| Open-closed | Extension points are introduced only under real pressure, such as repeated branching along one variation axis — speculative extension points are rejected explicitly |
-| Dependency inversion | Only an unstable external dependency earns an Adapter; proposals must state dependency direction |
-| Design patterns | Strategy, state machine, Adapter, factory/builder, and pipeline each have explicit trigger conditions — complexity removed must exceed indirection introduced |
-| Semantic reuse | Distinguish rules that must evolve together from rules that merely look alike; allow honest duplication, reject false deduplication |
-
-On top sits a **novelty tax**: any uncommon syntax, metaprogramming, new dependency, abstraction, or design pattern must pay for itself with a concrete benefit in correctness, measured performance, or total maintenance cost. A pattern name is not evidence of quality.
-
-The same standard drives both `code-design` proposals and `develop` implementation and conditional hardening, so design and coding apply one set of engineering judgment.
-
-### 🪶 A resident footprint of ~230 words
-
-The only always-on piece is a ~230-word Engineering Core — the baseline for repository discovery, requirement alignment, maintainability, safety preservation, and verified completion. When no workflow is invoked, nothing else is injected; your context and tokens stay with the actual task.
-
-### 🔒 Safety and authorization boundaries
-
-- Never commits, pushes, publishes, creates issues, installs dependencies, or modifies global configuration without authorization.
-- Destructive data decisions (such as how related data is handled) are always asked, never silently inferred.
-- `review` is strictly read-only; `code-design` produces proposals without production code; diagnosis is separated from fixing, and fixes require explicit authorization.
-
-### 🤝 Never takes over your project
-
-The current request and project-local `AGENTS.md`, `CLAUDE.md`, and authoritative documentation always take precedence. The process scales with the task: simple work stays direct, boundary testing follows real risk, and architecture changes follow demonstrated design pressure — no mandatory plan files, worktrees, subagents, TDD, or commit ceremony.
-
-## 🧩 One workflow, five entry points
-
-| Entry point | Use it for | Codex invocation |
+| Workflow | Delivery | Codex invocation |
 |---|---|---|
-| 🛠️ **Develop** | Features, refactors, tests, and maintainability work | `$engineering-flow:develop` |
-| 🔎 **Diagnose** | Bugs, regressions, incorrect output, intermittent faults, and slowdowns | `$engineering-flow:diagnose` |
-| 🧭 **Code Design** | Create a solution from scratch or refine an existing design | `$engineering-flow:code-design` |
-| 👀 **Review** | Strict read-only review of a diff, branch, or uncommitted work | `$engineering-flow:review` |
-| 📦 **Handoff** | Continue in another session or with another agent | `$engineering-flow:handoff` |
+| **Develop** | Align requirements, await approval, then implement, test, and reconcile docs | `$engineering-flow:develop` |
+| **Diagnose** | Reproduce and locate the cause, then repair and regression-test when authorized | `$engineering-flow:diagnose` |
+| **Code Design** | Create or refine an implementable proposal without production code | `$engineering-flow:code-design` |
+| **Review** | Perform a strict read-only review of a diff, branch, or uncommitted work | `$engineering-flow:review` |
+| **Handoff** | Preserve the minimum task state required by another session | `$engineering-flow:handoff` |
 
 Claude Code uses the same names with `/engineering-flow:` instead of `$engineering-flow:`.
 
-## ⚙️ How it works
+## Task-level continuity
+
+An explicit invocation selects how the whole task is handled, not only the current message:
 
 ```text
-Session start (startup / resume / clear / compact)
-  └─► Inject the ~230-word Engineering Core — the always-on engineering and safety baseline
-
-Explicitly name a workflow
-  └─► Inject that workflow's complete SKILL.md for the turn, exactly once
-
-Every other prompt
-  └─► Zero injection; the native experience is preserved
+discover & clarify ──► final checkpoint ──► await approval ──► implement & verify ──► complete
+          ▲                                         │                              │
+          └────── added scope aligns increment ─────┘                              │
+                                 omitted acceptance resumes implementation ◄──────┘
 ```
 
-Both platforms share the same skills and hooks, and static tests keep the invocation metadata in agreement.
+- “Proceed with the plan above” may approve implementation after the final checkpoint; a reading acknowledgement or clarification answer cannot.
+- When a diagnosis is rejected, Diagnose remains read-only and tests a new hypothesis. Repair authorization does not require switching to Develop.
+- Explicit cancellation, workflow switching, or an unrelated task ends the old workflow and authority.
 
-## 🚀 Quick Start
+## Engineering judgment
+
+| Concern | Default decision |
+|---|---|
+| **Requirements** | Users decide product behavior; agents own reversible details discoverable from the repository |
+| **Code** | Reuse domain rules that should evolve together; do not abstract merely similar code |
+| **Tests** | Prefer red-green evidence for regressions and high-risk behavior; use direct validation for mechanical work |
+| **Safety** | Review is read-only; commits, releases, global configuration, and destructive actions require their own authority |
+| **Documentation** | Keep small checkpoints in the conversation; follow project conventions for substantial requirements, falling back to `docs/requirements/` |
+
+## Quick start
 
 ### Codex CLI
 
@@ -89,62 +86,47 @@ codex plugin marketplace add yyqqCoding/engineering-flow-skills
 codex plugin add engineering-flow@engineering-flow
 ```
 
-Start a new session in your project after installation:
-
-```bash
-cd /path/to/your-project
-codex
-```
-
 ### Claude Code
-
-Run inside Claude Code:
 
 ```text
 /plugin marketplace add yyqqCoding/engineering-flow-skills
 /plugin install engineering-flow@engineering-flow
 ```
 
-## 💬 Start Building
-
-For a clear small task, describe it directly:
-
-```text
-Add a status filter to the user list. Reuse the existing query parameters and component, add the smallest meaningful verification, and do not commit.
-```
-
-For a complete development lifecycle, explicitly choose an entry point:
+Start a new session after installation. Describe clear small tasks directly; explicitly invoke the full development workflow when needed:
 
 ```text
 $engineering-flow:develop
-Implement order batch export. Understand the existing design and ownership boundaries, clarify until implementation is safe, then present the checkpoint and pause. After I approve it, complete the implementation, focused tests, and necessary documentation updates. Do not commit.
+Implement order batch export. Inspect the existing design, ownership, and acceptance behavior first; present the final checkpoint after clarification and pause. Do not commit.
 ```
 
-After Develop finishes clarification, reply directly:
+After reading the checkpoint, reply:
 
 ```text
 Proceed with the plan above.
 ```
 
-Answers, approval, corrections, and omitted original acceptance items continue the same workflow without repeating the token.
+## Validation
 
-See the [user guide](docs/user-guide.md) for complete scenarios and examples.
+<picture>
+  <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="assets/readme/evidence-mobile-dark.svg">
+  <source media="(max-width: 640px) and (prefers-color-scheme: light)" srcset="assets/readme/evidence-mobile-light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/evidence-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/readme/evidence-light.svg">
+  <img alt="Engineering Flow validation: general behavior improved from 45/51 to 51/51, task continuity improved from 0/12 to 12/12, deterministic tests passed 49/49, and explicit routing passed 51/51" src="assets/readme/evidence-light.svg" width="100%">
+</picture>
 
-## 📚 Documentation
+[Evaluation method](docs/testing-strategy.md) · [Full benchmark record](docs/benchmark-log.md)
 
-- [User guide: complete usage, installation, updates, and troubleshooting](docs/user-guide.md)
-- [Product design](docs/product-design.md)
-- [Behavior specification](docs/behavior-spec.md)
-- [Trigger model](docs/trigger-model.md)
-- [Testing strategy](docs/testing-strategy.md)
-- [A/B benchmark log](docs/benchmark-log.md)
+## Documentation
 
-## 🤝 Credits
+| Use | Design | Evidence |
+|---|---|---|
+| [User guide](docs/user-guide.md) | [Product design](docs/product-design.md) | [Benchmark log](docs/benchmark-log.md) |
+| [Trigger model](docs/trigger-model.md) | [Behavior specification](docs/behavior-spec.md) | [Testing strategy](docs/testing-strategy.md) |
 
-Engineering Flow references and reorganizes selected ideas from:
+Engineering Flow focuses on Coding Agent workflows, context, multi-turn interaction, and reliability evaluation. It is not a general Agent runtime and does not take over issues, branches, commits, or releases.
 
-- [Superpowers](https://github.com/obra/superpowers)
-- [Matt Pocock Skills](https://github.com/mattpocock/skills)
-- [Ponytail](https://github.com/DietrichGebert/ponytail)
+## License
 
-See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution. The project is licensed under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution.

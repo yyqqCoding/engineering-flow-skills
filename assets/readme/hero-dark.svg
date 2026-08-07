@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title desc">
+  <title id="title">Engineering Flow</title>
+  <desc id="desc">A five-stage coding agent workflow from discovery and clarification through approval, implementation, and verification.</desc>
+  <rect width="1200" height="440" rx="8" fill="#0B0E11"/>
+  <path d="M0 1H1200" stroke="#2A3036"/>
+  <path d="M64 82H1136" stroke="#242A30"/>
+  <path d="M64 376H1136" stroke="#242A30"/>
+
+  <rect x="64" y="32" width="28" height="28" rx="4" fill="#F3F5F7"/>
+  <path d="M71 40H85V44H75V48H84V52H75V56H71V40Z" fill="#0B0E11"/>
+  <text x="108" y="53" fill="#F3F5F7" font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="18" font-weight="700" letter-spacing="0">ENGINEERING FLOW</text>
+
+  <rect x="934" y="34" width="90" height="24" rx="4" fill="#161B20" stroke="#343C44"/>
+  <text x="979" y="50" text-anchor="middle" fill="#B9C1C9" font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="11" font-weight="600" letter-spacing="0">CODEX CLI</text>
+  <rect x="1034" y="34" width="102" height="24" rx="4" fill="#161B20" stroke="#343C44"/>
+  <text x="1085" y="50" text-anchor="middle" fill="#B9C1C9" font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="11" font-weight="600" letter-spacing="0">CLAUDE CODE</text>
+
+  <text x="64" y="140" fill="#F4F6F8" font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="42" font-weight="720" letter-spacing="0">ALIGN. AUTHORIZE. BUILD. VERIFY.</text>
+  <text x="64" y="176" fill="#9AA4AE" font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="17" font-weight="400" letter-spacing="0">Task-level coding agent workflows, grounded in repository facts and finished with evidence.</text>
+
+  <path d="M124 270H1076" stroke="#343B43" stroke-width="2"/>
+  <path d="M270 270L280 264V276L270 270Z" fill="#59636D"/>
+  <path d="M490 270L500 264V276L490 270Z" fill="#59636D"/>
+  <path d="M710 270L720 264V276L710 270Z" fill="#59636D"/>
+  <path d="M930 270L940 264V276L930 270Z" fill="#59636D"/>
+
+  <g font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" letter-spacing="0">
+    <circle cx="124" cy="270" r="26" fill="#0B0E11" stroke="#5EA2F7" stroke-width="2"/>
+    <text x="124" y="275" text-anchor="middle" fill="#8DBCF8" font-size="13" font-weight="700">01</text>
+    <text x="124" y="321" text-anchor="middle" fill="#D5DADE" font-size="12" font-weight="650">DISCOVER</text>
+    <text x="124" y="342" text-anchor="middle" fill="#7F8993" font-size="11">repository truth</text>
+
+    <circle cx="344" cy="270" r="26" fill="#0B0E11" stroke="#39C792" stroke-width="2"/>
+    <text x="344" y="275" text-anchor="middle" fill="#71D8B2" font-size="13" font-weight="700">02</text>
+    <text x="344" y="321" text-anchor="middle" fill="#D5DADE" font-size="12" font-weight="650">CLARIFY</text>
+    <text x="344" y="342" text-anchor="middle" fill="#7F8993" font-size="11">material decisions</text>
+
+    <circle cx="564" cy="270" r="26" fill="#0B0E11" stroke="#E7B94D" stroke-width="2"/>
+    <text x="564" y="275" text-anchor="middle" fill="#F2CE77" font-size="13" font-weight="700">03</text>
+    <text x="564" y="321" text-anchor="middle" fill="#D5DADE" font-size="12" font-weight="650">APPROVE</text>
+    <text x="564" y="342" text-anchor="middle" fill="#7F8993" font-size="11">explicit checkpoint</text>
+
+    <circle cx="784" cy="270" r="26" fill="#0B0E11" stroke="#E57B69" stroke-width="2"/>
+    <text x="784" y="275" text-anchor="middle" fill="#F2A092" font-size="13" font-weight="700">04</text>
+    <text x="784" y="321" text-anchor="middle" fill="#D5DADE" font-size="12" font-weight="650">IMPLEMENT</text>
+    <text x="784" y="342" text-anchor="middle" fill="#7F8993" font-size="11">minimal clear change</text>
+
+    <circle cx="1004" cy="270" r="26" fill="#0B0E11" stroke="#A88CF0" stroke-width="2"/>
+    <text x="1004" y="275" text-anchor="middle" fill="#C0ACF7" font-size="13" font-weight="700">05</text>
+    <text x="1004" y="321" text-anchor="middle" fill="#D5DADE" font-size="12" font-weight="650">VERIFY</text>
+    <text x="1004" y="342" text-anchor="middle" fill="#7F8993" font-size="11">fresh evidence</text>
+  </g>
+
+  <circle cx="70" cy="406" r="3" fill="#39C792"/>
+  <text x="82" y="410" fill="#9AA4AE" font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="11" font-weight="600" letter-spacing="0">TASK-LEVEL CONTINUITY</text>
+  <text x="1136" y="410" text-anchor="end" fill="#68727C" font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="11" font-weight="600" letter-spacing="0">EVIDENCE-DRIVEN BY DESIGN</text>
+</svg>

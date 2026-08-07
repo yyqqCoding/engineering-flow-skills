@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="600" viewBox="0 0 480 600" role="img" aria-labelledby="title desc">
+  <title id="title">Engineering Flow validation results</title>
+  <desc id="desc">General behavior improved from 45 of 51 to 51 of 51. Task continuity improved from 0 of 12 to 12 of 12. Deterministic tests passed 49 of 49 and explicit routing passed 51 of 51.</desc>
+  <rect width="480" height="600" rx="8" fill="#0B0E11"/>
+  <path d="M32 212H448M32 408H448" stroke="#293038"/>
+  <g font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" letter-spacing="0">
+    <text x="32" y="45" fill="#89949E" font-size="12" font-weight="700">GENERAL BEHAVIOR</text>
+    <text x="32" y="90" fill="#F3F5F7" font-size="30" font-weight="720">45/51</text>
+    <text x="150" y="90" fill="#69747E" font-size="19">→</text>
+    <text x="190" y="90" fill="#71D8B2" font-size="30" font-weight="720">51/51</text>
+    <rect x="32" y="116" width="384" height="10" rx="4" fill="#293038"/>
+    <rect x="32" y="116" width="339" height="10" rx="4" fill="#69747E"/>
+    <rect x="32" y="142" width="384" height="10" rx="4" fill="#293038"/>
+    <rect x="32" y="142" width="384" height="10" rx="4" fill="#39C792"/>
+    <text x="32" y="184" fill="#89949E" font-size="13">17 isolated development scenarios</text>
+
+    <text x="32" y="253" fill="#89949E" font-size="12" font-weight="700">TASK CONTINUITY</text>
+    <text x="32" y="298" fill="#F3F5F7" font-size="30" font-weight="720">0/12</text>
+    <text x="126" y="298" fill="#69747E" font-size="19">→</text>
+    <text x="166" y="298" fill="#8DBCF8" font-size="30" font-weight="720">12/12</text>
+    <rect x="32" y="324" width="384" height="10" rx="4" fill="#293038"/>
+    <rect x="32" y="350" width="384" height="10" rx="4" fill="#5EA2F7"/>
+    <text x="32" y="392" fill="#89949E" font-size="13">4 multi-turn workflows · 3 runs each</text>
+
+    <text x="32" y="449" fill="#89949E" font-size="12" font-weight="700">DETERMINISTIC GATES</text>
+    <circle cx="50" cy="494" r="18" fill="#15382D"/>
+    <path d="M41 494L47 500L59 487" fill="none" stroke="#71D8B2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="82" y="502" fill="#F3F5F7" font-size="27" font-weight="720">49/49</text>
+    <text x="206" y="499" fill="#89949E" font-size="13">repository tests</text>
+    <circle cx="50" cy="554" r="18" fill="#162B43"/>
+    <path d="M41 554L47 560L59 547" fill="none" stroke="#8DBCF8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="82" y="562" fill="#F3F5F7" font-size="27" font-weight="720">51/51</text>
+    <text x="206" y="559" fill="#89949E" font-size="13">explicit routing</text>
+  </g>
+</svg>
