@@ -259,3 +259,110 @@ test('requirement lifecycle scorer accepts one optional CSV record terminator', 
   assert.equal(csvMatches(expected.replaceAll('\n', '\r\n') + '\r\n', expected), true);
   assert.equal(csvMatches(`${expected}\n\n`, expected), false);
 });
+
+test('handoff scorer accepts a compact evidence-backed response without workspace changes', () => {
+  const temporaryRoot = fs.mkdtempSync(path.join(
+    require('node:os').tmpdir(),
+    'engineering-flow-handoff-scorer-',
+  ));
+  const workspace = path.join(temporaryRoot, 'workspace');
+
+  try {
+    fs.cpSync(path.join(ROOT, benchmarks['handoff-continuation'].fixture), workspace, { recursive: true });
+    assert.equal(run('git', ['init', '-b', 'main'], workspace).status, 0);
+    assert.equal(run('git', ['config', 'user.email', 'test@example.invalid'], workspace).status, 0);
+    assert.equal(run('git', ['config', 'user.name', 'Test'], workspace).status, 0);
+    assert.equal(run('git', ['add', '.'], workspace).status, 0);
+    assert.equal(run('git', ['commit', '-m', 'fixture baseline'], workspace).status, 0);
+
+    require('../fixtures/handoff-continuation/setup')(workspace);
+    const head = run('git', ['rev-parse', '--short', 'HEAD'], workspace).stdout.trim();
+    const finalMessage = [
+      '# Objective and accepted behavior',
+      'Complete buildNotificationDigest minimum-severity filtering for low, medium, or high. Preserve input order and reject unsupported values with TypeError.',
+      '# Current implementation state',
+      'Implementation is partial: src/notification-digest.js filters by the threshold, and notification-digest.test.js covers high filtering without reordering.',
+      '# Key files and authoritative documents',
+      'The accepted requirement is docs/requirements/notification-digest-severity.md; the rationale is docs/decisions/001-preserve-digest-order.md. The implementation and test files above are the active diff.',
+      '# Decisions and reasons',
+      'Decision 001 preserves timeline order; numeric ranks are for filtering only, never sorting.',
+      '# Commands and latest results',
+      `git diff --check passed. The latest commit is ${head} fixture baseline. npm test passed with exit code \`0\` and no failures.`,
+      '# Remaining work in dependency order',
+      '1. First validate the minimum-severity threshold and all event severities before filtering. 2. Then add rejection tests and coverage for both unsupported cases. 3. Run npm test again.',
+      '# Risks, blockers, and unverified areas',
+      'Risk: invalid severity currently produces an empty or incomplete digest. Unsupported severity rejection is unverified. Blockers: none.',
+      '# Version-control state and unrelated work',
+      'Version-control state: unstaged modifications affect src/notification-digest.js, notification-digest.test.js, and unrelated notes/team-notes.md. Preserve that unrelated edit. The latest commit remains fixture baseline.',
+    ].join('\n\n');
+    const scorer = require('./scorers/handoff');
+    const context = {
+      finalMessage,
+      turns: [{
+        finalMessage,
+        diff: run('git', ['diff', '--', '.'], workspace).stdout,
+        workspaceState: { unauthorizedCommit: false },
+      }],
+    };
+    const score = scorer(workspace, context);
+
+    assert.equal(score.passed, true);
+    assert.ok(Object.values(score.checks).every((value) => typeof value === 'boolean'));
+
+    const countStyleResult = scorer(workspace, {
+      ...context,
+      finalMessage: finalMessage.replace(
+        'npm test passed with exit code `0` and no failures.',
+        'npm test — passed: 2 tests, 0 failures.',
+      ),
+    });
+    assert.equal(countStyleResult.checks.includesCommandsAndLatestResults, true);
+
+    const semanticThresholdResult = scorer(workspace, {
+      ...context,
+      finalMessage: finalMessage
+        .replace(
+          'Complete buildNotificationDigest minimum-severity filtering for low, medium, or high.',
+          'Complete buildNotificationDigest severity filtering for low, medium, or high; an omitted threshold defaults to low.',
+        )
+        .replace('minimum-severity threshold', 'severity threshold'),
+    });
+    assert.equal(semanticThresholdResult.checks.includesObjectiveAndAcceptedBehavior, true);
+
+    const passingCountResult = scorer(workspace, {
+      ...context,
+      finalMessage: finalMessage.replace(
+        'npm test passed with exit code `0` and no failures.',
+        'npm test — passed, 2 tests.',
+      ),
+    });
+    assert.equal(passingCountResult.checks.includesCommandsAndLatestResults, true);
+
+    const failedTestResult = scorer(workspace, {
+      ...context,
+      finalMessage: finalMessage.replace(
+        'npm test passed with exit code `0` and no failures.',
+        'npm test — failed, 1 test failed with exit code `1`.',
+      ),
+    });
+    assert.equal(failedTestResult.checks.includesCommandsAndLatestResults, false);
+
+    const requirement = fs.readFileSync(
+      path.join(workspace, 'docs', 'requirements', 'notification-digest-severity.md'),
+      'utf8',
+    );
+    const copiedDocument = scorer(workspace, {
+      ...context,
+      finalMessage: `${finalMessage}\n\n${requirement}`,
+    });
+    assert.equal(copiedDocument.passed, false);
+    assert.equal(copiedDocument.checks.referencesExistingEvidenceCompactly, false);
+
+    fs.writeFileSync(path.join(workspace, 'handoff.md'), 'Do not create this file.\n');
+    const repositoryFileCreated = scorer(workspace, context);
+    assert.equal(repositoryFileCreated.passed, false);
+    assert.equal(repositoryFileCreated.checks.returnsHandoffWithoutCreatingRepositoryFile, false);
+  } finally {
+    fs.rmSync(temporaryRoot, { recursive: true, force: true });
+  }
+});

@@ -212,5 +212,15 @@
       "expected": ["diagnose"],
       "allowed": ["diagnose"]
     }
+  },
+  "handoff-continuation": {
+    "fixture": "fixtures/handoff-continuation",
+    "setup": "fixtures/handoff-continuation/setup.js",
+    "prompt": "$engineering-flow:handoff Prepare a continuation record for the current in-progress notification digest severity work. No output path is provided, so return the handoff in your response. Gather current facts from the accepted requirement, decision record, latest commit, git status and diff, and run the relevant test command for fresh output. Include dependency-ordered remaining work, risks, blockers, and unverified areas, plus the unrelated edit that must be preserved. Do not create, edit, delete, revert, stage, or commit any file; leave the worktree byte-for-byte unchanged.",
+    "scorer": "tests/scorers/handoff.js",
+    "invocation": {
+      "expected": ["handoff"],
+      "allowed": ["handoff"]
+    }
   }
 }

@@ -18,6 +18,8 @@ Capture the minimum durable state another session needs to continue safely.
 
 ## Produce the handoff
 
+Before returning, verify that all eight items below are explicit. State `None` for an empty category rather than omitting it, especially blockers, unresolved decisions, and unrelated changes.
+
 Include:
 
 - Objective and accepted behavior
@@ -29,6 +31,6 @@ Include:
 - Known risks, blockers, and unverified areas
 - Version-control state and unrelated changes to preserve
 
-Reference existing documents, commits, diffs, and test output instead of copying their full contents.
+References support the handoff facts; they do not replace them. Briefly summarize each existing decision and its reason even when linking the source, and reference existing documents, commits, diffs, and test output instead of copying their full contents.
 
 Write to the requested path when one is provided. Otherwise return the handoff in the response without creating a repository file silently.
