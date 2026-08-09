@@ -1,6 +1,6 @@
 {
   "name": "engineering-flow-skills",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Development workflow skills for Codex CLI and Claude Code",
   "license": "MIT",
