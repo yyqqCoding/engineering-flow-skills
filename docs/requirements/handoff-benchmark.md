@@ -167,6 +167,24 @@ Remove the two manually confirmed handoff scorer false negatives without weakeni
 - Average duration was `106158.66666666667` ms (median `112060`). Average input/cached/output/reasoning tokens were `94814.33333333333` / `73216` / `3928.3333333333335` / `1623.3333333333333`.
 - `npm run benchmark:summary` completed successfully and kept the scorer-calibrated fingerprint separate from all earlier cohorts.
 
+## Final paired release evidence
+
+### Goal
+
+Close the release-evidence gap identified after 1.0.1 publication: the scorer-calibrated `3/3` candidate cohort had no baseline under the same benchmark fingerprint, and the manifest version bump changed the released candidate plugin fingerprint.
+
+### Verification evidence
+
+- `npm test` passed 50 deterministic/static tests before the paired run. This result verifies the harness and repository invariants; it is not counted as model behavior evidence.
+- All paired samples used benchmark fingerprint `610789f879f0`, provider `ABtest`, model `gpt-5.6-luna`, high reasoning, timeout `240000`, and concurrency 1.
+- Current-release control cohort: `handoff-continuation:baseline:610789f879f0-2b58049fc03e`, using the installed 1.0.0 plugin. It had 3 discovered, clean, completed samples and scored 0/3.
+- Published 1.0.1 candidate cohort: `handoff-continuation:candidate:610789f879f0-eceaf3d7d5b1`. It had 3 discovered, clean, completed samples and scored 3/3.
+- All six samples passed invocation and fixture public tests, had zero model file changes, preserved the prepared feature and unrelated edits, and made no unauthorized commit. No sample was contaminated, incomplete, or excluded.
+- Manual review confirmed that every baseline failure was substantive: each response linked the decision record but omitted the decision reason that numeric ranks are only for inclusion comparison and sorting is prohibited because the digest represents an incident timeline. Every candidate response stated that decision and reason, explicit empty blocker/unresolved-decision state, and a concrete passing test result.
+- Baseline averages were `83855.66666666667` ms, `11.666666666666666` tool calls, and `75718` input tokens. Candidate averages were `79968` ms, `11` tool calls, and `77736.33333333333` input tokens.
+- `npm run benchmark:summary` completed successfully. The 0/3 versus 3/3 comparison uses only the final matching benchmark and environment fingerprints and does not combine any earlier scorer or plugin cohort.
+- This is bounded evidence for the tested no-output-path handoff scenario under this provider/model/reasoning configuration, not a blanket cross-model or cross-scenario reliability claim.
+
 ## Open questions
 
 None. The user supplied the material behavior, safety constraint, harness contract, verification threshold, and run protocol. Fixture domain names and exact regex implementation are reversible repository-local choices.

@@ -390,3 +390,26 @@ Final candidate environment and fingerprints:
 All 24 counted runs completed without contamination or unauthorized commits and passed invocation plus public-test checks. Candidate averages were 155 seconds, 11.42 tool calls, 410,893 input tokens, and 10,461 output tokens. Control averages were 165 seconds, 16.00 tool calls, 466,950 input tokens, and 12,907 output tokens. Three concurrent candidate question-batching attempts and their automatic retries failed at the provider before yielding usable completed runs; they were excluded under the existing infrastructure policy. Re-running those gaps at concurrency one produced three complete samples without retry.
 
 This is a complete paired A/B comparison for the final benchmark and plugin fingerprints. It supports the bounded convergence revision without combining results from older scorer, plugin, provider, model, or reasoning cohorts. Future prompt changes still require a newly demonstrated behavior failure rather than attempts to preserve a nominal 12/12 score.
+
+## 2026-08-09 — Handoff final-fingerprint paired cohort
+
+An evidence audit found that the scorer-calibrated handoff candidate cohort had no current-release control under the same benchmark fingerprint. Publication of 1.0.1 also changed the candidate plugin fingerprint through the synchronized manifest versions. The handoff scenario was therefore rerun as a fresh paired 3x3 cohort rather than combining the earlier results.
+
+Final environment and fingerprints:
+
+- Provider `ABtest`, model `gpt-5.6-luna`, high reasoning, timeout 240 seconds, concurrency 1
+- `handoff-continuation` benchmark `610789f879f0`
+- Installed 1.0.0 control plugin `2b58049fc03e`
+- Published 1.0.1 candidate plugin `eceaf3d7d5b1`
+
+| Scenario | Control | Candidate |
+|---|---:|---:|
+| handoff-continuation | 0/3 | 3/3 |
+
+All six samples were completed and uncontaminated. Invocation and fixture public tests passed in every sample; no model file change or unauthorized commit occurred. There were no incomplete or excluded attempts in this paired run.
+
+Manual review confirmed that the three control failures were substantive rather than scorer errors. Each control response linked the decision record but omitted the required reason: numeric ranks are only for inclusion comparison, and results must not be sorted because the digest represents an incident timeline. All three candidate responses explicitly stated that decision and reason, included empty blocker and unresolved-decision states, and reported a concrete passing `npm test` result.
+
+Control averages were 84 seconds, 11.67 tool calls, 75,718 input tokens, and 3,615 output tokens. Candidate averages were 80 seconds, 11.00 tool calls, 77,736 input tokens, and 3,428 output tokens.
+
+This complete paired comparison supports the bounded handoff completeness revision for the tested no-output-path scenario under this exact provider, model, and reasoning configuration. It does not combine older scorer or plugin fingerprints and does not establish a blanket cross-model or cross-scenario reliability claim. The separate 50/50 `npm test` result is deterministic harness evidence, not behavioral sample count.
