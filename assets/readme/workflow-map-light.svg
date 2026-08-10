@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="460" viewBox="0 0 1200 460" role="img" aria-labelledby="title desc" font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
+  <title id="title">How the five workflows connect</title>
+  <desc id="desc">Code Design feeds an accepted proposal into Develop, and Develop can hand a task back when a deeper design is needed. Develop passes a finished change to Review, and Review returns findings to Develop. Diagnose enters Develop only when product behavior is undefined. Handoff can be reached whenever a session ends. Develop and Diagnose both contain a human approval gate.</desc>
+
+  <rect x="0.5" y="0.5" width="1199" height="459" rx="10" fill="#fbfcfb" stroke="#dce2de"/>
+
+  <text x="48" y="46" fill="#087b32" font-size="12" font-weight="700" letter-spacing="0.11em">HOW THE FIVE WORKFLOWS CONNECT</text>
+  <g>
+    <path d="M902 42h28" stroke="#bdc8c0" stroke-width="2" stroke-linecap="round"/>
+    <text x="938" y="46" fill="#58635d" font-size="12">Normal progression</text>
+    <path d="M1064 42h28" stroke="#bdc8c0" stroke-width="2" stroke-linecap="round" stroke-dasharray="6 5"/>
+    <text x="1100" y="46" fill="#58635d" font-size="12">Conditional</text>
+  </g>
+
+  <g fill="none" stroke="#bdc8c0" stroke-width="2" stroke-linecap="round">
+    <path d="M232 288H491"/>
+    <path d="M624 300H833"/>
+    <g stroke-dasharray="7 6">
+      <path d="M499 312H240"/>
+      <path d="M849 331C820 400 660 415 612 350"/>
+      <path d="M221 161C320 225 415 240 508 254"/>
+      <path d="M604 256C710 205 870 168 972 158"/>
+    </g>
+  </g>
+  <g fill="#bdc8c0">
+    <path d="M499 288l-10-5.5v11z"/>
+    <path d="M841 300l-10-5.5v11z"/>
+    <path d="M232 312l10 5.5v-11z"/>
+    <path d="M605 344l-1.6-11.4 9.7 6.1z"/>
+    <path d="M516 256l-10.4-4.6 1 10.9z"/>
+    <path d="M980 156l-9.7-5.9-1.1 10.9z"/>
+  </g>
+
+  <g font-size="13" fill="#58635d" text-anchor="middle">
+    <text x="365" y="274">Design accepted</text>
+    <text x="365" y="338">Needs deeper design</text>
+    <text x="728" y="286">Change ready</text>
+    <text x="736" y="438">Findings return to Develop</text>
+    <text x="372" y="212">Behavior undefined</text>
+    <text x="790" y="166">Session ends</text>
+  </g>
+
+  <g>
+    <circle cx="190" cy="130" r="44" fill="#fff3e8" stroke="#df6c13" stroke-width="2"/>
+    <g transform="translate(169 109) scale(1.3125)" fill="none" stroke="#df6c13" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 22h4.2l2.6-8.5 3.4 13 2.6-6H21"/>
+      <circle cx="23" cy="10.5" r="5.5"/>
+      <path d="m27 14.5 3 3.2"/>
+    </g>
+    <g transform="translate(221 99)">
+      <circle r="13" fill="#df6c13" stroke="#fbfcfb" stroke-width="2.5"/>
+      <g fill="none" stroke="#FEFEFE" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M-3.6-1.4V-3A2.5 2.5 0 0 1 1.4-3V-1.4M-5-1.4h7.8v6H-5V-1.4Z"/>
+      </g>
+    </g>
+    <text x="190" y="204" text-anchor="middle" fill="#101512" font-size="17" font-weight="700">Diagnose</text>
+  </g>
+
+  <g>
+    <circle cx="1010" cy="130" r="42" fill="#f6f8f6" stroke="#bdc8c0" stroke-width="2"/>
+    <g transform="translate(989 109) scale(1.3125)" fill="none" stroke="#58635d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 16h14" stroke-dasharray="3 3"/>
+      <rect x="11" y="12.5" width="7" height="7" rx="2" fill="#f6f8f6"/>
+      <circle cx="4.5" cy="16" r="3"/>
+      <circle cx="27.5" cy="16" r="3"/>
+    </g>
+    <text x="1010" y="202" text-anchor="middle" fill="#101512" font-size="17" font-weight="700">Handoff</text>
+  </g>
+
+  <g>
+    <circle cx="190" cy="300" r="44" fill="#f2edfc" stroke="#7142c7" stroke-width="2"/>
+    <g transform="translate(169 279) scale(1.3125)" fill="none" stroke="#7142c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 15.2c6.5 0 8.5-8 15-8" stroke-dasharray="3 3" opacity="0.5"/>
+      <path d="M8 16.8c6.5 0 8.5 8 15 8" stroke-dasharray="3 3" opacity="0.5"/>
+      <path d="M8 16h15"/>
+      <circle cx="4.5" cy="16" r="2.6" fill="#7142c7"/>
+      <circle cx="25.8" cy="16" r="3.2" fill="#7142c7"/>
+    </g>
+    <text x="190" y="374" text-anchor="middle" fill="#101512" font-size="17" font-weight="700">Code Design</text>
+  </g>
+
+  <g>
+    <circle cx="560" cy="300" r="62" fill="#e9f7ee" stroke="#087b32" stroke-width="2.6"/>
+    <g transform="translate(533 273) scale(1.6875)" fill="none" stroke="#087b32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2.5 16h6"/>
+      <path d="M23.5 16h6"/>
+      <circle cx="16" cy="16" r="7"/>
+      <path d="m12.8 16.2 2.2 2.2 4.2-4.8"/>
+    </g>
+    <g transform="translate(604 256)">
+      <circle r="14" fill="#df6c13" stroke="#fbfcfb" stroke-width="2.5"/>
+      <g fill="none" stroke="#FEFEFE" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M-3.9-1.5V-3.2A2.7 2.7 0 0 1 1.5-3.2V-1.5M-5.4-1.5h8.4v6.4h-8.4V-1.5Z"/>
+      </g>
+    </g>
+    <text x="560" y="390" text-anchor="middle" fill="#101512" font-size="19" font-weight="750">Develop</text>
+  </g>
+
+  <g>
+    <circle cx="880" cy="300" r="44" fill="#edf4ff" stroke="#2467ce" stroke-width="2"/>
+    <g transform="translate(859 279) scale(1.3125)" fill="none" stroke="#2467ce" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 3.6h11l7 7v18H7z"/>
+      <path d="M18 3.6v7.4h7"/>
+      <path d="M11.5 17.5h9" opacity="0.6"/>
+      <path d="M11.5 22.5h6" opacity="0.6"/>
+      <rect x="9.5" y="13" width="13" height="2" rx="1" fill="#2467ce" stroke="none"/>
+    </g>
+    <text x="880" y="374" text-anchor="middle" fill="#101512" font-size="17" font-weight="700">Review</text>
+  </g>
+
+  <g transform="translate(48 430)">
+    <circle r="13" fill="#df6c13"/>
+    <g fill="none" stroke="#FEFEFE" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-3.6-1.4V-3A2.5 2.5 0 0 1 1.4-3V-1.4M-5-1.4h7.8v6H-5V-1.4Z"/>
+    </g>
+    <text x="24" y="5" fill="#58635d" font-size="13">Contains a human approval gate: nothing is written until you authorize it</text>
+  </g>
+</svg>

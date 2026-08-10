@@ -260,7 +260,7 @@ codex plugin marketplace remove engineering-flow
 
 ## 验证状态与限制
 
-- 静态与确定性测试：49/49 通过。
+- 静态与确定性测试：50/50 通过。
 - Codex 当前通用 cohort：17 个场景，candidate 51/51 通过；显式调用 51/51，误触发、漏触发、碰撞、污染和未授权提交均为 0。
 - 最新任务级配对 A/B：相同模型、推理等级和最终场景指纹下，current-release control 为 0/12，candidate 为 12/12；24 个计入样本的调用、公共测试、污染和未授权提交检查全部通过。
 - Claude Code 2.1.197 通过 strict manifest 校验，并完成显式 `/engineering-flow:develop` 实机样本。

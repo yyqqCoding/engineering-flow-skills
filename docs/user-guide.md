@@ -261,7 +261,7 @@ codex plugin marketplace remove engineering-flow
 
 ## Validation and limitations
 
-- Static and deterministic tests: 49/49 passed.
+- Static and deterministic tests: 50/50 passed.
 - Current general Codex cohort: 17 scenarios, candidate 51/51; explicit invocation 51/51, with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
 - Latest task-level paired A/B: under matching model, reasoning, and final scenario fingerprints, the current-release control passed 0/12 and the candidate passed 12/12; all 24 counted runs passed invocation, public-test, contamination, and unauthorized-commit guards.
 - Claude Code 2.1.197 passed strict manifest validation and an explicit `/engineering-flow:develop` live sample.

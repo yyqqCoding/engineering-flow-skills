@@ -1,35 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="600" viewBox="0 0 480 600" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="620" viewBox="0 0 480 620" role="img" aria-labelledby="title desc" font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif">
   <title id="title">Engineering Flow validation results</title>
-  <desc id="desc">General behavior improved from 45 of 51 to 51 of 51. Task continuity improved from 0 of 12 to 12 of 12. Deterministic tests passed 49 of 49 and explicit routing passed 51 of 51.</desc>
-  <rect width="480" height="600" rx="8" fill="#F6F8FA"/>
-  <path d="M32 212H448M32 408H448" stroke="#DCE2E7"/>
-  <g font-family="Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" letter-spacing="0">
-    <text x="32" y="45" fill="#697580" font-size="12" font-weight="700">GENERAL BEHAVIOR</text>
-    <text x="32" y="90" fill="#12161B" font-size="30" font-weight="720">45/51</text>
-    <text x="150" y="90" fill="#8A959E" font-size="19">→</text>
-    <text x="190" y="90" fill="#16865B" font-size="30" font-weight="720">51/51</text>
-    <rect x="32" y="116" width="384" height="10" rx="4" fill="#D8DEE4"/>
-    <rect x="32" y="116" width="339" height="10" rx="4" fill="#8A959E"/>
-    <rect x="32" y="142" width="384" height="10" rx="4" fill="#D8DEE4"/>
-    <rect x="32" y="142" width="384" height="10" rx="4" fill="#209B70"/>
-    <text x="32" y="184" fill="#697580" font-size="13">17 isolated development scenarios</text>
+  <desc id="desc">Matched-pair runs under one identical configuration. Everyday engineering behavior improved from 45 of 51 to 51 of 51. Multi-turn task continuity improved from 0 of 12 to 12 of 12. Deterministic project tests passed 50 of 50, and explicit workflow routing was exact at 51 of 51.</desc>
 
-    <text x="32" y="253" fill="#697580" font-size="12" font-weight="700">TASK CONTINUITY</text>
-    <text x="32" y="298" fill="#12161B" font-size="30" font-weight="720">0/12</text>
-    <text x="126" y="298" fill="#8A959E" font-size="19">→</text>
-    <text x="166" y="298" fill="#377FC8" font-size="30" font-weight="720">12/12</text>
-    <rect x="32" y="324" width="384" height="10" rx="4" fill="#D8DEE4"/>
-    <rect x="32" y="350" width="384" height="10" rx="4" fill="#377FC8"/>
-    <text x="32" y="392" fill="#697580" font-size="13">4 multi-turn workflows · 3 runs each</text>
+  <rect x="0.5" y="0.5" width="479" height="619" rx="10" fill="#fbfcfb" stroke="#dce2de"/>
+  <path d="M32 236H448M32 452H448" stroke="#dce2de"/>
 
-    <text x="32" y="449" fill="#697580" font-size="12" font-weight="700">DETERMINISTIC GATES</text>
-    <circle cx="50" cy="494" r="18" fill="#E1F2EB"/>
-    <path d="M41 494L47 500L59 487" fill="none" stroke="#16865B" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="82" y="502" fill="#12161B" font-size="27" font-weight="720">49/49</text>
-    <text x="206" y="499" fill="#697580" font-size="13">repository tests</text>
-    <circle cx="50" cy="554" r="18" fill="#E7EFF9"/>
-    <path d="M41 554L47 560L59 547" fill="none" stroke="#377FC8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-    <text x="82" y="562" fill="#12161B" font-size="27" font-weight="720">51/51</text>
-    <text x="206" y="559" fill="#697580" font-size="13">explicit routing</text>
-  </g>
+  <text x="32" y="56" fill="#087b32" font-size="11" font-weight="700" letter-spacing="0.1em">EVERYDAY BEHAVIOR</text>
+  <text x="32" y="100" fill="#58635d" font-size="28" font-weight="720">45/51</text>
+  <text x="130" y="99" fill="#bdc8c0" font-size="19">&#8594;</text>
+  <text x="164" y="100" fill="#087b32" font-size="28" font-weight="720">51/51</text>
+  <text x="32" y="132" fill="#58635d" font-size="10" font-weight="650">WITHOUT WORKFLOWS</text>
+  <rect x="32" y="140" width="416" height="11" rx="5.5" fill="#dce2de"/>
+  <rect x="32" y="140" width="367" height="11" rx="5.5" fill="#bdc8c0"/>
+  <text x="32" y="174" fill="#087b32" font-size="10" font-weight="650">WITH WORKFLOWS</text>
+  <rect x="32" y="182" width="416" height="11" rx="5.5" fill="#dce2de"/>
+  <rect x="32" y="182" width="416" height="11" rx="5.5" fill="#087b32"/>
+  <text x="32" y="216" fill="#58635d" font-size="12">17 engineering scenarios &#183; 3 runs each</text>
+
+  <text x="32" y="276" fill="#2467ce" font-size="11" font-weight="700" letter-spacing="0.1em">MULTI-TURN CONTINUITY</text>
+  <text x="32" y="320" fill="#58635d" font-size="28" font-weight="720">0/12</text>
+  <text x="112" y="319" fill="#bdc8c0" font-size="19">&#8594;</text>
+  <text x="146" y="320" fill="#2467ce" font-size="28" font-weight="720">12/12</text>
+  <text x="32" y="352" fill="#58635d" font-size="10" font-weight="650">WITHOUT WORKFLOWS</text>
+  <rect x="32" y="360" width="416" height="11" rx="5.5" fill="#dce2de"/>
+  <text x="32" y="394" fill="#2467ce" font-size="10" font-weight="650">WITH WORKFLOWS</text>
+  <rect x="32" y="402" width="416" height="11" rx="5.5" fill="#dce2de"/>
+  <rect x="32" y="402" width="416" height="11" rx="5.5" fill="#2467ce"/>
+  <text x="32" y="436" fill="#58635d" font-size="12">4 multi-turn tasks &#183; 3 runs each</text>
+
+  <text x="32" y="492" fill="#58635d" font-size="11" font-weight="700" letter-spacing="0.1em">DETERMINISTIC GATES</text>
+  <circle cx="50" cy="530" r="16" fill="#e9f7ee"/>
+  <path d="M42 530l5 5 11-11" fill="none" stroke="#087b32" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="78" y="538" fill="#101512" font-size="22" font-weight="720">50/50</text>
+  <text x="176" y="538" fill="#58635d" font-size="12">Static, hook, fixture, scorer tests</text>
+  <circle cx="50" cy="576" r="16" fill="#edf4ff"/>
+  <path d="M42 576l5 5 11-11" fill="none" stroke="#2467ce" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="78" y="584" fill="#101512" font-size="22" font-weight="720">51/51</text>
+  <text x="176" y="584" fill="#58635d" font-size="12">Named workflow loaded, 0 unasked</text>
 </svg>
