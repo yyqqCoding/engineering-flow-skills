@@ -7,6 +7,10 @@ const {
   assessInvocation,
   parseJsonl,
 } = require('./lib/benchmark-utils');
+const {
+  filterReportsByManifest,
+  loadEvidenceManifest,
+} = require('./lib/evidence-manifest');
 
 const ROOT = path.resolve(__dirname, '..');
 const RESULT_DIR = path.join(ROOT, 'benchmark-results');
@@ -117,6 +121,7 @@ function loadReports(filterName) {
     const report = JSON.parse(fs.readFileSync(path.join(RESULT_DIR, filename), 'utf8'));
     if (!report.benchmark || !report.arm) continue;
     if (filterName && report.benchmark !== filterName) continue;
+    report.reportFile = filename;
     reports.push(report);
   }
 
@@ -127,7 +132,11 @@ function summarize(reports) {
   const grouped = {};
   for (const report of reports) {
     const cohort = report.cohort || 'legacy';
-    const key = `${report.benchmark}:${report.arm}:${cohort}`;
+    const provider = report.modelRun?.modelProvider || 'unknown-provider';
+    const model = report.modelRun?.model || 'unknown-model';
+    const reasoning = report.modelRun?.reasoningEffort || 'unknown-reasoning';
+    const key = `${report.benchmark}:${report.arm}:${cohort}`
+      + `:provider=${provider}:model=${model}:reasoning=${reasoning}`;
     (grouped[key] ||= []).push(report);
   }
 
@@ -138,16 +147,49 @@ function summarize(reports) {
   );
 }
 
+function parseArguments(args) {
+  let filterName = null;
+  let manifestPath = null;
+  for (let index = 0; index < args.length; index += 1) {
+    const value = args[index];
+    if (value === '--manifest') {
+      manifestPath = args[index + 1];
+      if (!manifestPath) throw new Error('--manifest requires a path');
+      index += 1;
+    } else if (value.startsWith('-')) {
+      throw new Error(`Unknown option: ${value}`);
+    } else if (filterName) {
+      throw new Error(`Unexpected argument: ${value}`);
+    } else {
+      filterName = value;
+    }
+  }
+  return { filterName, manifestPath };
+}
+
 if (require.main === module) {
-  const filterName = process.argv[2];
+  let options;
+  try {
+    options = parseArguments(process.argv.slice(2));
+  } catch (error) {
+    process.stderr.write(`${error.message}\n`);
+    process.exit(2);
+  }
+  const { filterName, manifestPath } = options;
   if (filterName && !benchmarks[filterName]) {
     process.stderr.write(`Unknown benchmark: ${filterName}\n`);
     process.exit(2);
   }
-  process.stdout.write(`${JSON.stringify(summarize(loadReports(filterName)), null, 2)}\n`);
+  let reports = loadReports(filterName);
+  if (manifestPath) {
+    const resolvedManifest = path.resolve(ROOT, manifestPath);
+    reports = filterReportsByManifest(reports, loadEvidenceManifest(resolvedManifest));
+  }
+  process.stdout.write(`${JSON.stringify(summarize(reports), null, 2)}\n`);
 }
 
 module.exports = {
+  parseArguments,
   summarize,
   summarizeGroup,
 };

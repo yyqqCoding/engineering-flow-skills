@@ -2,6 +2,30 @@
 
 All notable changes to Engineering Flow are documented here.
 
+## 1.0.2 - 2026-08-20
+
+Expands behavioral coverage and hardens release evidence without adding another workflow or growing the always-on Core.
+
+### Added
+
+- Machine-readable behavior, risk, workflow, transition, stack, language, and holdout coverage for every benchmark, with a deterministic coverage report.
+- Focused scenarios for mixed approval plus scope expansion, durable fresh-context recovery, durable completion-evidence holdout, workflow termination, explicit workflow overlap, unreproduced diagnosis, cross-language verification, fact/solution alignment, justified novelty, and debug-artifact cleanup.
+- Fixture-specific verification commands, a standard-library Python fixture, GitHub Actions CI, a release evidence manifest, and a separate direct durable-repair evidence manifest for exact cohort selection.
+- A final same-environment paired release cohort with three completed samples per arm across ten v1.0.2 scenarios.
+
+### Changed
+
+- Develop pauses the whole turn when approval of an earlier checkpoint is bundled with a material scope increment, then waits for approval of the revised checkpoint.
+- Portable requirement records carry a pending completion-evidence gate; completion replaces it with exact implementation paths, test paths, verification results, and deviations while removing stale checkpoint-time future language.
+- Benchmark summaries keep provider, model, and reasoning levels separate and can filter reports through an exact evidence manifest.
+- Plugin fingerprints include only released manifests, the skill registry, hooks, and skills, so ignored editor metadata cannot split cohorts.
+- Codex and Claude contributor instructions are synchronized, and repository text files use LF line endings.
+
+### Updating from 1.0.1
+
+- Codex CLI users refresh the marketplace, reinstall the plugin, and start a new session.
+- Claude Code users update the marketplace and plugin, then start a new session.
+
 ## 1.0.1 - 2026-08-09
 
 Adds behavioral coverage and reliability hardening for cross-session handoffs.

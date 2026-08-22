@@ -1,0 +1,7 @@
+{
+  "name": "durable-finalization-holdout-fixture",
+  "private": true,
+  "scripts": {
+    "test": "node --test access-batch.test.js"
+  }
+}

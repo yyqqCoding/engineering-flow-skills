@@ -10,12 +10,104 @@ const {
   read,
   readJson,
 } = require('./helpers/repository');
+const {
+  fingerprintBenchmark,
+  fingerprintCandidate,
+} = require('../scripts/lib/benchmark-fingerprints');
+const { validateEvidenceManifest } = require('../scripts/lib/evidence-manifest');
 
 const skillConfig = readJson('config/skills.json');
 const skillNames = listSkillNames();
 
 test('skill registry matches released skill directories', () => {
   assert.deepEqual(Object.keys(skillConfig).sort(), skillNames);
+});
+
+test('Codex and Claude contributor instructions stay synchronized', () => {
+  assert.equal(
+    read('CLAUDE.md').replace(/^# CLAUDE\.md/, '# AGENTS.md'),
+    read('AGENTS.md'),
+  );
+});
+
+test('CI runs the deterministic suite and semantic coverage report', () => {
+  const workflow = read('.github/workflows/ci.yml');
+  assert.match(workflow, /npm test/);
+  assert.match(workflow, /npm run benchmark:coverage -- --json/);
+  assert.match(workflow, /node-version:\s*20/);
+  assert.doesNotMatch(workflow, /benchmark:(?:ab|fill)|run-codex-benchmark/);
+});
+
+test('release evidence manifest selects exact final fingerprints and environments', () => {
+  const manifest = readJson('config/evidence-manifest.json');
+  const durableRepairManifest = readJson('config/durable-repair-evidence-manifest.json');
+  const packageJson = readJson('package.json');
+  const benchmarks = readJson('config/benchmarks.json');
+
+  assert.deepEqual(validateEvidenceManifest(manifest), []);
+  assert.equal(manifest.release, packageJson.version);
+  assert.equal(manifest.cohorts.length, 20);
+  assert.equal(new Set(manifest.cohorts.map((cohort) => cohort.benchmark)).size, 10);
+  assert.equal(
+    manifest.cohorts.reduce((total, cohort) => total + cohort.reports.length, 0),
+    60,
+  );
+  assert.deepEqual(new Set(manifest.cohorts.map((cohort) => cohort.arm)), new Set([
+    'baseline',
+    'candidate',
+  ]));
+  for (const benchmark of new Set(manifest.cohorts.map((cohort) => cohort.benchmark))) {
+    assert.deepEqual(
+      new Set(manifest.cohorts
+        .filter((cohort) => cohort.benchmark === benchmark)
+        .map((cohort) => cohort.arm)),
+      new Set(['baseline', 'candidate']),
+    );
+  }
+  for (const cohort of manifest.cohorts) {
+    assert.ok(benchmarks[cohort.benchmark], `${cohort.benchmark} must exist`);
+    assert.equal(
+      cohort.benchmarkFingerprint,
+      fingerprintBenchmark(ROOT, benchmarks[cohort.benchmark]),
+    );
+    assert.ok(cohort.targetCompleted >= 3);
+  }
+  for (const cohort of manifest.cohorts) {
+    assert.equal(
+      cohort.pluginFingerprint,
+      cohort.arm === 'candidate' ? fingerprintCandidate(ROOT) : '5a6093705b18',
+    );
+  }
+
+  assert.deepEqual(validateEvidenceManifest(durableRepairManifest), []);
+  assert.equal(durableRepairManifest.release, packageJson.version);
+  assert.equal(durableRepairManifest.cohorts.length, 4);
+  assert.equal(
+    new Set(durableRepairManifest.cohorts.map((cohort) => cohort.benchmark)).size,
+    2,
+  );
+  assert.equal(
+    durableRepairManifest.cohorts.reduce(
+      (total, cohort) => total + cohort.reports.length,
+      0,
+    ),
+    12,
+  );
+  for (const cohort of durableRepairManifest.cohorts) {
+    assert.ok(benchmarks[cohort.benchmark], `${cohort.benchmark} must exist`);
+    assert.equal(
+      cohort.benchmarkFingerprint,
+      cohort.benchmark === 'develop-durable-resume'
+        ? '4f98f3a35b33'
+        : '20d5dc918965',
+    );
+    assert.equal(cohort.targetCompleted, 3);
+    if (cohort.arm === 'baseline') {
+      assert.equal(cohort.pluginFingerprint, '95776e20f2e1');
+    } else {
+      assert.equal(cohort.pluginFingerprint, '3f36c118c841');
+    }
+  }
 });
 
 test('skill names, Claude policy, and Codex policy stay synchronized', () => {

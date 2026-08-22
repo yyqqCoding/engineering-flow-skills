@@ -6,7 +6,18 @@ function promptsForBenchmark(benchmark) {
   if (prompts.some((prompt) => typeof prompt !== 'string' || prompt.trim() === '')) {
     throw new Error('Benchmark prompts and followUps must be non-empty strings');
   }
+  const freshSessionTurns = benchmark.freshSessionTurns || [];
+  if (!Array.isArray(freshSessionTurns)
+      || freshSessionTurns.some((turn) => !Number.isInteger(turn) || turn < 2 || turn > prompts.length)
+      || new Set(freshSessionTurns).size !== freshSessionTurns.length) {
+    throw new Error('freshSessionTurns must contain unique turn numbers between 2 and the final turn');
+  }
   return prompts;
+}
+
+function freshSessionTurnsForBenchmark(benchmark) {
+  promptsForBenchmark(benchmark);
+  return new Set(benchmark.freshSessionTurns || []);
 }
 
 function extractThreadId(events) {
@@ -93,6 +104,7 @@ function readRequirementStates(workspace) {
         documents.push({
           path: path.relative(workspace, fullPath).split(path.sep).join('/'),
           status: match[1],
+          content,
         });
       }
     }
@@ -106,6 +118,7 @@ module.exports = {
   buildCodexArgs,
   extractThreadId,
   extractTurnFailure,
+  freshSessionTurnsForBenchmark,
   promptsForBenchmark,
   readRequirementStates,
 };

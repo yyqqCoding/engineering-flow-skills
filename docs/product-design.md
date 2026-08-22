@@ -65,6 +65,13 @@ discover and clarify -> awaiting approval -> implement and verify -> complete
           +-- changed scope ---+--------------------+-- material scope change returns to alignment
 ```
 
+If one follow-up both approves the current checkpoint and materially adds or changes scope, the
+updated checkpoint does not yet exist when that approval is sent. The whole turn remains
+alignment-only: do not implement the previously checkpointed scope or the increment. Present the
+revised incremental checkpoint and wait for later action language before implementing either part.
+Once that later action language arrives, resume implementation and verification immediately and carry
+the revised scope through completion; do not stop after restating the checkpoint.
+
 `diagnose` owns the complete defect lifecycle:
 
 ```text
@@ -103,6 +110,10 @@ Words such as "undefined", "intentional", and "not specified" describe an unreso
 After the user answers the independent clarification batch, ask another question only when an answer created a genuinely dependent decision or newly discovered authoritative evidence contradicts the request. Repository mechanics and independently conceivable edge cases do not reopen clarification; otherwise proceed directly to the checkpoint.
 
 After clarification, present one final alignment checkpoint and pause without changing production code, tests, or configuration. A short checkpoint stays in the conversation. A substantial checkpoint uses an existing authoritative project document when available, or `docs/requirements/<feature-slug>.md` when no applicable documentation convention exists. When the initial substantial request already provides a complete contract, create and verify that `Draft` record in the first turn; hypothetical optional inputs outside the contract cannot delay it. The durable record contains the same goal, acceptance behavior, out of scope, assumptions, and solution boundary as the checkpoint, not only a status and acceptance list. Only clear action language sent after this checkpoint, such as "implement this", "start", or "proceed with the plan above", approves implementation. The initial request, clarification answers, and reading acknowledgements do not.
+
+Approval bundled with a material scope increment is not post-checkpoint approval for the revised
+task. Align the increment and pause the whole turn; a later approval authorizes the revised
+checkpoint.
 
 For implementation work, align the solution boundary as well as the behavior: identify the likely owner, interfaces, data/state effects, compatibility constraints, and any decision that would materially change the result. Reversible internal details remain the agent's responsibility. Ordinary clear requests that did not invoke `develop` still proceed without a ceremonial approval checkpoint.
 
@@ -228,6 +239,25 @@ Develop requirement records use an explicit status:
 If an `Implemented` record is found to have omitted an original acceptance item, return it to `Accepted` until the omission is implemented and verified. A material scope change returns to alignment and approval; it is not silently absorbed under the old acceptance.
 
 Before a record becomes `Implemented`, stale prospective statements are reconciled too: deferred tests, planned files, assumptions, and other provisional language must be updated to the actual diff and fresh evidence. A status-only edit is not sufficient.
+
+The portable fallback record carries this completion gate across lost conversational context. While
+`Draft` or `Accepted`, its `Completion evidence` section records implementation files, test files,
+and verification as `Pending`, plus currently known deviations and the exact resolved finalization
+command (`--record <path> --mode ready --finalize`). The other checkpoint sections use timeless
+constraints instead of describing work as deferred until approval. Persisting that command lets a
+fresh context validate and complete the record without recovering the earlier workflow transcript.
+Before `Implemented`, those fields are replaced with exact changed paths, fresh command results, and
+confirmed deviations; the whole record is reread to remove obsolete `will`, `after approval`, planned,
+and deferred wording. The bundled validator checks the Draft shape, then checks the reconciled record
+and actual changed paths while status remains `Accepted`. Only a successful `--finalize` validation
+performs one atomic write of `Status: Implemented` and stable passing evidence; validation failures and
+repeated finalization leave the record unchanged. An established project documentation convention may
+express the same facts in its own structure without using the fallback validator.
+
+Completion verification uses the project's canonical command for the changed fixture or package. The
+default Node fixture convention is `npm test`; a project-declared command takes precedence. The
+`Verification` field records the complete command, including all arguments, exactly as executed and its
+passing result. A different command that happens to pass is not equivalent completion evidence.
 
 At completion, compare accepted behavior, documentation, code, and test evidence. Before a requirement record becomes `Implemented`, reconcile its stated files, boundaries, and evidence with the actual diff and verification results. Updating documentation must not be used to legitimize an implementation that failed to meet the accepted requirement.
 

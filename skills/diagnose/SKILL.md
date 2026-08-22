@@ -15,7 +15,7 @@ Own the broken behavior as one task across reproduction, root-cause correction, 
 - Build the fastest practical signal for the exact symptom: focused test, command/request, replay, minimal harness, stress loop, or performance measurement.
 - Tighten it for speed, determinism, and unattended execution.
 
-Inspect once and reuse the evidence. Do not repeat unchanged searches, reproductions, or commands for narration or final-report formatting. If automated reproduction is impractical, report what was attempted and calibrate confidence.
+Inspect once and reuse the evidence. Do not repeat unchanged searches, reproductions, or commands for narration or final-report formatting. If automated reproduction is impractical, report what was attempted and calibrate confidence. If the reported behavior cannot be reproduced, say so explicitly in the final diagnosis and state that no repository-supported root cause can be established; do not replace that bounded conclusion with a speculative cause.
 
 ## 2. Minimize and locate ownership
 

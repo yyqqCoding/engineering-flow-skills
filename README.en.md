@@ -129,6 +129,8 @@ Proceed with the plan above.
 
 The same tasks were run under two configurations — one with the plugin installed, one without — with everything else identical. Pass or fail is decided by an external scoring script from the actual file changes and test output; a claim of having verified something counts for nothing.
 
+For the v1.0.2 closeout, 68/68 deterministic tests pass and 32 configured scenarios map all 45 behavior IDs. The refreshed same-environment paired cohort selects 60 completed reports across ten scenarios: the 1.0.1 control passed 22/30 and the v1.0.2 candidate passed 23/30. All selected runs passed invocation, fixture-verification, contamination, and unauthorized-commit guards. A separate direct durable-repair comparison improved from 0/6 to 1/6, so completion reconciliation remains a documented limitation rather than a solved claim. Scenario mapping and completed model trials are reported separately.
+
 Process is not free: averaged across the behavior cohort, the workflow side used about 17.6% more tool calls and 16.5% more input tokens. That is precisely why all five workflows are invoked by name.
 
 [Evaluation method](docs/testing-strategy.md) · [Full record](docs/benchmark-log.md) · [Read it online](https://engineering-flow-web.vercel.app/en/evidence)

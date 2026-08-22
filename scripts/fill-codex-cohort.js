@@ -47,7 +47,8 @@ function loadReports() {
 }
 
 function isUsable(report) {
-  return report.modelRun?.status === 0
+  return report.modelRun?.completed === true
+    && report.modelRun?.status === 0
     && !report.modelRun?.timedOut
     && !report.modelRun?.error
     && !report.modelRun?.contaminated

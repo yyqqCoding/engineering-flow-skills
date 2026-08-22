@@ -1,16 +1,16 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-function implementationChanged(diff) {
-  return /^diff --git a\/(?:src\/|[^/]*\.test\.js|package\.json)/m.test(diff || '');
-}
+const {
+  hasRequirementState,
+  implementationChanged,
+  observedDraftValidatorPass,
+  observedReadyValidatorPass,
+  persistsReadyValidator,
+  reconcilesCompletionEvidence,
+} = require('./durable-record');
 
-function hasRequirementState(turn, expected) {
-  return (turn?.requirementDocuments || []).some((document) => (
-    document.path === 'docs/requirements/customer-export.md'
-      && document.status === expected
-  ));
-}
+const REQUIREMENT_PATH = 'docs/requirements/customer-export.md';
 
 function expectedCsv() {
   return [
@@ -70,23 +70,25 @@ module.exports = function score(workspace, context = {}) {
     ? fs.readFileSync(requirementPath, 'utf8')
     : '';
   const draftPaused = !implementationChanged(turns[0]?.diff)
-    && hasRequirementState(turns[0], 'Draft');
+    && hasRequirementState(turns[0], REQUIREMENT_PATH, 'Draft');
   const acceptedPaused = !implementationChanged(turns[1]?.diff)
-    && hasRequirementState(turns[1], 'Accepted');
+    && hasRequirementState(turns[1], REQUIREMENT_PATH, 'Accepted');
   const implementedAfterEvidence = implementationChanged(turns[2]?.diff)
-    && hasRequirementState(turns[2], 'Implemented')
+    && hasRequirementState(turns[2], REQUIREMENT_PATH, 'Implemented')
     && turns[2]?.publicTests?.passed
     && behaviorCorrect;
   const focusedCoverage = /buildCustomerExport/.test(tests)
     && /includeDisabled/.test(tests)
     && /customers must be an array/.test(tests);
-  const durableRecord = /Status:\s*Implemented/i.test(requirement)
-    || hasRequirementState(turns[2], 'Implemented');
-  const reconciledRecord = durableRecord
+  const reconciledRecord = /Status:\s*Implemented/i.test(requirement)
+    && hasRequirementState(turns[2], REQUIREMENT_PATH, 'Implemented')
     && /Acceptance|验收/i.test(requirement)
     && /Out of scope|非目标|范围外/i.test(requirement)
-    && /customer-export\.test\.js/.test(requirement)
-    && !/test-running|to be (?:added|created)|待添加|待创建/i.test(requirement);
+    && reconcilesCompletionEvidence(requirement, turns[2]);
+  const validatedBeforeCompletion = observedReadyValidatorPass(context.events);
+  const validatedDraft = observedDraftValidatorPass(context.events);
+  const durableValidatorCommand = persistsReadyValidator(turns[0], REQUIREMENT_PATH)
+    && persistsReadyValidator(turns[1], REQUIREMENT_PATH);
 
   return {
     passed: turns.length === 3
@@ -94,13 +96,19 @@ module.exports = function score(workspace, context = {}) {
       && acceptedPaused
       && implementedAfterEvidence
       && focusedCoverage
-      && reconciledRecord,
+      && reconciledRecord
+      && validatedDraft
+      && durableValidatorCommand
+      && validatedBeforeCompletion,
     checks: {
       createsDraftRequirementAndPauses: draftPaused,
       recordsApprovalWithoutImplementing: acceptedPaused,
       implementsThenMarksRequirementImplemented: implementedAfterEvidence,
       leavesFocusedCoverage: focusedCoverage,
       keepsDurableAcceptanceRecord: reconciledRecord,
+      runsPassingDraftValidator: validatedDraft,
+      persistsReadyValidatorCommand: durableValidatorCommand,
+      runsPassingCompletionValidator: validatedBeforeCompletion,
     },
   };
 };

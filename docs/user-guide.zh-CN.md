@@ -260,9 +260,11 @@ codex plugin marketplace remove engineering-flow
 
 ## 验证状态与限制
 
-- 静态与确定性测试：50/50 通过。
-- Codex 当前通用 cohort：17 个场景，candidate 51/51 通过；显式调用 51/51，误触发、漏触发、碰撞、污染和未授权提交均为 0。
-- 最新任务级配对 A/B：相同模型、推理等级和最终场景指纹下，current-release control 为 0/12，candidate 为 12/12；24 个计入样本的调用、公共测试、污染和未授权提交检查全部通过。
+- 静态与确定性测试：68/68 通过。
+- 当前语料包含 32 个已配置场景，在语义上覆盖全部 45 个行为 ID；这不等同于完成了 32 次模型试验。
+- 已发布的 Codex 通用 cohort 仍为 17 个场景、candidate 51/51 通过；显式调用 51/51，误触发、漏触发、碰撞、污染和未授权提交均为 0。
+- 较早的任务级配对 A/B 在相同模型、推理等级和最终场景指纹下为 current-release control 0/12、candidate 12/12。
+- 刷新后的 v1.0.2 同环境配对 cohort 精确选择十个场景的 60 个完整报告：1.0.1 control 为 22/30、candidate 为 23/30；所有入选样本的调用、fixture 验证、污染和未授权提交检查全部通过。单独的 durable 修复直接对照从 0/6 提升到 1/6，因此完成态同步仍作为已记录限制。
 - Claude Code 2.1.197 通过 strict manifest 校验，并完成显式 `/engineering-flow:develop` 实机样本。
 - Claude 普通 Core-only 歧义样本尚未达到 Codex 同等行为，因此涉及数据、权限等重大决定时应显式调用完整工作流。
 - 完整工作流会增加上下文、工具调用和耗时，所以不会自动加载到每个请求。
@@ -300,6 +302,10 @@ BENCH_REPETITIONS=3 BENCH_CONCURRENCY=2 \
 # 补齐当前 cohort 并汇总
 BENCH_TARGET_COMPLETED=3 BENCH_CONCURRENCY=2 npm run benchmark:fill
 npm run benchmark:summary
+
+# 复现已冻结的发布汇总和 durable 修复汇总
+npm run benchmark:release-summary
+npm run benchmark:durable-repair-summary
 ```
 
 场景可以定义多轮后续消息。Runner 会保留第一次 `codex exec` 会话、捕获 thread ID，并用 `codex exec resume` 执行后续轮次；每轮记录消息、事件、工作区 diff、需求文档状态和公开测试结果。

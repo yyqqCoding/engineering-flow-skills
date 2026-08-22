@@ -13,10 +13,12 @@ const {
 } = require('../scripts/lib/benchmark-utils');
 const { isUsable } = require('../scripts/fill-codex-cohort');
 const { loadEnvFile } = require('../scripts/lib/env-file');
+const { fingerprintCandidate } = require('../scripts/lib/benchmark-fingerprints');
 const {
   buildCodexArgs,
   extractThreadId,
   extractTurnFailure,
+  freshSessionTurnsForBenchmark,
   promptsForBenchmark,
   readRequirementStates,
 } = require('../scripts/lib/benchmark-conversation');
@@ -87,9 +89,25 @@ test('extracts the session id and validates configured follow-up prompts', () =>
     promptsForBenchmark({ prompt: 'first', followUps: ['second', 'third'] }),
     ['first', 'second', 'third'],
   );
+  assert.deepEqual(
+    [...freshSessionTurnsForBenchmark({
+      prompt: 'first',
+      followUps: ['second', 'third'],
+      freshSessionTurns: [3],
+    })],
+    [3],
+  );
   assert.throws(
     () => promptsForBenchmark({ prompt: 'first', followUps: [''] }),
     /non-empty strings/,
+  );
+  assert.throws(
+    () => promptsForBenchmark({
+      prompt: 'first',
+      followUps: ['second'],
+      freshSessionTurns: [1],
+    }),
+    /freshSessionTurns/,
   );
 });
 
@@ -103,9 +121,21 @@ test('captures requirement document lifecycle states', () => {
   fs.writeFileSync(path.join(workspace, 'docs', 'notes.md'), '# Notes\n');
 
   assert.deepEqual(readRequirementStates(workspace), [
-    { path: 'docs/requirements/batch-export.md', status: 'Accepted' },
-    { path: 'docs/requirements/done.md', status: 'Implemented' },
-    { path: 'docs/requirements/draft.md', status: 'Draft' },
+    {
+      path: 'docs/requirements/batch-export.md',
+      status: 'Accepted',
+      content: '# Batch export\n\nStatus: Accepted\n',
+    },
+    {
+      path: 'docs/requirements/done.md',
+      status: 'Implemented',
+      content: '# Done\n\nStatus: **Implemented**\n',
+    },
+    {
+      path: 'docs/requirements/draft.md',
+      status: 'Draft',
+      content: '# Draft\n\n**Status:** Draft\n',
+    },
   ]);
 });
 
@@ -137,9 +167,36 @@ test('keeps the local secret file ignored', () => {
   assert.match(gitignore, /(?:^|\n)\.env(?:\r?\n|$)/);
 });
 
+test('candidate fingerprints ignore local plugin metadata but track released inputs', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'engineering-flow-fingerprint-'));
+  const files = {
+    '.claude-plugin/marketplace.json': '{}\n',
+    '.claude-plugin/plugin.json': '{}\n',
+    '.codex-plugin/plugin.json': '{}\n',
+    'config/skills.json': '{}\n',
+    'hooks/core.md': '# Core\n',
+    'skills/develop/SKILL.md': '# Develop\n',
+  };
+
+  for (const [relativePath, contents] of Object.entries(files)) {
+    const target = path.join(root, relativePath);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    fs.writeFileSync(target, contents);
+  }
+
+  const initial = fingerprintCandidate(root);
+  fs.mkdirSync(path.join(root, '.claude-plugin', '.idea'), { recursive: true });
+  fs.writeFileSync(path.join(root, '.claude-plugin', '.idea', 'workspace.xml'), '<local/>\n');
+  assert.equal(fingerprintCandidate(root), initial);
+
+  fs.writeFileSync(path.join(root, 'hooks', 'core.md'), '# Updated Core\n');
+  assert.notEqual(fingerprintCandidate(root), initial);
+});
+
 test('cohort filling accepts only completed uncontaminated model turns', () => {
   const usable = {
     modelRun: {
+      completed: true,
       status: 0,
       timedOut: false,
       error: null,
@@ -149,6 +206,7 @@ test('cohort filling accepts only completed uncontaminated model turns', () => {
   };
 
   assert.equal(isUsable(usable), true);
+  assert.equal(isUsable({ ...usable, modelRun: { ...usable.modelRun, completed: false } }), false);
   assert.equal(isUsable({ ...usable, modelRun: { ...usable.modelRun, timedOut: true } }), false);
   assert.equal(isUsable({ ...usable, modelRun: { ...usable.modelRun, status: 1 } }), false);
   assert.equal(isUsable({ ...usable, metrics: { turns: 0 } }), false);

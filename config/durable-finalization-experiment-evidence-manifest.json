@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "release": "1.0.2",
+  "deterministicChecks": [
+    "node --test tests/requirement-validator.test.js tests/benchmark-utils.test.js tests/hooks.test.js tests/fixtures.test.js tests/benchmark-coverage.test.js",
+    "npm run benchmark:coverage -- --json"
+  ],
+  "cohorts": [
+    {
+      "benchmark": "develop-durable-resume",
+      "arm": "baseline",
+      "benchmarkFingerprint": "38512282e6f9",
+      "pluginFingerprint": "f73cae99cb1a",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-resume-baseline-1787279921623-1541.json",
+        "develop-durable-resume-baseline-1787280057742-7860.json",
+        "develop-durable-resume-baseline-1787280218991-15096.json"
+      ]
+    },
+    {
+      "benchmark": "develop-durable-resume",
+      "arm": "candidate",
+      "benchmarkFingerprint": "38512282e6f9",
+      "pluginFingerprint": "f1a02f22368a",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-resume-candidate-1787286972824-16897.json",
+        "develop-durable-resume-candidate-1787287169182-25289.json",
+        "develop-durable-resume-candidate-1787287343694-32721.json"
+      ]
+    },
+    {
+      "benchmark": "develop-durable-finalization-holdout",
+      "arm": "baseline",
+      "benchmarkFingerprint": "b005276a2817",
+      "pluginFingerprint": "f73cae99cb1a",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-finalization-holdout-baseline-1787287548742-41553.json",
+        "develop-durable-finalization-holdout-baseline-1787287670659-47650.json",
+        "develop-durable-finalization-holdout-baseline-1787287806199-54372.json"
+      ]
+    },
+    {
+      "benchmark": "develop-durable-finalization-holdout",
+      "arm": "candidate",
+      "benchmarkFingerprint": "b005276a2817",
+      "pluginFingerprint": "f1a02f22368a",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-finalization-holdout-candidate-1787287963578-61876.json",
+        "develop-durable-finalization-holdout-candidate-1787288140431-69412.json",
+        "develop-durable-finalization-holdout-candidate-1787288355835-78364.json"
+      ]
+    }
+  ]
+}

@@ -5,6 +5,10 @@ const path = require('node:path');
 const test = require('node:test');
 
 const { ROOT, readJson } = require('./helpers/repository');
+const {
+  runFixtureVerification,
+  verificationForBenchmark,
+} = require('../scripts/lib/benchmark-verification');
 
 const benchmarks = readJson('config/benchmarks.json');
 
@@ -34,6 +38,10 @@ test('benchmark fixtures and scorers exist', () => {
     }
     assert.ok(Array.isArray(benchmark.invocation?.expected), `${name} expected invocation list is missing`);
     assert.ok(Array.isArray(benchmark.invocation?.allowed), `${name} allowed invocation list is missing`);
+    assert.doesNotThrow(
+      () => verificationForBenchmark(benchmark),
+      `${name} verification command is invalid`,
+    );
   }
 });
 
@@ -51,8 +59,8 @@ test('Codex explicit-skill benchmarks use the plugin namespace', () => {
 
 test('fixture public tests pass before model changes', () => {
   for (const [name, benchmark] of Object.entries(benchmarks)) {
-    const result = run('npm', ['test'], path.join(ROOT, benchmark.fixture));
-    assert.equal(result.status, 0, `${name} fixture baseline tests failed\n${result.stdout}\n${result.stderr}`);
+    const result = runFixtureVerification(path.join(ROOT, benchmark.fixture), benchmark);
+    assert.equal(result.passed, true, `${name} fixture baseline tests failed\n${result.stdout}\n${result.stderr}`);
   }
 });
 
@@ -116,10 +124,10 @@ test('benchmark setup hooks create valid pre-existing worktree state', () => {
     assert.equal(status.status, 0, `${name} setup status failed`);
     assert.notEqual(status.stdout, '', `${name} setup must create pre-existing work`);
 
-    const publicTests = run('npm', ['test'], workspace);
+    const publicTests = runFixtureVerification(workspace, benchmark);
     assert.equal(
-      publicTests.status,
-      0,
+      publicTests.passed,
+      true,
       `${name} setup broke public tests\n${publicTests.stdout}\n${publicTests.stderr}`,
     );
 
@@ -213,6 +221,84 @@ test('develop lifecycle scorer accepts equivalent incremental approval wording',
   assert.equal(awaitsApproval('The checkpoint is ready.'), false);
 });
 
+test('mixed approval and scope scorer requires the entire turn to stay read-only', () => {
+  const scorer = require('./scorers/develop-scope-in-approval');
+  const checkpoint = 'Goal and acceptance are aligned. Reply “implement this” to approve.';
+  const increment = [
+    'Incremental checkpoint: decimal integer strings are now accepted.',
+    'Whitespace, a plus sign, and leading zeros remain invalid.',
+    'Reply “implement this” to approve the revised checkpoint.',
+  ].join('\n');
+  const readOnly = scorer(path.join(ROOT, benchmarks['clear-simple-task'].fixture), {
+    turns: [
+      { finalMessage: checkpoint, diff: '' },
+      { finalMessage: increment, diff: '' },
+    ],
+  });
+  const changed = scorer(path.join(ROOT, benchmarks['clear-simple-task'].fixture), {
+    turns: [
+      { finalMessage: checkpoint, diff: '' },
+      { finalMessage: increment, diff: 'diff --git a/src/math.js b/src/math.js\n' },
+    ],
+  });
+
+  assert.equal(readOnly.checks.pausesEntireMixedApprovalTurn, true);
+  assert.equal(changed.checks.pausesEntireMixedApprovalTurn, false);
+});
+
+test('fact alignment scorer distinguishes approval from reversible implementation choices', () => {
+  const {
+    asksForReversibleChoice,
+    hasFocusedCoverage,
+  } = require('./scorers/fact-solution-alignment');
+
+  assert.equal(asksForReversibleChoice('Should I put this in the service or formatter?'), true);
+  assert.equal(asksForReversibleChoice('Which helper should own this behavior?'), true);
+  assert.equal(asksForReversibleChoice('Reply “implement this” to approve the formatter boundary.'), false);
+  assert.equal(hasFocusedCoverage("formatOrderLabel({ name: '   ' })"), true);
+  assert.equal(hasFocusedCoverage('    formatOrderLabel({ name: validName })'), false);
+});
+
+test('justified novelty scorer requires an explicit concrete benefit', () => {
+  const { explainsBenefit } = require('./scorers/justified-novelty');
+
+  assert.equal(
+    explainsBenefit('A generator keeps the iterable lazy without materializing an array.'),
+    true,
+  );
+  assert.equal(explainsBenefit('Implemented the iterator and tests.'), false);
+});
+
+test('diagnose cleanup scorer detects retained debug-only artifacts', () => {
+  const temporaryRoot = fs.mkdtempSync(path.join(
+    require('node:os').tmpdir(),
+    'engineering-flow-debug-cleanup-',
+  ));
+  const workspace = path.join(temporaryRoot, 'workspace');
+  fs.cpSync(path.join(ROOT, benchmarks['regression-sensitivity'].fixture), workspace, {
+    recursive: true,
+  });
+  assert.equal(run('git', ['init', '-b', 'main'], workspace).status, 0);
+  assert.equal(run('git', ['config', 'user.email', 'test@example.invalid'], workspace).status, 0);
+  assert.equal(run('git', ['config', 'user.name', 'Test'], workspace).status, 0);
+  assert.equal(run('git', ['add', '.'], workspace).status, 0);
+  assert.equal(run('git', ['commit', '-m', 'baseline'], workspace).status, 0);
+
+  const {
+    hasDebugArtifacts,
+    stayedReadOnly,
+  } = require('./scorers/diagnose-cleanup');
+  assert.equal(hasDebugArtifacts(workspace), false);
+  assert.equal(stayedReadOnly({ diff: '' }), true);
+  assert.equal(stayedReadOnly({ diff: 'diff --git a/README.md b/README.md\n' }), false);
+  fs.appendFileSync(
+    path.join(workspace, 'src', 'renewal-date.js'),
+    '\nconsole.log("TEMP_DEBUG");\n',
+  );
+  assert.equal(hasDebugArtifacts(workspace), true);
+  fs.rmSync(temporaryRoot, { recursive: true, force: true });
+});
+
 test('diagnose continuation requires probe evidence rather than causal keywords alone', () => {
   const { hasDistinguishingEvidence } = require('./scorers/diagnose-continuation');
   const temporaryRoot = fs.mkdtempSync(path.join(
@@ -250,14 +336,101 @@ test('diagnose continuation requires probe evidence rather than causal keywords 
   fs.rmSync(temporaryRoot, { recursive: true, force: true });
 });
 
+test('no-reproduction scorer requires both failed reproduction and bounded certainty', () => {
+  const { reportsEvidenceLimit } = require('./scorers/diagnose-no-reproduction');
+
+  assert.equal(reportsEvidenceLimit(
+    'I could not reproduce the duplicate IDs, so there is no supported root cause yet.',
+  ), true);
+  assert.equal(reportsEvidenceLimit(
+    'I could not reproduce it, but the cache refresh is definitely racing with the reader.',
+  ), false);
+  assert.equal(reportsEvidenceLimit(
+    'The available code looks correct and the tests pass.',
+  ), false);
+  assert.equal(reportsEvidenceLimit(
+    'The reported duplicate IDs cannot be reproduced. No repository-supported root cause can be established.',
+  ), true);
+  assert.equal(reportsEvidenceLimit(
+    'The reported duplicate-ID behavior cannot be established from this repository. No repository-supported root cause was found.',
+  ), true);
+  assert.equal(reportsEvidenceLimit(
+    'The issue cannot be reproduced, therefore the cache refresh is definitely racing.',
+  ), false);
+});
+
 test('requirement lifecycle scorer accepts one optional CSV record terminator', () => {
   const { csvMatches } = require('./scorers/develop-requirement-lifecycle');
+  const {
+    hasStaleProspectiveLanguage,
+    observedDraftValidatorPass,
+    observedReadyValidatorPass,
+    persistsReadyValidator,
+    reconcilesCompletionEvidence,
+  } = require('./scorers/durable-record');
   const expected = 'id,name,status\ncustomer-1,Ada,active';
 
   assert.equal(csvMatches(expected, expected), true);
   assert.equal(csvMatches(`${expected}\n`, expected), true);
   assert.equal(csvMatches(expected.replaceAll('\n', '\r\n') + '\r\n', expected), true);
   assert.equal(csvMatches(`${expected}\n\n`, expected), false);
+
+  const completedRecord = [
+    '# Customer Export',
+    'Status: Implemented',
+    '## Completion evidence',
+    '- Implementation files: `src/customer-export.js`',
+    '- Test files: `customer-export.test.js`',
+    '- Verification: `npm test` — passed, 5 tests',
+    '- Deviations: None',
+    '- Ready validator: `validate-requirement-record.js --mode ready` — passed',
+  ].join('\n\n');
+  const finalTurn = {
+    diff: [
+      'diff --git a/src/customer-export.js b/src/customer-export.js',
+      'diff --git a/customer-export.test.js b/customer-export.test.js',
+    ].join('\n'),
+    publicTests: { command: 'npm', args: ['test'], passed: true },
+  };
+
+  assert.equal(reconcilesCompletionEvidence(completedRecord, finalTurn), true);
+  assert.equal(reconcilesCompletionEvidence(
+    completedRecord.replace('`npm test`', '`node --test customer-export.test.js`'),
+    finalTurn,
+  ), false);
+  assert.equal(hasStaleProspectiveLanguage(
+    completedRecord.replace('None', 'None\n\nFocused tests will be added after approval.'),
+  ), true);
+  assert.equal(reconcilesCompletionEvidence(
+    completedRecord.replace('customer-export.test.js', 'an adjacent test file'),
+    finalTurn,
+  ), false);
+
+  const validatorEvent = JSON.stringify({
+    type: 'item.completed',
+    item: {
+      type: 'command_execution',
+      command: 'node /plugin/skills/develop/scripts/validate-requirement-record.js --record docs/requirements/customer-export.md --mode ready',
+      exit_code: 0,
+    },
+  });
+  assert.equal(observedReadyValidatorPass(validatorEvent), true);
+  assert.equal(observedDraftValidatorPass(
+    validatorEvent.replace('--mode ready', '--mode draft'),
+  ), true);
+  assert.equal(persistsReadyValidator({ requirementDocuments: [{
+    path: 'docs/requirements/customer-export.md',
+    status: 'Accepted',
+    content: completedRecord
+      .replace('Status: Implemented', 'Status: Accepted')
+      .replace(
+        '`validate-requirement-record.js --mode ready` — passed',
+        '`node "/plugin/skills/develop/scripts/validate-requirement-record.js" --record docs/requirements/customer-export.md --mode ready --finalize`',
+      ),
+  }] }, 'docs/requirements/customer-export.md'), true);
+  assert.equal(observedReadyValidatorPass(
+    validatorEvent.replace('"exit_code":0', '"exit_code":1'),
+  ), false);
 });
 
 test('handoff scorer accepts a compact evidence-backed response without workspace changes', () => {

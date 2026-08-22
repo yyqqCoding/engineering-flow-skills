@@ -2,11 +2,21 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 
 const { summarizeGroup } = require('../scripts/summarize-benchmarks');
+const {
+  filterReportsByManifest,
+  validateEvidenceManifest,
+} = require('../scripts/lib/evidence-manifest');
 
 function report(overrides = {}) {
   return {
     durationMs: 100,
-    modelRun: { completed: true, contaminated: false },
+    modelRun: {
+      completed: true,
+      contaminated: false,
+      modelProvider: 'provider-a',
+      model: 'model-a',
+      reasoningEffort: 'low',
+    },
     score: { passed: true },
     publicTests: { passed: true },
     workspaceState: { unauthorizedCommit: false },
@@ -128,8 +138,70 @@ test('keeps different benchmark cohorts separate', () => {
     { benchmark: 'example', arm: 'candidate', cohort: 'new', ...report() },
   ]);
 
-  assert.deepEqual(Object.keys(result), [
-    'example:candidate:new',
-    'example:candidate:old',
+  assert.equal(Object.keys(result).length, 2);
+  assert.ok(Object.keys(result).some((key) => key.includes(':new:')));
+  assert.ok(Object.keys(result).some((key) => key.includes(':old:')));
+});
+
+test('keeps providers, models, and reasoning levels in separate summary groups', () => {
+  const { summarize } = require('../scripts/summarize-benchmarks');
+  const result = summarize([
+    { benchmark: 'example', arm: 'candidate', cohort: 'same', ...report() },
+    {
+      benchmark: 'example',
+      arm: 'candidate',
+      cohort: 'same',
+      ...report({
+        modelRun: {
+          completed: true,
+          contaminated: false,
+          modelProvider: 'provider-a',
+          model: 'model-a',
+          reasoningEffort: 'high',
+        },
+      }),
+    },
   ]);
+
+  assert.equal(Object.keys(result).length, 2);
+});
+
+test('evidence manifest filters exact benchmark, plugin, and environment cohorts', () => {
+  const manifest = {
+    schemaVersion: 1,
+    release: '1.0.2',
+    cohorts: [
+      {
+        benchmark: 'example',
+        arm: 'candidate',
+        benchmarkFingerprint: 'bench-a',
+        pluginFingerprint: 'plugin-a',
+        modelProvider: 'provider-a',
+        model: 'model-a',
+        reasoningEffort: 'low',
+        targetCompleted: 3,
+        reports: ['run-a.json', 'run-b.json', 'run-c.json'],
+      },
+    ],
+  };
+  const matching = {
+    reportFile: 'run-a.json',
+    benchmark: 'example',
+    arm: 'candidate',
+    benchmarkFingerprint: 'bench-a',
+    pluginFingerprint: 'plugin-a',
+    modelRun: {
+      modelProvider: 'provider-a',
+      model: 'model-a',
+      reasoningEffort: 'low',
+    },
+  };
+
+  assert.deepEqual(validateEvidenceManifest(manifest), []);
+  assert.deepEqual(filterReportsByManifest([
+    matching,
+    { ...matching, reportFile: 'run-d.json' },
+    { ...matching, pluginFingerprint: 'plugin-b' },
+    { ...matching, modelRun: { ...matching.modelRun, reasoningEffort: 'high' } },
+  ], manifest), [matching]);
 });

@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "release": "1.0.2",
+  "deterministicChecks": [
+    "node --test tests/requirement-validator.test.js tests/benchmark-utils.test.js tests/hooks.test.js tests/fixtures.test.js tests/benchmark-coverage.test.js",
+    "npm run benchmark:coverage -- --json"
+  ],
+  "cohorts": [
+    {
+      "benchmark": "develop-durable-resume",
+      "arm": "baseline",
+      "benchmarkFingerprint": "38512282e6f9",
+      "pluginFingerprint": "f73cae99cb1a",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-resume-baseline-1787279921623-1541.json",
+        "develop-durable-resume-baseline-1787280057742-7860.json",
+        "develop-durable-resume-baseline-1787280218991-15096.json"
+      ]
+    },
+    {
+      "benchmark": "develop-durable-resume",
+      "arm": "candidate",
+      "benchmarkFingerprint": "38512282e6f9",
+      "pluginFingerprint": "1c4ddbe7b125",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-resume-candidate-1787280406861-23304.json",
+        "develop-durable-resume-candidate-1787280622254-32010.json",
+        "develop-durable-resume-candidate-1787280831886-40347.json"
+      ]
+    },
+    {
+      "benchmark": "develop-durable-command-holdout",
+      "arm": "baseline",
+      "benchmarkFingerprint": "7fec2687d553",
+      "pluginFingerprint": "f73cae99cb1a",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-command-holdout-baseline-1787281013740-48235.json",
+        "develop-durable-command-holdout-baseline-1787281145716-54746.json",
+        "develop-durable-command-holdout-baseline-1787281315315-61963.json"
+      ]
+    },
+    {
+      "benchmark": "develop-durable-command-holdout",
+      "arm": "candidate",
+      "benchmarkFingerprint": "7fec2687d553",
+      "pluginFingerprint": "1c4ddbe7b125",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-command-holdout-candidate-1787281474133-69121.json",
+        "develop-durable-command-holdout-candidate-1787281685448-77513.json",
+        "develop-durable-command-holdout-candidate-1787281878132-85663.json"
+      ]
+    }
+  ]
+}

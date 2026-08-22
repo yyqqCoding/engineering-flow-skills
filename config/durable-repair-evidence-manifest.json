@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "release": "1.0.2",
+  "deterministicChecks": [
+    "npm test",
+    "npm run benchmark:coverage -- --json"
+  ],
+  "cohorts": [
+    {
+      "benchmark": "develop-durable-resume",
+      "arm": "baseline",
+      "benchmarkFingerprint": "4f98f3a35b33",
+      "pluginFingerprint": "95776e20f2e1",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-resume-baseline-1787236064921-12835.json",
+        "develop-durable-resume-baseline-1787236210005-19704.json",
+        "develop-durable-resume-baseline-1787236320046-25352.json"
+      ]
+    },
+    {
+      "benchmark": "develop-durable-resume",
+      "arm": "candidate",
+      "benchmarkFingerprint": "4f98f3a35b33",
+      "pluginFingerprint": "3f36c118c841",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-resume-candidate-1787237995804-5501.json",
+        "develop-durable-resume-candidate-1787238131431-11964.json",
+        "develop-durable-resume-candidate-1787238254273-17781.json"
+      ]
+    },
+    {
+      "benchmark": "develop-durable-evidence-holdout",
+      "arm": "baseline",
+      "benchmarkFingerprint": "20d5dc918965",
+      "pluginFingerprint": "95776e20f2e1",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-evidence-holdout-baseline-1787236450952-31934.json",
+        "develop-durable-evidence-holdout-baseline-1787236573968-37855.json",
+        "develop-durable-evidence-holdout-baseline-1787236700053-43961.json"
+      ]
+    },
+    {
+      "benchmark": "develop-durable-evidence-holdout",
+      "arm": "candidate",
+      "benchmarkFingerprint": "20d5dc918965",
+      "pluginFingerprint": "3f36c118c841",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-durable-evidence-holdout-candidate-1787238389999-24094.json",
+        "develop-durable-evidence-holdout-candidate-1787238524273-30551.json",
+        "develop-durable-evidence-holdout-candidate-1787238674566-37313.json"
+      ]
+    }
+  ]
+}

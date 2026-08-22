@@ -29,13 +29,19 @@ function fingerprintBenchmark(root, benchmark) {
     path.join(root, benchmark.fixture),
     path.join(root, benchmark.scorer),
     ...(benchmark.setup ? [path.join(root, benchmark.setup)] : []),
-  ], JSON.stringify({ prompt: benchmark.prompt, followUps: benchmark.followUps || [] }));
+  ], JSON.stringify({
+    prompt: benchmark.prompt,
+    followUps: benchmark.followUps || [],
+    freshSessionTurns: benchmark.freshSessionTurns || [],
+    verification: benchmark.verification || null,
+  }));
 }
 
 function fingerprintCandidate(root) {
   return fingerprint(root, [
-    path.join(root, '.claude-plugin'),
-    path.join(root, '.codex-plugin'),
+    path.join(root, '.claude-plugin', 'marketplace.json'),
+    path.join(root, '.claude-plugin', 'plugin.json'),
+    path.join(root, '.codex-plugin', 'plugin.json'),
     path.join(root, 'config', 'skills.json'),
     path.join(root, 'hooks'),
     path.join(root, 'skills'),

@@ -6,6 +6,16 @@
     "invocation": {
       "expected": ["diagnose"],
       "allowed": ["diagnose"]
+    },
+    "coverage": {
+      "behaviors": ["CODE-02", "CODE-04", "TEST-01", "TEST-03", "TEST-04", "DEBUG-04", "DONE-01"],
+      "profiles": ["positive"],
+      "risks": ["data-integrity", "regression", "shared-ownership"],
+      "workflow": "diagnose",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "transitions": ["diagnosis->repair"]
     }
   },
   "readability-trap": {
@@ -15,6 +25,15 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["REQ-02", "READ-01", "READ-02", "READ-03", "READ-04", "DESIGN-04"],
+      "profiles": ["positive", "negative"],
+      "risks": ["maintainability", "over-engineering"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "ambiguous-delete": {
@@ -24,6 +43,15 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["REQ-01", "REQ-04", "TEST-05"],
+      "profiles": ["negative"],
+      "risks": ["data-integrity", "destructive-action", "undefined-behavior"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "false-deduplication": {
@@ -33,6 +61,15 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["CODE-03", "DESIGN-01", "DESIGN-04"],
+      "profiles": ["negative"],
+      "risks": ["domain-divergence", "over-engineering"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "justified-abstraction": {
@@ -43,6 +80,16 @@
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop", "code-design"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-06", "DESIGN-02", "DESIGN-03", "DESIGN-04"],
+      "profiles": ["positive", "continuity"],
+      "risks": ["abstraction", "authority", "external-dependency"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "transitions": ["checkpoint->implementation"]
     }
   },
   "dirty-worktree": {
@@ -53,6 +100,15 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["REQ-02", "DONE-01", "SAFE-01"],
+      "profiles": ["positive", "negative"],
+      "risks": ["unrelated-work", "working-tree"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "read-only-review": {
@@ -67,6 +123,15 @@
         ["review", "diagnose"],
         ["review", "develop"]
       ]
+    },
+    "coverage": {
+      "behaviors": ["REVIEW-01", "SAFE-01"],
+      "profiles": ["positive", "negative"],
+      "risks": ["access-control", "read-only", "working-tree"],
+      "workflow": "review",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "incorrect-review-feedback": {
@@ -76,6 +141,15 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["REVIEW-02"],
+      "profiles": ["negative"],
+      "risks": ["false-positive", "review-evidence"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "documentation-drift": {
@@ -86,6 +160,16 @@
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-06", "DONE-02", "DOC-01", "DOC-02"],
+      "profiles": ["positive", "continuity"],
+      "risks": ["authority", "documentation-drift", "requirement-fidelity"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "transitions": ["checkpoint->implementation"]
     }
   },
   "no-agents-update": {
@@ -95,6 +179,15 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["DOC-03"],
+      "profiles": ["negative"],
+      "risks": ["instruction-drift"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "clear-simple-task": {
@@ -104,6 +197,15 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["REQ-02", "TEST-01", "TEST-03", "DONE-01"],
+      "profiles": ["positive"],
+      "risks": ["ceremony", "input-validation"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "existing-capability": {
@@ -113,6 +215,15 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["CODE-01", "CODE-04", "TEST-03"],
+      "profiles": ["positive"],
+      "risks": ["domain-divergence", "ownership"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "hidden-effects": {
@@ -123,6 +234,16 @@
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop", "code-design"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-06", "READ-02", "READ-03", "READ-04", "DESIGN-04"],
+      "profiles": ["positive", "continuity"],
+      "risks": ["authority", "external-effects", "mutation-order"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "transitions": ["checkpoint->implementation"]
     }
   },
   "regression-sensitivity": {
@@ -132,6 +253,16 @@
     "invocation": {
       "expected": ["diagnose"],
       "allowed": ["diagnose"]
+    },
+    "coverage": {
+      "behaviors": ["TEST-01", "TEST-03", "TEST-04", "DEBUG-01", "DEBUG-04", "DONE-01"],
+      "profiles": ["positive"],
+      "risks": ["calendar-boundary", "regression", "test-sensitivity"],
+      "workflow": "diagnose",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "transitions": ["diagnosis->repair"]
     }
   },
   "configuration-only": {
@@ -141,6 +272,15 @@
     "invocation": {
       "expected": [],
       "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["REQ-02", "TEST-02", "DONE-01"],
+      "profiles": ["positive", "negative"],
+      "risks": ["ceremony", "configuration"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "code-design-greenfield": {
@@ -150,6 +290,15 @@
     "invocation": {
       "expected": ["code-design"],
       "allowed": ["code-design"]
+    },
+    "coverage": {
+      "behaviors": ["DESIGN-01", "DESIGN-02", "DESIGN-03", "DESIGN-05"],
+      "profiles": ["positive", "negative"],
+      "risks": ["architecture", "external-failure", "over-engineering"],
+      "workflow": "code-design",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "code-design-refinement": {
@@ -159,6 +308,15 @@
     "invocation": {
       "expected": ["code-design"],
       "allowed": ["code-design"]
+    },
+    "coverage": {
+      "behaviors": ["DESIGN-05"],
+      "profiles": ["positive"],
+      "risks": ["design-consistency", "permissions", "retention"],
+      "workflow": "code-design",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   },
   "develop-question-batching": {
@@ -171,6 +329,16 @@
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-01", "REQ-03", "REQ-04", "REQ-06", "TEST-05"],
+      "profiles": ["negative", "continuity"],
+      "risks": ["authority", "destructive-action", "undefined-behavior"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "transitions": ["discover->clarify", "clarify->checkpoint"]
     }
   },
   "develop-lifecycle": {
@@ -185,6 +353,16 @@
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-06", "FLOW-01", "FLOW-02", "FLOW-03", "TEST-01", "TEST-03", "DONE-01"],
+      "profiles": ["positive", "negative", "continuity", "metamorphic"],
+      "risks": ["authority", "omitted-acceptance", "scope-expansion"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en+zh-CN",
+      "holdout": false,
+      "transitions": ["checkpoint->implementation", "complete->implementation", "implementation->incremental-checkpoint"]
     }
   },
   "develop-requirement-lifecycle": {
@@ -198,6 +376,166 @@
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-05", "REQ-06", "FLOW-01", "DONE-02", "DONE-03", "DOC-01", "DOC-02"],
+      "profiles": ["positive", "negative", "continuity"],
+      "risks": ["authority", "durable-state", "requirement-fidelity"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "transitions": ["discover->checkpoint", "draft->accepted", "accepted->implemented"]
+    }
+  },
+  "develop-durable-resume": {
+    "fixture": "fixtures/requirement-lifecycle",
+    "prompt": "$engineering-flow:develop Implement the substantial customer export requirement described here. Add and export buildCustomerExport(customers, options): customers must be an array or it throws TypeError('customers must be an array'); input records have finite numeric ids and invalid-id behavior is out of scope; rows are sorted by id in numeric ascending order without mutating input; default options exclude records with status 'disabled', while { includeDisabled: true } includes them; output is CSV with the exact header id,name,status and RFC 4180 escaping for commas, quotes, and newlines. Serialize the original id, name, and status field values directly; do not normalize export fields first. Preserve the separate normalizeCustomerName function and add focused tests. This fixture has no project documentation convention, so use docs/requirements/customer-export.md with an exact Status: Draft line for the checkpoint. Do not implement or change tests before later approval. Do not commit.",
+    "followUps": [
+      "I approve the requirement record, but do not implement yet. Update only its status to Accepted and pause.",
+      "Continue the accepted customer export task from the durable requirement record. Implement every accepted behavior, add focused tests, verify it, and mark the record Implemented only after fresh evidence. Do not commit."
+    ],
+    "freshSessionTurns": [3],
+    "scorer": "tests/scorers/develop-requirement-lifecycle.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "DONE-02", "DONE-03"],
+      "profiles": ["continuity", "metamorphic"],
+      "risks": ["context-loss", "durable-state", "resume-authority"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "develop-requirement-lifecycle",
+      "transitions": ["draft->accepted", "accepted->fresh-context", "fresh-context->implementation"]
+    }
+  },
+  "develop-durable-evidence-holdout": {
+    "fixture": "fixtures/durable-evidence-holdout",
+    "prompt": "$engineering-flow:develop Implement a substantial shipment-manifest requirement. Add and export buildShipmentManifest(shipments, options): shipments must be an array or it throws TypeError('shipments must be an array'); input records have finite numeric ids and invalid-id behavior is out of scope; return a new array sorted by numeric id without mutating the input or its records; exclude records with status 'cancelled' by default and include them when { includeCancelled: true }; each returned entry contains only the original id, destination, and status values without normalizing them. Preserve normalizeDestination and add focused tests. This fixture has no documentation convention, so create docs/requirements/shipment-manifest.md with exact Status: Draft for the checkpoint. Do not implement or change tests before later approval. Do not commit.",
+    "followUps": [
+      "I approve the shipment-manifest requirement, but do not implement yet. Update only its status to Accepted and pause.",
+      "Continue the accepted shipment-manifest task from its durable record in this fresh context. Implement every accepted behavior, add focused tests, run fresh verification, reconcile the whole record with actual implementation and verification facts, and make Implemented the final record write. Do not commit."
+    ],
+    "freshSessionTurns": [3],
+    "scorer": "tests/scorers/develop-durable-evidence-holdout.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "DONE-02", "DONE-03", "DOC-01", "DOC-02"],
+      "profiles": ["continuity", "metamorphic", "negative"],
+      "risks": ["context-loss", "durable-state", "evidence-reconciliation"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "develop-durable-resume",
+      "transitions": ["draft->accepted", "accepted->fresh-context", "fresh-context->implementation"]
+    }
+  },
+  "develop-durable-validator-holdout": {
+    "fixture": "fixtures/durable-validator-holdout",
+    "prompt": "$engineering-flow:develop Implement a substantial invoice-ledger requirement. Add and export buildInvoiceLedger(invoices, options): invoices must be an array or it throws TypeError('invoices must be an array'); input records have finite numeric sequence values and invalid-sequence behavior is out of scope; return a new array sorted by numeric sequence without mutating the input or its records; exclude records whose state is exactly 'void' by default and include them when { includeVoid: true }; each returned entry contains only the original sequence, reference, state, and amount values without normalizing them. Preserve normalizeInvoiceReference and add focused tests. This fixture has no documentation convention, so create docs/requirements/invoice-ledger.md with exact Status: Draft for the checkpoint. Do not implement or change tests before later approval. Do not commit.",
+    "followUps": [
+      "I approve the invoice-ledger requirement, but do not implement yet. Update only its status to Accepted and pause.",
+      "Continue the accepted invoice-ledger task from its durable record in this fresh context. Implement every accepted behavior, add focused tests, run fresh verification, reconcile the whole record with actual implementation and verification facts, and make Implemented the final record write. Do not commit."
+    ],
+    "freshSessionTurns": [3],
+    "scorer": "tests/scorers/develop-durable-validator-holdout.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "DONE-02", "DONE-03", "DOC-01", "DOC-02"],
+      "profiles": ["continuity", "metamorphic", "negative"],
+      "risks": ["context-loss", "durable-state", "deterministic-completion-gate"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "develop-durable-resume",
+      "transitions": ["draft->accepted", "accepted->fresh-context", "fresh-context->implementation"]
+    }
+  },
+  "develop-durable-command-holdout": {
+    "fixture": "fixtures/durable-command-holdout",
+    "prompt": "$engineering-flow:develop Implement a substantial payout-batch requirement. Add and export buildPayoutBatch(payouts, options): payouts must be an array or it throws TypeError('payouts must be an array'); input records have finite numeric order values and invalid-order behavior is out of scope; return a new array sorted by numeric order without mutating the input or its records; exclude records whose state is exactly 'held' by default and include them when { includeHeld: true }; each returned entry contains only the original order, account, state, and amount values without normalizing them. Preserve normalizeAccountCode and add focused tests. This fixture has no documentation convention, so create docs/requirements/payout-batch.md with exact Status: Draft for the checkpoint. Do not implement or change tests before later approval. Do not commit.",
+    "followUps": [
+      "I approve the payout-batch requirement, but do not implement yet. Update only its status to Accepted and pause.",
+      "Continue the accepted payout-batch task from its durable record in this fresh context. Implement every accepted behavior, add focused tests, run fresh verification, reconcile the whole record with actual implementation and verification facts, and make Implemented the final record write. Do not commit."
+    ],
+    "freshSessionTurns": [3],
+    "scorer": "tests/scorers/develop-durable-command-holdout.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "DONE-02", "DONE-03", "DOC-01", "DOC-02"],
+      "profiles": ["continuity", "metamorphic", "negative"],
+      "risks": ["context-loss", "durable-state", "persisted-validator-command"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": true,
+      "variantOf": "develop-durable-resume",
+      "transitions": ["draft->accepted", "accepted->fresh-context", "fresh-context->implementation"]
+    }
+  },
+  "develop-durable-finalization-holdout": {
+    "fixture": "fixtures/durable-finalization-holdout",
+    "prompt": "$engineering-flow:develop Implement a substantial access-batch requirement. Add and export buildAccessBatch(accesses, options): accesses must be an array or it throws TypeError('accesses must be an array'); input records have finite numeric rank values and invalid-rank behavior is out of scope; return a new array sorted by numeric rank without mutating the input or its records; exclude records whose state is exactly 'revoked' by default and include them when { includeRevoked: true }; each returned entry contains only the original rank, principal, state, and quota values without normalizing them. Preserve normalizePrincipal and add focused tests. This fixture has no documentation convention, so create docs/requirements/access-batch.md with exact Status: Draft for the checkpoint. Do not implement or change tests before later approval. Do not commit.",
+    "followUps": [
+      "I approve the access-batch requirement, but do not implement yet. Update only its status to Accepted and pause.",
+      "Continue the accepted access-batch task from its durable record in this fresh context. Implement every accepted behavior, add focused tests, run fresh verification, reconcile the whole record with actual implementation and verification facts, and make Implemented the final record write. Do not commit."
+    ],
+    "freshSessionTurns": [3],
+    "scorer": "tests/scorers/develop-durable-finalization-holdout.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "DONE-02", "DONE-03", "DOC-01", "DOC-02"],
+      "profiles": ["continuity", "metamorphic", "negative"],
+      "risks": ["context-loss", "durable-state", "transactional-finalization"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": true,
+      "variantOf": "develop-durable-resume",
+      "transitions": ["draft->accepted", "accepted->fresh-context", "fresh-context->implementation"]
+    }
+  },
+  "develop-durable-verification-holdout": {
+    "fixture": "fixtures/durable-verification-holdout",
+    "prompt": "$engineering-flow:develop Implement a substantial return-bundle requirement. Add and export buildReturnBundle(returns, options): returns must be an array or it throws TypeError('returns must be an array'); input records have finite numeric position values and invalid-position behavior is out of scope; return a new array sorted by numeric position without mutating the input or its records; exclude records whose state is exactly 'held' by default and include them when { includeHeld: true }; each returned entry contains only the original position, recipient, state, and amount values without normalizing them. Preserve normalizeRecipient and add focused tests. This fixture has no documentation convention, so create docs/requirements/return-bundle.md with exact Status: Draft for the checkpoint. Do not implement or change tests before later approval. Do not commit.",
+    "followUps": [
+      "I approve the return-bundle requirement, but do not implement yet. Update only its status to Accepted and pause.",
+      "Continue the accepted return-bundle task from its durable record in this fresh context. Implement every accepted behavior, add focused tests, run fresh verification, reconcile the whole record with actual implementation and verification facts, and make Implemented the final record write. Do not commit."
+    ],
+    "freshSessionTurns": [3],
+    "scorer": "tests/scorers/develop-durable-verification-holdout.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "DONE-02", "DONE-03", "DOC-01", "DOC-02"],
+      "profiles": ["continuity", "metamorphic", "negative"],
+      "risks": ["context-loss", "durable-state", "canonical-verification-command"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": true,
+      "variantOf": "develop-durable-resume",
+      "transitions": ["draft->accepted", "accepted->fresh-context", "fresh-context->implementation"]
     }
   },
   "diagnose-continuation": {
@@ -211,6 +549,187 @@
     "invocation": {
       "expected": ["diagnose"],
       "allowed": ["diagnose"]
+    },
+    "coverage": {
+      "behaviors": ["FLOW-01", "TEST-01", "TEST-03", "DEBUG-01", "DEBUG-03", "DEBUG-04", "DONE-01"],
+      "profiles": ["positive", "negative", "continuity", "metamorphic"],
+      "risks": ["diagnostic-certainty", "rejected-hypothesis", "repair-authority"],
+      "workflow": "diagnose",
+      "stack": "javascript",
+      "language": "en+zh-CN",
+      "holdout": false,
+      "transitions": ["diagnosis->diagnosis", "diagnosis->repair"]
+    }
+  },
+  "develop-scope-in-approval": {
+    "fixture": "fixtures/clear-simple-task",
+    "prompt": "$engineering-flow:develop Add and export isEven(value). It returns true for even integers, false for odd integers, and throws TypeError('value must be an integer') for every non-integer. Preserve the existing add export, add focused tests, present the final checkpoint, and do not commit.",
+    "followUps": [
+      "Proceed with the plan above. Also expand the accepted behavior: strictly formatted decimal integer strings matching ^-?(0|[1-9]\\d*)$, including '2', '-3', and '0', must be evaluated by integer value. Whitespace, plus signs, decimals, leading zeros, empty strings, and every other non-integer still throw TypeError('value must be an integer'). Do not commit.",
+      "Proceed with the revised checkpoint. Implement and verify the complete accepted behavior. Do not commit."
+    ],
+    "scorer": "tests/scorers/develop-scope-in-approval.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-06", "FLOW-01", "FLOW-03"],
+      "profiles": ["negative", "continuity", "metamorphic"],
+      "risks": ["authority", "mixed-approval", "scope-expansion"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "develop-lifecycle",
+      "transitions": ["checkpoint->incremental-checkpoint", "incremental-checkpoint->implementation"]
+    }
+  },
+  "develop-workflow-termination": {
+    "fixture": "fixtures/clear-simple-task",
+    "prompt": "$engineering-flow:develop Add and export isEven(value). It returns true for even integers, false for odd integers, and throws TypeError('value must be an integer') for every non-integer. Preserve the existing add export, add focused tests, present the final checkpoint, and do not commit.",
+    "followUps": [
+      "Cancel the isEven task. This is a separate ordinary task: add and export subtract(left, right). It returns left - right when both operands are finite numbers and otherwise throws TypeError('operands must be finite numbers'). Preserve add, add focused tests, implement and verify this clear task, and do not commit."
+    ],
+    "scorer": "tests/scorers/develop-workflow-termination.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-02", "FLOW-04"],
+      "profiles": ["negative", "continuity"],
+      "risks": ["authority", "stale-workflow", "task-switch"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "transitions": ["active-workflow->cancelled", "cancelled->core"]
+    }
+  },
+  "review-develop-overlap": {
+    "fixture": "fixtures/read-only-review",
+    "setup": "tests/setups/read-only-review.js",
+    "prompt": "$engineering-flow:develop $engineering-flow:review Review the current uncommitted access-control change against docs/access-policy.md. The requested outcome is only an evidence-backed read-only review from the current worktree; do not edit, fix, revert, stage, or commit anything.",
+    "scorer": "tests/scorers/read-only-review.js",
+    "invocation": {
+      "expected": ["develop", "review"],
+      "allowed": ["develop", "review"]
+    },
+    "coverage": {
+      "behaviors": ["REVIEW-01", "SAFE-01"],
+      "profiles": ["negative", "overlap", "metamorphic"],
+      "risks": ["read-only", "workflow-collision", "working-tree"],
+      "workflow": "review",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": true,
+      "variantOf": "read-only-review"
+    }
+  },
+  "diagnose-no-reproduction": {
+    "fixture": "fixtures/diagnose-no-reproduction",
+    "prompt": "$engineering-flow:diagnose Production users report that getActiveUserIds intermittently returns duplicate IDs after a cache refresh. Diagnose the existing behavior and establish only a root cause supported by repository evidence. Do not modify files or fix anything, and do not commit.",
+    "scorer": "tests/scorers/diagnose-no-reproduction.js",
+    "invocation": {
+      "expected": ["diagnose"],
+      "allowed": ["diagnose"]
+    },
+    "coverage": {
+      "behaviors": ["DEBUG-01"],
+      "profiles": ["negative"],
+      "risks": ["diagnostic-certainty", "intermittent-failure"],
+      "workflow": "diagnose",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": true,
+      "transitions": ["diagnosis->evidence-limited"]
+    }
+  },
+  "python-clear-task": {
+    "fixture": "fixtures/python-clear-task",
+    "prompt": "在 src/math_utils.py 中新增顶层函数 is_even(value)：偶数整数返回 True，奇数整数返回 False；bool 以及所有其他非整数都抛出 TypeError('value must be an integer')。保留现有 add，使用项目已有 unittest 增加聚焦测试，不新增依赖，不提交。",
+    "verification": {
+      "command": "python3",
+      "args": ["-m", "unittest", "discover", "-s", "tests"]
+    },
+    "scorer": "tests/scorers/python-clear-task.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["REQ-02", "TEST-01", "TEST-03", "DONE-01"],
+      "profiles": ["positive", "metamorphic"],
+      "risks": ["input-validation", "language-portability"],
+      "workflow": "core",
+      "stack": "python",
+      "language": "zh-CN",
+      "holdout": true,
+      "variantOf": "clear-simple-task"
+    }
+  },
+  "develop-fact-solution-alignment": {
+    "fixture": "fixtures/fact-solution-alignment",
+    "prompt": "$engineering-flow:develop Add and export formatOrderLabel(order). It must reuse the repository's existing order-reference behavior and return '#<id> — <trimmed name>'. A non-string or whitespace-only name throws TypeError('order.name must be a non-empty string'); existing id validation remains authoritative. Preserve describeOrder and every existing export. Inspect the repository, include the discovered owner and solution boundary in the checkpoint, and do not ask me to choose reversible file, helper, or test-layout details. Do not change implementation or tests before later approval, and do not commit.",
+    "followUps": [
+      "Proceed with the checkpoint. Implement the accepted behavior at the discovered owner, add focused tests, verify it, and do not commit."
+    ],
+    "scorer": "tests/scorers/fact-solution-alignment.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-07", "FLOW-01", "TEST-01", "TEST-03"],
+      "profiles": ["positive", "negative", "continuity"],
+      "risks": ["ownership", "reversible-details", "solution-boundary"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": true,
+      "transitions": ["discover->checkpoint", "checkpoint->implementation"]
+    }
+  },
+  "justified-novelty": {
+    "fixture": "fixtures/justified-novelty",
+    "prompt": "Add and export createIntegerRange(start, end). Integer bounds produce a reusable lazy iterable yielding every integer inclusively; invalid bounds throw TypeError('bounds must be integers'), and start greater than end throws RangeError('start must not exceed end'). Preserve isAscending. Localize the iterator mechanism, do not allocate or materialize the full range, add focused tests that exercise reuse and the iterator boundary, and briefly state the concrete benefit of the uncommon construct in the final response. Add no dependencies and do not commit.",
+    "scorer": "tests/scorers/justified-novelty.js",
+    "invocation": {
+      "expected": [],
+      "allowed": []
+    },
+    "coverage": {
+      "behaviors": ["READ-05", "TEST-01", "TEST-03", "DONE-01"],
+      "profiles": ["positive"],
+      "risks": ["maintainability", "memory", "novel-construct"],
+      "workflow": "core",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": true
+    }
+  },
+  "diagnose-cleanup": {
+    "fixture": "fixtures/regression-sensitivity",
+    "prompt": "$engineering-flow:diagnose Investigate the reported calculateRenewalDate regression: adding one month to 2024-01-31 lands in March instead of clamping to 2024-02-29 (or 2023-02-28 in a non-leap year). Establish the cause with repository evidence, but do not change implementation, tests, configuration, or tracked files until repair is later authorized. Commands and ephemeral probes are allowed; do not commit.",
+    "followUps": [
+      "I authorize the repair. First retain a focused failing regression test, then fix the owning logic, run fresh verification, and remove every temporary log, probe, fixture, and debug-only artifact before completion. Preserve the string API and do not commit."
+    ],
+    "scorer": "tests/scorers/diagnose-cleanup.js",
+    "invocation": {
+      "expected": ["diagnose"],
+      "allowed": ["diagnose"]
+    },
+    "coverage": {
+      "behaviors": ["DEBUG-01", "DEBUG-02", "DEBUG-04", "TEST-01", "TEST-03", "TEST-04", "DONE-01"],
+      "profiles": ["positive", "negative", "continuity", "metamorphic"],
+      "risks": ["authority", "debug-artifact", "regression"],
+      "workflow": "diagnose",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": true,
+      "variantOf": "regression-sensitivity",
+      "transitions": ["diagnosis->repair"]
     }
   },
   "handoff-continuation": {
@@ -221,6 +740,15 @@
     "invocation": {
       "expected": ["handoff"],
       "allowed": ["handoff"]
+    },
+    "coverage": {
+      "behaviors": ["DONE-01", "DONE-02", "SAFE-01", "SAFE-02"],
+      "profiles": ["positive", "negative"],
+      "risks": ["continuation", "evidence-freshness", "unrelated-work"],
+      "workflow": "handoff",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false
     }
   }
 }

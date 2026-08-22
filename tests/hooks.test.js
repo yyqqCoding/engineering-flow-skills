@@ -87,6 +87,10 @@ test('explicit Codex skill tokens inject the complete requested workflow', () =>
   assert.match(output.hookSpecificOutput.additionalContext, /ENGINEERING_FLOW:EXPLICIT_WORKFLOWS/);
   assert.match(output.hookSpecificOutput.additionalContext, /active task/i);
   assert.match(output.hookSpecificOutput.additionalContext, /# Diagnose/);
+  assert.match(
+    output.hookSpecificOutput.additionalContext,
+    /Workflow resource directory: .*skills[\\/]diagnose/,
+  );
   assert.match(output.hookSpecificOutput.additionalContext, /observe red before the fix/i);
 });
 

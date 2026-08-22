@@ -16,6 +16,7 @@ const {
   buildCodexArgs,
   extractThreadId,
   extractTurnFailure,
+  freshSessionTurnsForBenchmark,
   promptsForBenchmark,
   readRequirementStates,
 } = require('./lib/benchmark-conversation');
@@ -23,6 +24,7 @@ const {
   fingerprintBenchmark,
   fingerprintCandidate,
 } = require('./lib/benchmark-fingerprints');
+const { runFixtureVerification } = require('./lib/benchmark-verification');
 const { loadEnvFile } = require('./lib/env-file');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -134,22 +136,6 @@ function runStreaming(command, args, options = {}) {
   });
 }
 
-function runPublicTests(workspace) {
-  const result = childProcess.spawnSync('npm', ['test'], {
-    cwd: workspace,
-    encoding: 'utf8',
-    timeout: 60 * 1000,
-    // npm resolves to npm.cmd on Windows, which spawnSync only runs through a shell.
-    shell: process.platform === 'win32',
-  });
-  return {
-    passed: result.status === 0,
-    status: result.status,
-    stdout: result.stdout,
-    stderr: result.stderr,
-  };
-}
-
 function routePrompt(pluginRoot, prompt) {
   if (!pluginRoot) return [];
   const routerPath = path.join(pluginRoot, 'hooks', 'user-prompt-submit.js');
@@ -165,6 +151,7 @@ function routePrompt(pluginRoot, prompt) {
 async function main() {
   const benchmark = benchmarks[benchmarkName];
   const prompts = promptsForBenchmark(benchmark);
+  const freshSessionTurns = freshSessionTurnsForBenchmark(benchmark);
   const pluginRoot = arm === 'candidate' ? ROOT : baselinePluginRoot;
   const benchmarkFingerprint = fingerprintBenchmark(ROOT, benchmark);
   const candidateFingerprint = fingerprintCandidate(ROOT);
@@ -251,6 +238,10 @@ async function main() {
   for (let index = 0; index < prompts.length; index += 1) {
     const prompt = prompts[index];
     const turnNumber = index + 1;
+    const startsFreshSession = freshSessionTurns.has(turnNumber);
+    const nextTurnNumber = turnNumber + 1;
+    const nextTurnResumesCurrent = nextTurnNumber <= prompts.length
+      && !freshSessionTurns.has(nextTurnNumber);
     const turnOutputPath = path.join(
       resultDir,
       `${benchmarkName}-${arm}-${runId}-turn-${turnNumber}.jsonl`,
@@ -259,8 +250,8 @@ async function main() {
     const turnStartedAt = Date.now();
     const args = buildCodexArgs({
       prompt,
-      threadId,
-      persistent: prompts.length > 1,
+      threadId: startsFreshSession ? null : threadId,
+      persistent: nextTurnResumesCurrent,
       configOverrides,
       workspace,
       finalPath: turnFinalPath,
@@ -276,7 +267,7 @@ async function main() {
     const turnFailure = extractTurnFailure(events);
     eventStreams.push(events);
 
-    if (index === 0) threadId = extractThreadId(events);
+    if (index === 0 || startsFreshSession) threadId = extractThreadId(events);
 
     const finalMessage = fs.existsSync(turnFinalPath)
       ? fs.readFileSync(turnFinalPath, 'utf8')
@@ -306,7 +297,7 @@ async function main() {
       },
       finalMessage,
       metrics: turnMetrics,
-      publicTests: runPublicTests(workspace),
+      publicTests: runFixtureVerification(workspace, benchmark),
       requirementDocuments: readRequirementStates(workspace),
       workspaceState: {
         status,
@@ -318,8 +309,8 @@ async function main() {
     });
 
     if (!turnResults.at(-1).modelRun.completed) break;
-    if (prompts.length > 1 && index === 0 && !threadId) {
-      continuationError = 'The first turn did not emit thread.started.thread_id';
+    if (nextTurnResumesCurrent && !threadId) {
+      continuationError = `Turn ${turnNumber} did not emit thread.started.thread_id`;
       break;
     }
   }
@@ -353,7 +344,8 @@ async function main() {
       error: String(error.stack || error.message || error),
     };
   }
-  const publicTests = turnResults.at(-1)?.publicTests || runPublicTests(workspace);
+  const publicTests = turnResults.at(-1)?.publicTests
+    || runFixtureVerification(workspace, benchmark);
   const diff = run('git', ['diff', '--', '.'], { cwd: workspace }).stdout;
   const finalStatus = run('git', ['status', '--short'], { cwd: workspace }).stdout;
   const finalHead = run('git', ['rev-parse', 'HEAD'], { cwd: workspace }).stdout.trim();

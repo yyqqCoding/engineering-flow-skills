@@ -42,8 +42,9 @@ function buildAdditionalContext(prompt) {
 
   for (const name of requested) {
     try {
-      const content = fs.readFileSync(path.join(ROOT, 'skills', name, 'SKILL.md'), 'utf8').trim();
-      if (content) loaded.push({ name, content });
+      const resourceRoot = path.join(ROOT, 'skills', name);
+      const content = fs.readFileSync(path.join(resourceRoot, 'SKILL.md'), 'utf8').trim();
+      if (content) loaded.push({ name, content, resourceRoot });
     } catch {
       // Fail open: an unavailable optional workflow must not block the user's turn.
     }
@@ -51,8 +52,9 @@ function buildAdditionalContext(prompt) {
 
   if (loaded.length === 0) return null;
 
-  const sections = loaded.map(({ name, content }) => [
+  const sections = loaded.map(({ name, content, resourceRoot }) => [
     `## Explicit workflow: ${name}`,
+    `Workflow resource directory: ${resourceRoot}`,
     content,
   ].join('\n\n'));
 

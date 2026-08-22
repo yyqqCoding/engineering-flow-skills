@@ -70,6 +70,15 @@ Failure signals:
 
 Only clear implementation authority sent after the final checkpoint, such as "start implementation", "implement this", or "proceed with the plan above", moves an active Develop task to implementation and a durable requirement record to `Accepted`. The initial request, answers to clarification questions, and a reading acknowledgement alone do not.
 
+When one message both approves the current checkpoint and materially adds or changes scope, its
+approval precedes the revised checkpoint and therefore authorizes no implementation in that turn.
+The agent aligns the increment, presents the revised checkpoint, and waits for later action
+language before implementing either the prior scope or the increment.
+The whole turn is alignment-only: no commands, file edits, requirement-status changes, test changes,
+or configuration changes occur before the revised checkpoint is approved.
+After later action language approves that revised checkpoint, the agent resumes implementation and
+verification immediately; it does not only restate the checkpoint or end with an empty turn.
+
 ### REQ-07: Fact and solution alignment
 
 For an implementation task, the agent discovers repository facts and aligns material solution decisions before coding without asking the user to choose reversible internal details.
@@ -95,6 +104,8 @@ If a follow-up materially changes acceptance behavior or scope, the agent aligns
 Failure signals:
 
 - Asks whether an explicitly requested behavior change is intentional instead of treating it as the increment and presenting its approval checkpoint.
+- Implements the previously checkpointed portion in the same turn that approval also introduces a material scope increment.
+- Treats approval bundled with a scope increment as approval of the revised checkpoint.
 
 ### FLOW-04: Workflow termination
 
@@ -230,6 +241,10 @@ A durable requirement record is marked `Implemented` only after every accepted b
 
 Before marking the record `Implemented`, its stated files, boundaries, and evidence are reconciled with the actual diff and verification results.
 Provisional statements made false by the accepted implementation, such as deferred tests or files "to be added", are replaced with actual implementation and verification facts rather than left behind under an updated status.
+
+For the portable fallback convention, a `Draft` or `Accepted` record contains a `Completion evidence` section whose implementation files, test files, and verification fields remain `Pending`; all other checkpoint sections use timeless constraints rather than approval-relative future tense. The section also persists the exact resolved finalization command, including the record path and `--mode ready --finalize`, so fresh context can validate and complete it without transcript state. Completion evidence is filled while the record remains `Accepted`. The bundled validator must pass against the reconciled record and actual task paths before `Implemented` becomes the final record write; `--finalize` then atomically writes `Status: Implemented` and stable passing evidence. Validation failures and repeated finalization do not modify the record. Obsolete prospective wording such as `will`, `after approval`, `planned`, or `to be added` is absent across the whole final record.
+
+Completion evidence uses the canonical verification command for the changed fixture or package. For the default Node fixture convention this is `npm test`; an explicitly declared project command takes precedence. The `Verification` field must contain the complete command, including all arguments, exactly as executed, and its passing result. Passing a different command does not satisfy the evidence requirement.
 
 ### DOC-01: Documentation reflects facts
 

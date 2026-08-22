@@ -261,9 +261,11 @@ codex plugin marketplace remove engineering-flow
 
 ## Validation and limitations
 
-- Static and deterministic tests: 50/50 passed.
-- Current general Codex cohort: 17 scenarios, candidate 51/51; explicit invocation 51/51, with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
-- Latest task-level paired A/B: under matching model, reasoning, and final scenario fingerprints, the current-release control passed 0/12 and the candidate passed 12/12; all 24 counted runs passed invocation, public-test, contamination, and unauthorized-commit guards.
+- Static and deterministic tests: 68/68 passed.
+- The configured corpus contains 32 scenarios mapping all 45 behavior IDs. This is semantic coverage, not a claim that 32 model trials completed.
+- The published broad Codex cohort remains 17 scenarios and 51/51 candidate passes, including exact explicit invocation with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
+- The earlier task-level paired A/B passed 0/12 on the current-release control and 12/12 on the candidate under matching model, reasoning, and final scenario fingerprints.
+- The refreshed v1.0.2 same-environment paired cohort selects 60 completed reports across ten scenarios: the 1.0.1 control passed 22/30 and the candidate passed 23/30. All selected runs passed invocation, fixture-verification, contamination, and unauthorized-commit guards. A separate direct durable-repair comparison improved from 0/6 to 1/6, so completion reconciliation remains a documented limitation.
 - Claude Code 2.1.197 passed strict manifest validation and an explicit `/engineering-flow:develop` live sample.
 - Claude Core-only ambiguity behavior does not yet match Codex. Explicitly invoke the full workflow for material data, permission, or policy decisions.
 - Full workflows add context, tool calls, and latency, so they do not load for every request.
@@ -301,6 +303,10 @@ BENCH_REPETITIONS=3 BENCH_CONCURRENCY=2 \
 # Fill the current cohort and summarize
 BENCH_TARGET_COMPLETED=3 BENCH_CONCURRENCY=2 npm run benchmark:fill
 npm run benchmark:summary
+
+# Reproduce the frozen release and durable-repair summaries
+npm run benchmark:release-summary
+npm run benchmark:durable-repair-summary
 ```
 
 Scenarios may define follow-up turns. The runner persists the first `codex exec` session, captures its thread ID, and uses `codex exec resume` for later turns while recording each message, event stream, workspace diff, requirement-document state, and public-test result.
