@@ -713,3 +713,59 @@ wait for later implementation approval before entering implementation. A fresh p
 candidate `2/3`; the two passing samples covered the revised behavior, while the remaining failure was
 an occasional model-side early action in the mixed turn. The behavior is accepted as sufficient for this
 release; no runtime tool restriction or further prompt expansion is warranted for the observed residual.
+
+## 2026-08-22 — Release manifest refresh after the scope-alignment change
+
+The scope-alignment revision above changed the Develop skill and therefore the candidate plugin
+fingerprint, so the release manifest no longer described the working tree and the deterministic manifest
+gate failed. Every candidate arm was rerun at the new fingerprint rather than editing the recorded
+fingerprint in place.
+
+Common environment:
+
+- Provider `ABtest`, model `gpt-5.6-luna`, low reasoning, timeout 240 seconds, concurrency 1
+- v1.0.1 baseline plugin `5a6093705b18`
+- Refreshed v1.0.2 candidate plugin `f050b0ec4443`
+- Exact selected reports: `config/evidence-manifest.json`
+
+All 27 candidate runs completed on the first attempt with no infrastructure retries.
+
+A baseline audit performed during the refresh found a separate manifest defect. For
+`develop-durable-resume` and `develop-durable-evidence-holdout`, three of the six named baseline reports
+had been produced under superseded benchmark fingerprints (`fe6b480aaead`, `4f98f3a35b33`, and
+`20d5dc918965`). The summarizer correctly excluded them, so the previously published `23/30` baseline
+total was not reproducible from the manifest it cited. Those two cohorts were re-selected from reports
+that actually match the declared benchmark fingerprint; enough usable samples already existed, so no
+baseline run was repeated. The corrected baseline total is `22/30`, and both affected baseline cohorts
+are `0/3` rather than `1/3` and `0/3`.
+
+| Scenario | Benchmark fingerprint | v1.0.1 baseline | v1.0.2 candidate |
+|---|---|---:|---:|
+| develop-scope-in-approval | `6d367cba87f4` | 2/3 | 2/3 |
+| develop-durable-resume | `38512282e6f9` | 0/3 | 3/3 |
+| develop-durable-evidence-holdout | `a47dfd4e467a` | 0/3 | 3/3 |
+| develop-workflow-termination | `1cd7ca379849` | 3/3 | 3/3 |
+| review-develop-overlap | `3da448bcd588` | 3/3 | 3/3 |
+| diagnose-no-reproduction | `34821c12f038` | 2/3 | 2/3 |
+| python-clear-task | `eec15df7e8fa` | 3/3 | 2/3 |
+| develop-fact-solution-alignment | `e00108b19172` | 3/3 | 3/3 |
+| justified-novelty | `e5b7d0e0d5af` | 3/3 | 3/3 |
+| diagnose-cleanup | `a17c48ee6ed0` | 3/3 | 3/3 |
+| **Total** | — | **22/30** | **27/30** |
+
+All 60 selected reports completed with no contaminated, incomplete, or unauthorized-commit runs, and
+invocation passed 30/30 in each arm with no false routes or collisions. Baseline averages were 79
+seconds, 7.30 tool calls, and 182,708 input tokens; candidate averages were 87 seconds, 8.27 tool calls,
+and 212,413 input tokens.
+
+The candidate total is unchanged at `27/30` and the per-scenario pattern is identical to the superseded
+cohort, so the scope-alignment revision neither improved nor regressed any scenario in this corpus. Three
+scenarios remain stochastic in the candidate arm: the mixed approval-plus-scope turn, the explicit
+"cannot reproduce" conclusion, and the cross-language Python task. Those failures are retained rather
+than resampled. Full deterministic verification is `npm test` with `77/77` tests passing, and semantic
+coverage remains `36` scenarios mapping all `45/45` behavior IDs.
+
+Benchmark and plugin fingerprints are computed from repository-relative paths, so they resolve
+differently on a Windows checkout than on a POSIX one. Cohort selection and the manifest gate must
+therefore be run from a POSIX environment; this refresh and its verification were.
+

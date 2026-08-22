@@ -25,15 +25,15 @@
       "benchmark": "develop-scope-in-approval",
       "arm": "candidate",
       "benchmarkFingerprint": "6d367cba87f4",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-scope-in-approval-candidate-1787323130873-6944.json",
-        "develop-scope-in-approval-candidate-1787323343238-12258.json",
-        "develop-scope-in-approval-candidate-1787323226513-9524.json"
+        "develop-scope-in-approval-candidate-1787367371289-48034.json",
+        "develop-scope-in-approval-candidate-1787367448684-50545.json",
+        "develop-scope-in-approval-candidate-1787367522806-52996.json"
       ]
     },
     {
@@ -46,24 +46,24 @@
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-durable-resume-baseline-1787228810438-44617.json",
         "develop-durable-resume-baseline-1787323445631-14786.json",
-        "develop-durable-resume-baseline-1787237104027-63172.json"
+        "develop-durable-resume-baseline-1787323580816-17864.json",
+        "develop-durable-resume-baseline-1787323698766-20930.json"
       ]
     },
     {
       "benchmark": "develop-durable-resume",
       "arm": "candidate",
       "benchmarkFingerprint": "38512282e6f9",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-durable-resume-candidate-1787291317629-77178.json",
-        "develop-durable-resume-candidate-1787291154757-69821.json",
-        "develop-durable-resume-candidate-1787290975351-61819.json"
+        "develop-durable-resume-candidate-1787374140288-59166.json",
+        "develop-durable-resume-candidate-1787374380661-62295.json",
+        "develop-durable-resume-candidate-1787374539650-65489.json"
       ]
     },
     {
@@ -76,8 +76,8 @@
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
+        "develop-durable-evidence-holdout-baseline-1787323810694-23882.json",
         "develop-durable-evidence-holdout-baseline-1787323938013-26897.json",
-        "develop-durable-evidence-holdout-baseline-1787237387205-76116.json",
         "develop-durable-evidence-holdout-baseline-1787324081743-29934.json"
       ]
     },
@@ -85,15 +85,15 @@
       "benchmark": "develop-durable-evidence-holdout",
       "arm": "candidate",
       "benchmarkFingerprint": "a47dfd4e467a",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-durable-evidence-holdout-candidate-1787324238314-446.json",
-        "develop-durable-evidence-holdout-candidate-1787324633019-6918.json",
-        "develop-durable-evidence-holdout-candidate-1787324394584-3419.json"
+        "develop-durable-evidence-holdout-candidate-1787374721664-68621.json",
+        "develop-durable-evidence-holdout-candidate-1787374875988-71771.json",
+        "develop-durable-evidence-holdout-candidate-1787375022653-74874.json"
       ]
     },
     {
@@ -115,15 +115,15 @@
       "benchmark": "develop-workflow-termination",
       "arm": "candidate",
       "benchmarkFingerprint": "1cd7ca379849",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-workflow-termination-candidate-1787325012825-14606.json",
-        "develop-workflow-termination-candidate-1787324825942-10412.json",
-        "develop-workflow-termination-candidate-1787324914628-12441.json"
+        "develop-workflow-termination-candidate-1787375240319-78209.json",
+        "develop-workflow-termination-candidate-1787375314535-80082.json",
+        "develop-workflow-termination-candidate-1787375415849-82173.json"
       ]
     },
     {
@@ -145,15 +145,15 @@
       "benchmark": "review-develop-overlap",
       "arm": "candidate",
       "benchmarkFingerprint": "3da448bcd588",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "review-develop-overlap-candidate-1787325186483-18649.json",
-        "review-develop-overlap-candidate-1787325135945-17566.json",
-        "review-develop-overlap-candidate-1787325080282-16497.json"
+        "review-develop-overlap-candidate-1787375491983-84008.json",
+        "review-develop-overlap-candidate-1787375558054-85079.json",
+        "review-develop-overlap-candidate-1787375611089-86211.json"
       ]
     },
     {
@@ -175,15 +175,15 @@
       "benchmark": "diagnose-no-reproduction",
       "arm": "candidate",
       "benchmarkFingerprint": "34821c12f038",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "diagnose-no-reproduction-candidate-1787325322880-21795.json",
-        "diagnose-no-reproduction-candidate-1787325224728-19673.json",
-        "diagnose-no-reproduction-candidate-1787325272115-20738.json"
+        "diagnose-no-reproduction-candidate-1787375665937-87298.json",
+        "diagnose-no-reproduction-candidate-1787375718049-88356.json",
+        "diagnose-no-reproduction-candidate-1787375763444-89413.json"
       ]
     },
     {
@@ -205,15 +205,15 @@
       "benchmark": "python-clear-task",
       "arm": "candidate",
       "benchmarkFingerprint": "eec15df7e8fa",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "python-clear-task-candidate-1787325374854-22813.json",
-        "python-clear-task-candidate-1787325513360-25081.json",
-        "python-clear-task-candidate-1787325439746-23928.json"
+        "python-clear-task-candidate-1787375802673-90429.json",
+        "python-clear-task-candidate-1787375879322-91558.json",
+        "python-clear-task-candidate-1787375973968-92771.json"
       ]
     },
     {
@@ -235,15 +235,15 @@
       "benchmark": "develop-fact-solution-alignment",
       "arm": "candidate",
       "benchmarkFingerprint": "e00108b19172",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-fact-solution-alignment-candidate-1787325867403-30649.json",
-        "develop-fact-solution-alignment-candidate-1787325581670-26241.json",
-        "develop-fact-solution-alignment-candidate-1787325706219-28401.json"
+        "develop-fact-solution-alignment-candidate-1787376037190-93846.json",
+        "develop-fact-solution-alignment-candidate-1787376148461-96052.json",
+        "develop-fact-solution-alignment-candidate-1787376267278-98347.json"
       ]
     },
     {
@@ -265,15 +265,15 @@
       "benchmark": "justified-novelty",
       "arm": "candidate",
       "benchmarkFingerprint": "e5b7d0e0d5af",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "justified-novelty-candidate-1787326069598-1500.json",
-        "justified-novelty-candidate-1787326009329-409.json",
-        "justified-novelty-candidate-1787326129219-2579.json"
+        "justified-novelty-candidate-1787376392532-781.json",
+        "justified-novelty-candidate-1787376450812-1855.json",
+        "justified-novelty-candidate-1787376512278-2967.json"
       ]
     },
     {
@@ -295,15 +295,15 @@
       "benchmark": "diagnose-cleanup",
       "arm": "candidate",
       "benchmarkFingerprint": "a17c48ee6ed0",
-      "pluginFingerprint": "c8f519c5b3c4",
+      "pluginFingerprint": "f050b0ec4443",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "diagnose-cleanup-candidate-1787326314391-5730.json",
-        "diagnose-cleanup-candidate-1787326404841-7737.json",
-        "diagnose-cleanup-candidate-1787326491813-9794.json"
+        "diagnose-cleanup-candidate-1787376568276-4051.json",
+        "diagnose-cleanup-candidate-1787376661604-6090.json",
+        "diagnose-cleanup-candidate-1787376814164-8217.json"
       ]
     }
   ]
