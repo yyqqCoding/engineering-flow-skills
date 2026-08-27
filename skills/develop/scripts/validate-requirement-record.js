@@ -61,6 +61,10 @@ function hasStableReadyValidatorEvidence(value) {
     && !/[\\/]validate-requirement-record\.js/.test(text);
 }
 
+function declaresNoTestFiles(value) {
+  return /^(?:none|n\/a)(?:\s|$|[—-])/i.test(String(value || '').trim());
+}
+
 function parseArguments(argv) {
   const options = { ignores: [], finalize: false };
   for (let index = 0; index < argv.length; index += 1) {
@@ -211,9 +215,15 @@ function validateRecord({ markdown, mode, changed = [], recordPath, ignores = []
   const scopedChanges = changed.filter((value) => value !== normalizedRecord && !ignored.has(value));
   const testPaths = scopedChanges.filter(isTestPath);
   const implementationPaths = scopedChanges.filter((value) => !isTestPath(value));
+  const recordsNoTestFiles = declaresNoTestFiles(testValue);
 
   if (implementationPaths.length === 0) errors.push('no changed implementation path found');
-  if (testPaths.length === 0) errors.push('no changed test path found');
+  if (testPaths.length === 0 && !recordsNoTestFiles) {
+    errors.push('Test files must be None when no test path changed');
+  }
+  if (testPaths.length > 0 && recordsNoTestFiles) {
+    errors.push('Test files cannot be None when test paths changed');
+  }
   for (const filename of implementationPaths) {
     if (!implementationValue.includes(filename)) {
       errors.push(`Implementation files omits changed path: ${filename}`);
@@ -273,6 +283,7 @@ if (require.main === module) main();
 module.exports = {
   changedPaths,
   completionEvidenceSection,
+  declaresNoTestFiles,
   finalizeRecord,
   fieldValue,
   hasReadyValidatorCommand,

@@ -65,6 +65,7 @@ Failure signals:
 
 - Mentions or promises the requirement path in the checkpoint response without actually creating the required `Draft` record.
 - Creates the record after the checkpoint turn or with a state other than `Draft`.
+- Creates a fallback requirement record for an ordinary local task whose checkpoint fits in the conversation and needs no repository-backed recovery or coordination.
 
 ### REQ-06: Approval semantics
 
@@ -179,17 +180,23 @@ When explicitly asked for `code-design`, the agent either creates a solution fro
 
 ## Testing and diagnosis
 
-### TEST-01: Valuable red-green loop
+### TEST-01: Production before feature tests
 
-For a testable business behavior or regression, the agent observes a relevant failure before implementing the fix and makes the smallest behaviorally meaningful slice pass.
+For new or changed behavior other than regression repair, the agent may read or run existing tests but completes the approved production implementation before the first test-file write. It then selects and writes necessary tests as a separate phase without another user checkpoint or commit requirement.
+
+Failure signals:
+
+- Adds or edits feature tests while production implementation is still incomplete.
+- Uses a test-first slice loop for ordinary new behavior.
+- Adds another approval checkpoint between production implementation and test selection.
 
 ### TEST-02: No ceremonial tests
 
 For mechanical, presentational, configuration, or framework-wiring changes, the agent chooses appropriate compile/lint/integration evidence instead of creating implementation-coupled unit tests.
 
-### TEST-03: Test sensitivity
+### TEST-03: Necessary and sensitive coverage
 
-A regression test fails when the fix is removed or the relevant behavior is broken. Passing tests that cannot detect the defect do not count as evidence.
+An added test protects critical accepted behavior, a domain invariant, or an established risk boundary through a stable seam and fails when that protected behavior is removed or meaningfully mutated. Tests that only mirror implementation details or execute a path without detecting the behavior are insufficient. Silence about tests is neutral; the workflow fails this behavior if it invents a no-test constraint from silence or from an unrelated restriction on dependencies, documentation, commits, or another artifact. A temporary probe does not replace selected automated coverage when a stable seam exists; explicit no-test scope instead requires the strongest non-test evidence and a reported gap.
 
 ### TEST-04: Risk-based boundary hardening
 
@@ -198,6 +205,10 @@ When changed or broken behavior crosses a material input, numeric/time, state, c
 ### TEST-05: No invented boundary behavior
 
 When expected behavior at a material boundary is not established by requirements or repository precedent, the agent asks for the product decision instead of encoding an arbitrary assertion.
+
+### TEST-06: Regression-first exception
+
+For a defect with a stable automated seam, the agent turns the minimized reproduction into a focused regression test, observes that test fail before editing production code, and retains sensitive passing coverage after the fix. When no correct seam exists, it reports the limitation rather than adding a misleading test.
 
 ### DEBUG-01: Reproduction before hypothesis
 
@@ -239,7 +250,7 @@ Each accepted behavior is either supported by implementation and evidence or exp
 
 A durable requirement record is marked `Implemented` only after every accepted behavior is reconciled with fresh evidence. `Draft`, `Accepted`, `Implemented`, and `Superseded` reflect the actual task state.
 
-Before marking the record `Implemented`, its stated files, boundaries, and evidence are reconciled with the actual diff and verification results.
+Before marking the record `Implemented`, its stated files, boundaries, and evidence are reconciled with the actual diff and verification results. `Test files` lists exact changed test paths or states `None` when a more appropriate non-test verification was used.
 Provisional statements made false by the accepted implementation, such as deferred tests or files "to be added", are replaced with actual implementation and verification facts rather than left behind under an updated status.
 
 For the portable fallback convention, a `Draft` or `Accepted` record contains a `Completion evidence` section whose implementation files, test files, and verification fields remain `Pending`; all other checkpoint sections use timeless constraints rather than approval-relative future tense. The section also persists the exact resolved finalization command, including the record path and `--mode ready --finalize`, so fresh context can validate and complete it without transcript state. Completion evidence is filled while the record remains `Accepted`. The bundled validator must pass against the reconciled record and actual task paths before `Implemented` becomes the final record write; `--finalize` then atomically writes `Status: Implemented` and stable passing evidence. Validation failures and repeated finalization do not modify the record. Obsolete prospective wording such as `will`, `after approval`, `planned`, or `to be added` is absent across the whole final record.

@@ -12,7 +12,7 @@ This project aims to correct a smaller set of high-value failure modes without t
 2. Proceed autonomously when requirements are clear or details are safely inferable from the repository, except when an explicitly invoked workflow defines a user checkpoint.
 3. Locate existing behavior and the correct ownership boundary before adding code.
 4. Prefer familiar, idiomatic, explicit, locally understandable code over compressed or clever code.
-5. Apply test-first development when it creates valuable behavioral evidence.
+5. Complete new production behavior before selecting necessary tests, while retaining test-first evidence for reproducible regressions.
 6. Diagnose root causes through a reproducible feedback loop.
 7. Verify with fresh, scope-appropriate evidence before claiming completion.
 8. Reconcile authoritative documentation with implemented behavior without rewriting accepted requirements to excuse an incorrect implementation.
@@ -111,6 +111,8 @@ After the user answers the independent clarification batch, ask another question
 
 After clarification, present one final alignment checkpoint and pause without changing production code, tests, or configuration. A short checkpoint stays in the conversation. A substantial checkpoint uses an existing authoritative project document when available, or `docs/requirements/<feature-slug>.md` when no applicable documentation convention exists. When the initial substantial request already provides a complete contract, create and verify that `Draft` record in the first turn; hypothetical optional inputs outside the contract cannot delay it. The durable record contains the same goal, acceptance behavior, out of scope, assumptions, and solution boundary as the checkpoint, not only a status and acceptance list. Only clear action language sent after this checkpoint, such as "implement this", "start", or "proceed with the plan above", approves implementation. The initial request, clarification answers, and reading acknowledgements do not.
 
+A local task whose checkpoint fits in the conversation does not receive a fallback requirement record. Durable records are for substantial work that needs repository-backed recovery or coordination, not a default artifact of invoking `develop`.
+
 Approval bundled with a material scope increment is not post-checkpoint approval for the revised
 task. Align the increment and pause the whole turn; a later approval authorizes the revised
 checkpoint.
@@ -127,12 +129,16 @@ An explicit complete predicate plus the semantic operation to apply resolves eve
 - Keep entry points thin and place behavior with the module that owns the relevant data and invariant.
 - Do not deduplicate code that merely looks similar but represents independently changing rules.
 
-### 4. Implement with feedback
+### 4. Implement, then select evidence
 
-- For regressions, first build the narrowest reliable reproduction available. When a stable automated seam exists, materialize it as a regression test and observe that test fail before editing production code; earlier diagnostic probes do not replace this red observation.
-- For valuable behavior seams, use a red-green-refactor loop one vertical slice at a time.
-- For mechanical, presentation-only, configuration, or framework-wiring changes, use the smallest meaningful compile/lint/integration check instead of ceremonial unit tests.
-- Refactor while green when it improves clarity, locality, or removes proven semantic duplication.
+- For new or changed behavior, use accepted requirements, existing tests, and repository conventions to complete the production implementation first. Existing tests may be read or run, but test files are not added or edited until the approved production behavior is implemented. This phase boundary does not add another user checkpoint or require a commit.
+- After the production implementation is complete, select verification independently. Add focused automated coverage only when it protects critical accepted behavior, a domain invariant, or an established risk boundary and can fail when that behavior breaks. Prefer a stable public seam over implementation details.
+- A request that does not mention tests is neutral, not a prohibition. Only an explicit no-test constraint suppresses test-file changes; restrictions on dependencies, documentation, commits, or other artifacts do not implicitly extend to tests.
+- A temporary probe may supplement selected automated coverage but does not replace it when critical behavior or an established risk boundary has a stable test seam. If the user explicitly prohibits test changes, use the strongest applicable non-test evidence and report the remaining coverage gap.
+- Treat permissions and trust, money or data integrity, destructive effects, lifecycle/state transitions, duplicate or concurrent operations, migrations, compatibility, and external-failure handling as strong reasons for targeted coverage. Add only applicable adjacent boundary cases whose expected behavior is established by requirements or repository precedent.
+- For regressions, first build the narrowest reliable reproduction available. When a stable automated seam exists, materialize it as a regression test and observe that test fail before editing production code; this is the exception to production-first test authoring.
+- For mechanical, presentation-only, configuration, documentation, or framework-wiring changes, prefer the smallest meaningful build, type, lint, integration, smoke, or visual check instead of ceremonial unit tests.
+- If post-implementation verification exposes an implementation defect, correct the production code and rerun the selected evidence. Refactor only when it improves clarity, locality, or proven semantic reuse.
 
 Apply two conditional hardening passes only when evidence justifies them:
 

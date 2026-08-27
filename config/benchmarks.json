@@ -8,7 +8,7 @@
       "allowed": ["diagnose"]
     },
     "coverage": {
-      "behaviors": ["CODE-02", "CODE-04", "TEST-01", "TEST-03", "TEST-04", "DEBUG-04", "DONE-01"],
+      "behaviors": ["CODE-02", "CODE-04", "DEBUG-04", "DONE-01"],
       "profiles": ["positive"],
       "risks": ["data-integrity", "regression", "shared-ownership"],
       "workflow": "diagnose",
@@ -199,13 +199,35 @@
       "allowed": []
     },
     "coverage": {
-      "behaviors": ["REQ-02", "TEST-01", "TEST-03", "DONE-01"],
+      "behaviors": ["REQ-02", "DONE-01"],
       "profiles": ["positive"],
       "risks": ["ceremony", "input-validation"],
       "workflow": "core",
       "stack": "javascript",
       "language": "en",
       "holdout": false
+    }
+  },
+  "post-implementation-testing": {
+    "fixture": "fixtures/post-implementation-testing",
+    "prompt": "$engineering-flow:develop Add and export debitBalance(balance, amount). Both values must be non-negative integers or it throws TypeError('balance and amount must be non-negative integers'). If amount exceeds balance, throw RangeError('insufficient balance'); an amount exactly equal to balance is allowed and returns 0. Otherwise return balance - amount. Preserve formatAccountId, fully align the task before implementation, add no dependencies, and do not commit.",
+    "followUps": [
+      "Start implementation. Complete and verify the accepted behavior, and do not commit."
+    ],
+    "scorer": "tests/scorers/post-implementation-testing.js",
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-05", "REQ-06", "TEST-01", "TEST-03", "TEST-04", "DONE-01"],
+      "profiles": ["positive", "negative", "continuity"],
+      "risks": ["data-integrity", "boundary", "test-ceremony"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "transitions": ["checkpoint->implementation"]
     }
   },
   "existing-capability": {
@@ -255,7 +277,7 @@
       "allowed": ["diagnose"]
     },
     "coverage": {
-      "behaviors": ["TEST-01", "TEST-03", "TEST-04", "DEBUG-01", "DEBUG-04", "DONE-01"],
+      "behaviors": ["TEST-03", "TEST-04", "TEST-06", "DEBUG-01", "DEBUG-04", "DONE-01"],
       "profiles": ["positive"],
       "risks": ["calendar-boundary", "regression", "test-sensitivity"],
       "workflow": "diagnose",
@@ -355,7 +377,7 @@
       "allowed": ["develop"]
     },
     "coverage": {
-      "behaviors": ["REQ-03", "REQ-06", "FLOW-01", "FLOW-02", "FLOW-03", "TEST-01", "TEST-03", "DONE-01"],
+      "behaviors": ["REQ-03", "REQ-06", "FLOW-01", "FLOW-02", "FLOW-03", "TEST-03", "DONE-01"],
       "profiles": ["positive", "negative", "continuity", "metamorphic"],
       "risks": ["authority", "omitted-acceptance", "scope-expansion"],
       "workflow": "develop",
@@ -551,7 +573,7 @@
       "allowed": ["diagnose"]
     },
     "coverage": {
-      "behaviors": ["FLOW-01", "TEST-01", "TEST-03", "DEBUG-01", "DEBUG-03", "DEBUG-04", "DONE-01"],
+      "behaviors": ["FLOW-01", "TEST-03", "TEST-06", "DEBUG-01", "DEBUG-03", "DEBUG-04", "DONE-01"],
       "profiles": ["positive", "negative", "continuity", "metamorphic"],
       "risks": ["diagnostic-certainty", "rejected-hypothesis", "repair-authority"],
       "workflow": "diagnose",
@@ -659,7 +681,7 @@
       "allowed": []
     },
     "coverage": {
-      "behaviors": ["REQ-02", "TEST-01", "TEST-03", "DONE-01"],
+      "behaviors": ["REQ-02", "TEST-03", "DONE-01"],
       "profiles": ["positive", "metamorphic"],
       "risks": ["input-validation", "language-portability"],
       "workflow": "core",
@@ -681,7 +703,7 @@
       "allowed": ["develop"]
     },
     "coverage": {
-      "behaviors": ["REQ-07", "FLOW-01", "TEST-01", "TEST-03"],
+      "behaviors": ["REQ-07", "FLOW-01", "TEST-03"],
       "profiles": ["positive", "negative", "continuity"],
       "risks": ["ownership", "reversible-details", "solution-boundary"],
       "workflow": "develop",
@@ -700,7 +722,7 @@
       "allowed": []
     },
     "coverage": {
-      "behaviors": ["READ-05", "TEST-01", "TEST-03", "DONE-01"],
+      "behaviors": ["READ-05", "TEST-03", "DONE-01"],
       "profiles": ["positive"],
       "risks": ["maintainability", "memory", "novel-construct"],
       "workflow": "core",
@@ -721,7 +743,7 @@
       "allowed": ["diagnose"]
     },
     "coverage": {
-      "behaviors": ["DEBUG-01", "DEBUG-02", "DEBUG-04", "TEST-01", "TEST-03", "TEST-04", "DONE-01"],
+      "behaviors": ["DEBUG-01", "DEBUG-02", "DEBUG-04", "TEST-03", "TEST-04", "TEST-06", "DONE-01"],
       "profiles": ["positive", "negative", "continuity", "metamorphic"],
       "risks": ["authority", "debug-artifact", "regression"],
       "workflow": "diagnose",

@@ -34,7 +34,7 @@ Send the workflow name together with the task, preferably on the first line:
 
 ```text
 $engineering-flow:develop
-Implement order batch export. Reuse existing permission and query capabilities, add focused tests, and reconcile the authoritative documentation. Do not commit.
+Implement order batch export. Reuse existing permission and query capabilities, protect critical behavior with necessary evidence, and reconcile the authoritative documentation. Do not commit.
 ```
 
 Invocation formats:
@@ -66,15 +66,15 @@ Enter these tokens in the Codex or Claude Code conversation, not in Bash or Powe
 2. Aligns the goal, acceptance behavior, scope, facts, and material solution decisions.
 3. Batches independent material questions, asks dependent questions in order, and stops when implementation is safe.
 4. Returns the final checkpoint and pauses for explicit implementation approval.
-5. Implements the smallest complete change and gathers focused feedback after approval.
-6. Adds boundary coverage for applicable risk and improves structure under demonstrated design pressure.
+5. Completes the smallest production change before adding or editing tests.
+6. Selects only necessary tests and applicable boundary evidence, then improves structure under demonstrated design pressure.
 7. Verifies with fresh evidence and updates authoritative documentation only for changed facts.
 
 There is one Develop mode:
 
 ```text
 $engineering-flow:develop
-Implement device alarm contacts. Inspect the existing design and ownership boundaries, add focused tests, and reconcile the authoritative documentation.
+Implement device alarm contacts. Inspect the existing design and ownership boundaries, protect critical behavior with necessary evidence, and reconcile the authoritative documentation.
 ```
 
 Even for a clear request, the model first returns the final goal, acceptance behavior, scope, assumptions, and material solution boundary, then stops. A short checkpoint stays in the conversation. A substantial checkpoint follows the project's existing authoritative-document convention or, when none applies, uses `docs/requirements/<feature-slug>.md`. If the initial request already supplies a complete contract, the model creates and verifies the `Draft` in that turn; hypothetical optional inputs outside the contract cannot block it.
@@ -261,12 +261,12 @@ codex plugin marketplace remove engineering-flow
 
 ## Validation and limitations
 
-- Static and deterministic tests: 68/68 passed.
-- The configured corpus contains 32 scenarios mapping all 45 behavior IDs. This is semantic coverage, not a claim that 32 model trials completed.
+- Static and deterministic tests: 84/84 passed.
+- The configured corpus contains 37 scenarios mapping all 46 behavior IDs. This is semantic coverage, not a claim that 37 model trials completed.
 - The published broad Codex cohort remains 17 scenarios and 51/51 candidate passes, including exact explicit invocation with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
 - The earlier task-level paired A/B passed 0/12 on the current-release control and 12/12 on the candidate under matching model, reasoning, and final scenario fingerprints.
-- The refreshed v1.0.2 same-environment paired cohort selects 60 completed reports across ten scenarios: the 1.0.1 control passed 22/30 and the candidate passed 23/30. All selected runs passed invocation, fixture-verification, contamination, and unauthorized-commit guards. A separate direct durable-repair comparison improved from 0/6 to 1/6, so completion reconciliation remains a documented limitation.
-- Claude Code 2.1.197 passed strict manifest validation and an explicit `/engineering-flow:develop` live sample.
+- The final-fingerprint v1.0.2 paired cohort selects 12 completed reports across the two testing-policy scenarios. Production-before-tests improved from 0/3 on the 1.0.1 control to 3/3 on the candidate; the no-test configuration control remained 3/3 in both arms. Earlier ten-scenario results belong to an older candidate fingerprint and remain historical rather than being combined with the release cohort.
+- Claude Code 2.1.223 passed strict manifest validation; the final isolated `/engineering-flow:develop` trajectory wrote production before focused boundary tests.
 - Claude Core-only ambiguity behavior does not yet match Codex. Explicitly invoke the full workflow for material data, permission, or policy decisions.
 - Full workflows add context, tool calls, and latency, so they do not load for every request.
 
@@ -304,7 +304,11 @@ BENCH_REPETITIONS=3 BENCH_CONCURRENCY=2 \
 BENCH_TARGET_COMPLETED=3 BENCH_CONCURRENCY=2 npm run benchmark:fill
 npm run benchmark:summary
 
+# Generate reviewed cohort selections without overwriting the manifest
+npm run benchmark:evidence-generate -- --template config/evidence-manifest.json
+
 # Reproduce the frozen release and durable-repair summaries
+npm run benchmark:release-verify
 npm run benchmark:release-summary
 npm run benchmark:durable-repair-summary
 ```

@@ -34,7 +34,7 @@
 
 ```text
 $engineering-flow:develop
-实现订单批量导出。复用现有权限和查询能力，添加聚焦测试并同步权威文档。不要提交。
+实现订单批量导出。复用现有权限和查询能力，用必要证据保护关键行为并同步权威文档。不要提交。
 ```
 
 调用格式：
@@ -66,15 +66,15 @@ $engineering-flow:develop
 2. 对齐目标、验收行为、范围、事实和重要方案决定。
 3. 批量询问相互独立的重要问题，按依赖顺序询问后续问题，并在足以安全实施时停止。
 4. 输出最终确认内容并暂停，等待明确的实施批准。
-5. 批准后实现最小完整改动并获得聚焦反馈。
-6. 按实际风险补边界测试，按真实设计压力改善代码结构。
+5. 批准后先完成最小完整的生产代码，再新增或修改测试。
+6. 只选择必要测试和适用的边界证据，并按真实设计压力改善代码结构。
 7. 使用新鲜证据验证并同步发生变化的权威文档。
 
 Develop 只有一种模式：
 
 ```text
 $engineering-flow:develop
-实现设备告警通知人配置。检查现有设计和代码边界，完成聚焦测试，最后同步权威文档。
+实现设备告警通知人配置。检查现有设计和代码边界，用必要证据保护关键行为，最后同步权威文档。
 ```
 
 即使需求已经清晰，模型也会先输出最终目标、验收行为、范围、假设和重要方案边界，然后停止。内容较少时直接在对话中确认；内容较多时优先遵循项目已有权威文档约定，如果没有适用约定，则使用 `docs/requirements/<feature-slug>.md`。如果首轮需求已经给出完整合同，应在该轮创建并核实 `Draft`，合同外的假设性可选输入不能阻塞确认。
@@ -260,12 +260,12 @@ codex plugin marketplace remove engineering-flow
 
 ## 验证状态与限制
 
-- 静态与确定性测试：68/68 通过。
-- 当前语料包含 32 个已配置场景，在语义上覆盖全部 45 个行为 ID；这不等同于完成了 32 次模型试验。
+- 静态与确定性测试：84/84 通过。
+- 当前语料包含 37 个已配置场景，在语义上覆盖全部 46 个行为 ID；这不等同于完成了 37 次模型试验。
 - 已发布的 Codex 通用 cohort 仍为 17 个场景、candidate 51/51 通过；显式调用 51/51，误触发、漏触发、碰撞、污染和未授权提交均为 0。
 - 较早的任务级配对 A/B 在相同模型、推理等级和最终场景指纹下为 current-release control 0/12、candidate 12/12。
-- 刷新后的 v1.0.2 同环境配对 cohort 精确选择十个场景的 60 个完整报告：1.0.1 control 为 22/30、candidate 为 23/30；所有入选样本的调用、fixture 验证、污染和未授权提交检查全部通过。单独的 durable 修复直接对照从 0/6 提升到 1/6，因此完成态同步仍作为已记录限制。
-- Claude Code 2.1.197 通过 strict manifest 校验，并完成显式 `/engineering-flow:develop` 实机样本。
+- 最终指纹的 v1.0.2 配对 cohort 精确选择测试策略的两个场景、共 12 个完整报告：生产代码先于测试写入从 1.0.1 control 的 0/3 提升到 candidate 的 3/3；无需测试的配置变更两组均为 3/3。更早的十场景结果属于旧候选指纹，仅保留为历史证据，不与发布 cohort 合并。
+- Claude Code 2.1.223 通过 strict manifest 校验；最终隔离的 `/engineering-flow:develop` 轨迹先写生产代码，再补关键边界测试。
 - Claude 普通 Core-only 歧义样本尚未达到 Codex 同等行为，因此涉及数据、权限等重大决定时应显式调用完整工作流。
 - 完整工作流会增加上下文、工具调用和耗时，所以不会自动加载到每个请求。
 
@@ -303,7 +303,11 @@ BENCH_REPETITIONS=3 BENCH_CONCURRENCY=2 \
 BENCH_TARGET_COMPLETED=3 BENCH_CONCURRENCY=2 npm run benchmark:fill
 npm run benchmark:summary
 
+# 生成经审查的 cohort 选择，不覆盖现有 manifest
+npm run benchmark:evidence-generate -- --template config/evidence-manifest.json
+
 # 复现已冻结的发布汇总和 durable 修复汇总
+npm run benchmark:release-verify
 npm run benchmark:release-summary
 npm run benchmark:durable-repair-summary
 ```

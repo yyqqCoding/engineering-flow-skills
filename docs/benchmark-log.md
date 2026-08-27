@@ -769,3 +769,112 @@ Benchmark and plugin fingerprints are computed from repository-relative paths, s
 differently on a Windows checkout than on a POSIX one. Cohort selection and the manifest gate must
 therefore be run from a POSIX environment; this refresh and its verification were.
 
+## 2026-08-27 — Production-first selective-testing development evidence
+
+The testing policy changed for new behavior: complete production code before writing tests, then add
+only sensitive coverage for critical behavior or established risk boundaries. Regression repair keeps
+the stable-seam red-before-fix exception. Develop, Diagnose, and Code Design entrypoints were also
+shortened, with fallback requirement-record mechanics moved to a conditional reference.
+
+A new `post-implementation-testing` scenario deliberately does not request tests. Its scorer requires
+separate production and test file-change events, correct balance behavior, no unrelated artifacts, and
+mutation-sensitive coverage for both overdraft rejection and the exact-balance boundary. The first
+complete sample at candidate `68054a7b5017` satisfied the implementation order and both mutations but
+failed because it created an unnecessary fallback requirement record for a local task. This was manually
+reviewed as a genuine ceremony failure, not a scorer error. Develop and the product/behavior truth now
+state that a conversation-sized local checkpoint does not receive a fallback record.
+
+Development smokes at intermediate candidate `3097a5c6351e`, provider `ABtest`, model
+`gpt-5.6-luna`, low reasoning, and 240-second timeout produced:
+
+| Scenario | Benchmark fingerprint | Result | Evidence |
+|---|---|---:|---|
+| post-implementation-testing | `211cacbfbd05` | 1/1 | Production write preceded the test write; both critical mutations failed; only source and established test files changed |
+| regression-sensitivity | `30597af2c4bc` | 1/1 | Focused red occurred before the production fix; retained test failed against the original bug |
+| develop-requirement-lifecycle | `c56a4b124dfc` | 1/1 | Draft and ready validators passed; `Draft -> Accepted -> Implemented` and exact completion evidence were preserved through the conditional reference |
+| code-design-refinement | `0afd7d3ba1bd` | 1/1 | Contradictory execution and permission rules were resolved in a coherent read-only proposal |
+
+All four counted samples completed without contamination or unauthorized commits and passed their public
+fixture verification. One sandboxed attempt failed before a model turn because network access was blocked;
+one post-correction retry returned provider `503 auth_unavailable` with zero tokens and zero changes. Both
+are excluded as infrastructure failures.
+
+Final review then found that the fallback validator still required a changed test path even when a
+substantial configuration or documentation task had more meaningful non-test verification. The validator
+now requires exact changed test paths when tests changed, and explicit `Test files: None` when none changed;
+focused deterministic tests cover both branches. This changed the candidate fingerprint to `88a32553e6de`,
+so the earlier smokes remain a separate cohort rather than being combined with it. At the final fingerprint,
+fresh `post-implementation-testing` and `develop-requirement-lifecycle` samples both passed all scorer,
+public-test, invocation, contamination, and commit checks.
+
+These are single development smokes, not release-level stochastic evidence. The v1.0.2 release manifest
+remains intentionally tied to `f050b0ec4443`; it must not be relabeled or combined with this changed plugin
+and changed benchmark corpus.
+
+The first full deterministic run exposed one infrastructure-policy failure: `npm test` required the frozen
+v1.0.2 candidate fingerprint to equal the in-progress worktree. That made every legitimate skill edit fail
+before its new release cohort could be collected. The checks are now separated: `npm test` validates manifest
+shape and paired cohort accounting, while `npm run benchmark:release-verify` is the explicit release gate for
+the package version and current plugin and benchmark fingerprints. The fresh deterministic suite passes
+79/79; the explicit release gate correctly reports `f050b0ec4443 != 88a32553e6de` until matching release-level
+evidence is collected.
+
+Follow-up release-tooling work added deterministic manifest generation from a reviewed template. The first
+real invocation caught and removed a biased eligibility rule that would have excluded scorer failures; the
+generator now retains every completed, uncontaminated model sample and excludes only infrastructure or
+contamination failures. A manually dispatched release workflow runs deterministic, coverage, and strict
+fingerprint gates without launching stochastic model jobs. Repeated stale candidate fingerprints are
+reported once rather than once per scenario.
+
+Claude Code 2.1.223 loaded candidate `88a32553e6de`, the current Core, and all five workflows in an isolated
+Windows-local fixture, but the initial launch did not forward the API-provider variables through `WSLENV`
+and fell back to an expired OAuth session. The attempt consumed zero model tokens and changed no fixture
+files, so it is excluded. No further skill text was removed; the later failure-driven corrections leave the
+combined Core and skill entrypoints about 31% smaller than the pre-change version.
+
+The user's existing API configuration was then forwarded to only the isolated Claude child, without loading
+user plugins or printing credential values. Three manually reviewed Claude trajectories followed:
+
+| Candidate | Result | Review |
+|---|---:|---|
+| `88a32553e6de` | fail | Production code was written first, but the checkpoint invented `no test edits` from unrelated no-dependency/no-commit constraints and the model kept only an ephemeral probe |
+| `a6bcbf86a446` | fail | The checkpoint stopped inventing a direct test prohibition, but the model still used an ad-hoc probe as a substitute for stable money-integrity coverage |
+| `a1d44ed59b97` | pass | Production file edit preceded the test edit; final tests detected both overdraft-guard removal and the exact-balance boundary mutation; only the source and established test file changed |
+
+The two failures produced two narrow Develop corrections: silence about tests is neutral, and an ad-hoc probe
+cannot replace automated coverage already selected by the risk criteria. At final fingerprint
+`a1d44ed59b97`, a fresh Codex `post-implementation-testing` sample also passed every scorer, invocation,
+public-test, contamination, and commit check. A `configuration-only` negative sample changed only the requested
+JSON configuration and used its existing validator, demonstrating that the correction did not recreate
+ceremonial unit testing. These remain development smokes rather than release-level repeated cohorts.
+
+## 2026-08-27 — v1.0.2 final testing-policy release cohort
+
+The release evidence was deliberately narrowed to the two scenarios directly owned by the final testing-policy
+change instead of rerunning the older ten-scenario corpus. The earlier broad results remain historical evidence
+for plugin `f050b0ec4443`; they are not combined with the final candidate fingerprint.
+
+Common environment:
+
+- Provider `ABtest`, model `gpt-5.6-luna`, low reasoning, timeout 240 seconds
+- Released v1.0.1 control plugin `5a6093705b18`
+- Final v1.0.2 candidate plugin `a1d44ed59b97`
+- Three completed, uncontaminated samples per arm and scenario
+- Exact selected reports: `config/evidence-manifest.json`
+
+| Scenario | Benchmark fingerprint | v1.0.1 control | v1.0.2 candidate |
+|---|---|---:|---:|
+| post-implementation-testing | `211cacbfbd05` | 0/3 | 3/3 |
+| configuration-only | `18c7ec0173ac` | 3/3 | 3/3 |
+| **Total** | — | **3/6** | **6/6** |
+
+All three control failures were manually reviewed. Each produced correct behavior and passing boundary tests,
+but production and test files were written in the same edit event, failing the preregistered production-before-tests
+check. Every final candidate run wrote production separately before adding focused tests that detected both the
+overdraft-guard and exact-balance mutations. The negative configuration runs changed only the requested JSON and
+used the established validator; neither arm added ceremonial tests.
+
+All twelve selected reports completed with no contamination, infrastructure failure, or unauthorized commit.
+Invocation and fixture verification passed in every selected report. The deterministic suite passes 84/84,
+semantic coverage maps all 46 behavior IDs across 37 configured scenarios, strict Claude plugin validation passes,
+and `npm run benchmark:release-verify` matches the final package, benchmark, and candidate fingerprints.

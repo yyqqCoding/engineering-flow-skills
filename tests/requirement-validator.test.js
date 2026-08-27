@@ -7,6 +7,7 @@ const test = require('node:test');
 
 const { ROOT } = require('./helpers/repository');
 const {
+  declaresNoTestFiles,
   hasStaleProspectiveLanguage,
   hasStableReadyValidatorEvidence,
   isTestPath,
@@ -100,6 +101,25 @@ test('ready validator checks accepted state, changed paths, evidence, and stale 
     changed: [...input.changed, 'notes.txt'],
     ignores: ['notes.txt'],
   }), []);
+
+  const withoutTests = record('Accepted', {
+    implementation: '`config/dashboard.json`',
+    tests: 'None — configuration-only change',
+    verification: '`npm run validate:config` — passed',
+    deviations: 'None known',
+  });
+  assert.deepEqual(validateRecord({
+    markdown: withoutTests,
+    mode: 'ready',
+    changed: ['config/dashboard.json'],
+    recordPath: 'docs/requirements/customer-export.md',
+  }), []);
+  assert.match(validateRecord({
+    markdown: withoutTests.replace('None — configuration-only change', '`dashboard.test.js`'),
+    mode: 'ready',
+    changed: ['config/dashboard.json'],
+    recordPath: 'docs/requirements/customer-export.md',
+  }).join('\n'), /must be None/);
 });
 
 test('validator argument and test-path parsing stay explicit', () => {
@@ -121,6 +141,8 @@ test('validator argument and test-path parsing stay explicit', () => {
   assert.equal(isTestPath('customer-export.test.js'), true);
   assert.equal(isTestPath('tests/customer-export.js'), true);
   assert.equal(isTestPath('src/customer-export.js'), false);
+  assert.equal(declaresNoTestFiles('None — configuration-only change'), true);
+  assert.equal(declaresNoTestFiles('`customer-export.test.js`'), false);
   assert.equal(hasStaleProspectiveLanguage('The API will be rejected by policy.'), false);
   assert.equal(hasStaleProspectiveLanguage('Tests will be added after approval.'), true);
   assert.equal(hasStableReadyValidatorEvidence(
