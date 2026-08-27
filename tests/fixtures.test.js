@@ -259,6 +259,32 @@ test('fact alignment scorer distinguishes approval from reversible implementatio
   assert.equal(hasFocusedCoverage('    formatOrderLabel({ name: validName })'), false);
 });
 
+test('post-implementation scorer requires a separate production write before test writes', () => {
+  const {
+    observedProductionBeforeTests,
+  } = require('./scorers/post-implementation-testing');
+  const event = (paths) => JSON.stringify({
+    type: 'item.completed',
+    item: {
+      type: 'file_change',
+      changes: paths.map((filename) => ({ path: filename, kind: 'update' })),
+    },
+  });
+
+  assert.equal(observedProductionBeforeTests([
+    event(['/workspace/src/wallet.js']),
+    event(['/workspace/wallet.test.js']),
+  ].join('\n')), true);
+  assert.equal(observedProductionBeforeTests(event([
+    '/workspace/src/wallet.js',
+    '/workspace/wallet.test.js',
+  ])), false);
+  assert.equal(observedProductionBeforeTests([
+    event(['/workspace/wallet.test.js']),
+    event(['/workspace/src/wallet.js']),
+  ].join('\n')), false);
+});
+
 test('justified novelty scorer requires an explicit concrete benefit', () => {
   const { explainsBenefit } = require('./scorers/justified-novelty');
 

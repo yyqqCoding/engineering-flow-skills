@@ -2,21 +2,25 @@
 
 All notable changes to Engineering Flow are documented here.
 
-## 1.0.2 - 2026-08-20
+## 1.0.2 - 2026-08-27
 
-Expands behavioral coverage and hardens release evidence without adding another workflow or growing the always-on Core.
+Adds production-first, risk-selective testing guidance, reduces workflow prompt weight, and hardens release evidence without adding another workflow.
 
 ### Added
 
 - Machine-readable behavior, risk, workflow, transition, stack, language, and holdout coverage for every benchmark, with a deterministic coverage report.
 - Focused scenarios for mixed approval plus scope expansion, durable fresh-context recovery, durable completion-evidence holdout, workflow termination, explicit workflow overlap, unreproduced diagnosis, cross-language verification, fact/solution alignment, justified novelty, and debug-artifact cleanup.
 - Fixture-specific verification commands, a standard-library Python fixture, GitHub Actions CI, a release evidence manifest, and a separate direct durable-repair evidence manifest for exact cohort selection.
-- A final same-environment paired release cohort with three completed samples per arm across ten v1.0.2 scenarios.
+- A mutation-sensitive production-before-tests scenario, a no-test configuration control, deterministic evidence generation, and a strict release-evidence workflow.
+- A final same-environment paired release cohort with three completed samples per arm for the two testing-policy scenarios.
 
 ### Changed
 
 - Develop pauses the whole turn when approval of an earlier checkpoint is bundled with a material scope increment, then waits for approval of the revised checkpoint.
+- New behavior is implemented before tests are added; afterward, only critical contract, regression, and boundary coverage is selected. Regression repair retains the stable-seam red-before-fix exception.
+- Develop, Diagnose, and Code Design are shorter, and fallback requirement-record mechanics load only when a substantial task needs them.
 - Portable requirement records carry a pending completion-evidence gate; completion replaces it with exact implementation paths, test paths, verification results, and deviations while removing stale checkpoint-time future language.
+- Requirement completion accepts explicit `Test files: None` when non-test verification is more appropriate.
 - Benchmark summaries keep provider, model, and reasoning levels separate and can filter reports through an exact evidence manifest.
 - Plugin fingerprints include only released manifests, the skill registry, hooks, and skills, so ignored editor metadata cannot split cohorts.
 - Codex and Claude contributor instructions are synchronized, and repository text files use LF line endings.

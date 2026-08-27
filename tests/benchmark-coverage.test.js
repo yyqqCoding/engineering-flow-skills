@@ -45,6 +45,8 @@ test('high-risk lifecycle boundaries have executable scenario coverage', () => {
     'DEBUG-01',
     'REVIEW-01',
     'SAFE-01',
+    'TEST-01',
+    'TEST-06',
   ]) {
     assert.ok(
       summary.behaviors.scenarios[behaviorId].length > 0,

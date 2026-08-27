@@ -27,7 +27,7 @@ test('core stays compact and contains no workflow takeover language', () => {
   assert.doesNotMatch(core, /brainstorm|worktree|subagent|must write a plan|commit your work/i);
   assert.match(core, /minimum lines/i);
   assert.match(core, /never infer how related data is handled/i);
-  assert.match(core, /workflow remains active for the same task/i);
+  assert.match(core, /(?:workflow remains active for the same task|invoked workflow owns the task)/i);
   assert.match(core, /fresh scope-appropriate verification/i);
 });
 

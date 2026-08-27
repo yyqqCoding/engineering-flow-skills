@@ -15,6 +15,7 @@ const {
   fingerprintCandidate,
 } = require('../scripts/lib/benchmark-fingerprints');
 const { validateEvidenceManifest } = require('../scripts/lib/evidence-manifest');
+const { verifyReleaseEvidence } = require('../scripts/verify-release-evidence');
 
 const skillConfig = readJson('config/skills.json');
 const skillNames = listSkillNames();
@@ -38,7 +39,16 @@ test('CI runs the deterministic suite and semantic coverage report', () => {
   assert.doesNotMatch(workflow, /benchmark:(?:ab|fill)|run-codex-benchmark/);
 });
 
-test('release evidence manifest selects exact final fingerprints and environments', () => {
+test('release workflow runs strict evidence checks without stochastic cohort filling', () => {
+  const workflow = read('.github/workflows/release-evidence.yml');
+  assert.match(workflow, /workflow_dispatch:/);
+  assert.match(workflow, /npm test/);
+  assert.match(workflow, /benchmark:coverage -- --json/);
+  assert.match(workflow, /benchmark:release-verify/);
+  assert.doesNotMatch(workflow, /benchmark:(?:ab|fill)|run-codex-benchmark/);
+});
+
+test('frozen release evidence manifest retains complete paired cohorts', () => {
   const manifest = readJson('config/evidence-manifest.json');
   const durableRepairManifest = readJson('config/durable-repair-evidence-manifest.json');
   const packageJson = readJson('package.json');
@@ -46,12 +56,9 @@ test('release evidence manifest selects exact final fingerprints and environment
 
   assert.deepEqual(validateEvidenceManifest(manifest), []);
   assert.equal(manifest.release, packageJson.version);
-  assert.equal(manifest.cohorts.length, 20);
-  assert.equal(new Set(manifest.cohorts.map((cohort) => cohort.benchmark)).size, 10);
-  assert.equal(
-    manifest.cohorts.reduce((total, cohort) => total + cohort.reports.length, 0),
-    60,
-  );
+  const releaseBenchmarks = new Set(manifest.cohorts.map((cohort) => cohort.benchmark));
+  assert.ok(releaseBenchmarks.size > 0);
+  assert.equal(manifest.cohorts.length, releaseBenchmarks.size * 2);
   assert.deepEqual(new Set(manifest.cohorts.map((cohort) => cohort.arm)), new Set([
     'baseline',
     'candidate',
@@ -66,18 +73,15 @@ test('release evidence manifest selects exact final fingerprints and environment
   }
   for (const cohort of manifest.cohorts) {
     assert.ok(benchmarks[cohort.benchmark], `${cohort.benchmark} must exist`);
-    assert.equal(
-      cohort.benchmarkFingerprint,
-      fingerprintBenchmark(ROOT, benchmarks[cohort.benchmark]),
-    );
     assert.ok(cohort.targetCompleted >= 3);
+    assert.equal(cohort.reports.length, cohort.targetCompleted);
   }
-  for (const cohort of manifest.cohorts) {
-    assert.equal(
-      cohort.pluginFingerprint,
-      cohort.arm === 'candidate' ? fingerprintCandidate(ROOT) : '5a6093705b18',
-    );
-  }
+  assert.equal(
+    new Set(manifest.cohorts
+      .filter((cohort) => cohort.arm === 'candidate')
+      .map((cohort) => cohort.pluginFingerprint)).size,
+    1,
+  );
 
   assert.deepEqual(validateEvidenceManifest(durableRepairManifest), []);
   assert.equal(durableRepairManifest.release, packageJson.version);
@@ -108,6 +112,33 @@ test('release evidence manifest selects exact final fingerprints and environment
       assert.equal(cohort.pluginFingerprint, '3f36c118c841');
     }
   }
+});
+
+test('explicit release verification compares frozen evidence with current inputs', () => {
+  const manifest = structuredClone(readJson('config/evidence-manifest.json'));
+  const packageJson = readJson('package.json');
+  const benchmarks = readJson('config/benchmarks.json');
+  const candidateFingerprint = fingerprintCandidate(ROOT);
+
+  manifest.release = packageJson.version;
+  for (const cohort of manifest.cohorts) {
+    cohort.benchmarkFingerprint = fingerprintBenchmark(ROOT, benchmarks[cohort.benchmark]);
+    if (cohort.arm === 'candidate') cohort.pluginFingerprint = candidateFingerprint;
+  }
+  assert.deepEqual(verifyReleaseEvidence(ROOT, manifest, benchmarks, packageJson), []);
+
+  for (const cohort of manifest.cohorts) {
+    if (cohort.arm === 'candidate') cohort.pluginFingerprint = 'stale-plugin';
+    if (cohort.benchmark === manifest.cohorts[0].benchmark) {
+      cohort.benchmarkFingerprint = 'stale-benchmark';
+    }
+  }
+  const errors = verifyReleaseEvidence(ROOT, manifest, benchmarks, packageJson);
+  assert.match(
+    errors.join('\n'),
+    /benchmark fingerprint is stale[\s\S]*candidate plugin fingerprint is stale/,
+  );
+  assert.equal(errors.filter((error) => /candidate plugin fingerprint/.test(error)).length, 1);
 });
 
 test('skill names, Claude policy, and Codex policy stay synchronized', () => {

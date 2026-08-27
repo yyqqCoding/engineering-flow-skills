@@ -14,7 +14,9 @@
     "benchmark": "node scripts/run-codex-benchmark.js",
     "benchmark:ab": "node scripts/run-codex-ab.js",
     "benchmark:coverage": "node scripts/report-benchmark-coverage.js",
+    "benchmark:evidence-generate": "node scripts/generate-evidence-manifest.js",
     "benchmark:fill": "node scripts/fill-codex-cohort.js",
+    "benchmark:release-verify": "node scripts/verify-release-evidence.js",
     "benchmark:durable-repair-summary": "node scripts/summarize-benchmarks.js --manifest config/durable-repair-evidence-manifest.json",
     "benchmark:release-summary": "node scripts/summarize-benchmarks.js --manifest config/evidence-manifest.json",
     "benchmark:summary": "node scripts/summarize-benchmarks.js"

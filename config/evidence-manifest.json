@@ -7,303 +7,63 @@
   ],
   "cohorts": [
     {
-      "benchmark": "develop-scope-in-approval",
+      "benchmark": "post-implementation-testing",
       "arm": "baseline",
-      "benchmarkFingerprint": "6d367cba87f4",
+      "benchmarkFingerprint": "211cacbfbd05",
       "pluginFingerprint": "5a6093705b18",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-scope-in-approval-baseline-1787221382958-30463.json",
-        "develop-scope-in-approval-baseline-1787225071111-34611.json",
-        "develop-scope-in-approval-baseline-1787225145345-39143.json"
+        "post-implementation-testing-baseline-1787802817134-25184.json",
+        "post-implementation-testing-baseline-1787802817135-25185.json",
+        "post-implementation-testing-baseline-1787802894663-28956.json"
       ]
     },
     {
-      "benchmark": "develop-scope-in-approval",
+      "benchmark": "post-implementation-testing",
       "arm": "candidate",
-      "benchmarkFingerprint": "6d367cba87f4",
-      "pluginFingerprint": "f050b0ec4443",
+      "benchmarkFingerprint": "211cacbfbd05",
+      "pluginFingerprint": "a1d44ed59b97",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-scope-in-approval-candidate-1787367371289-48034.json",
-        "develop-scope-in-approval-candidate-1787367448684-50545.json",
-        "develop-scope-in-approval-candidate-1787367522806-52996.json"
+        "post-implementation-testing-candidate-1787800021638-13664.json",
+        "post-implementation-testing-candidate-1787802901205-29541.json",
+        "post-implementation-testing-candidate-1787802971016-32500.json"
       ]
     },
     {
-      "benchmark": "develop-durable-resume",
+      "benchmark": "configuration-only",
       "arm": "baseline",
-      "benchmarkFingerprint": "38512282e6f9",
+      "benchmarkFingerprint": "18c7ec0173ac",
       "pluginFingerprint": "5a6093705b18",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-durable-resume-baseline-1787323445631-14786.json",
-        "develop-durable-resume-baseline-1787323580816-17864.json",
-        "develop-durable-resume-baseline-1787323698766-20930.json"
+        "configuration-only-baseline-1787802993939-1014.json",
+        "configuration-only-baseline-1787803046689-3296.json",
+        "configuration-only-baseline-1787803071939-4449.json"
       ]
     },
     {
-      "benchmark": "develop-durable-resume",
+      "benchmark": "configuration-only",
       "arm": "candidate",
-      "benchmarkFingerprint": "38512282e6f9",
-      "pluginFingerprint": "f050b0ec4443",
+      "benchmarkFingerprint": "18c7ec0173ac",
+      "pluginFingerprint": "a1d44ed59b97",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "develop-durable-resume-candidate-1787374140288-59166.json",
-        "develop-durable-resume-candidate-1787374380661-62295.json",
-        "develop-durable-resume-candidate-1787374539650-65489.json"
-      ]
-    },
-    {
-      "benchmark": "develop-durable-evidence-holdout",
-      "arm": "baseline",
-      "benchmarkFingerprint": "a47dfd4e467a",
-      "pluginFingerprint": "5a6093705b18",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "develop-durable-evidence-holdout-baseline-1787323810694-23882.json",
-        "develop-durable-evidence-holdout-baseline-1787323938013-26897.json",
-        "develop-durable-evidence-holdout-baseline-1787324081743-29934.json"
-      ]
-    },
-    {
-      "benchmark": "develop-durable-evidence-holdout",
-      "arm": "candidate",
-      "benchmarkFingerprint": "a47dfd4e467a",
-      "pluginFingerprint": "f050b0ec4443",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "develop-durable-evidence-holdout-candidate-1787374721664-68621.json",
-        "develop-durable-evidence-holdout-candidate-1787374875988-71771.json",
-        "develop-durable-evidence-holdout-candidate-1787375022653-74874.json"
-      ]
-    },
-    {
-      "benchmark": "develop-workflow-termination",
-      "arm": "baseline",
-      "benchmarkFingerprint": "1cd7ca379849",
-      "pluginFingerprint": "5a6093705b18",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "develop-workflow-termination-baseline-1787229538585-78161.json",
-        "develop-workflow-termination-baseline-1787229589502-81300.json",
-        "develop-workflow-termination-baseline-1787229650388-84543.json"
-      ]
-    },
-    {
-      "benchmark": "develop-workflow-termination",
-      "arm": "candidate",
-      "benchmarkFingerprint": "1cd7ca379849",
-      "pluginFingerprint": "f050b0ec4443",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "develop-workflow-termination-candidate-1787375240319-78209.json",
-        "develop-workflow-termination-candidate-1787375314535-80082.json",
-        "develop-workflow-termination-candidate-1787375415849-82173.json"
-      ]
-    },
-    {
-      "benchmark": "review-develop-overlap",
-      "arm": "baseline",
-      "benchmarkFingerprint": "3da448bcd588",
-      "pluginFingerprint": "5a6093705b18",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "review-develop-overlap-baseline-1787229929146-99359.json",
-        "review-develop-overlap-baseline-1787229972180-1901.json",
-        "review-develop-overlap-baseline-1787230007233-3778.json"
-      ]
-    },
-    {
-      "benchmark": "review-develop-overlap",
-      "arm": "candidate",
-      "benchmarkFingerprint": "3da448bcd588",
-      "pluginFingerprint": "f050b0ec4443",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "review-develop-overlap-candidate-1787375491983-84008.json",
-        "review-develop-overlap-candidate-1787375558054-85079.json",
-        "review-develop-overlap-candidate-1787375611089-86211.json"
-      ]
-    },
-    {
-      "benchmark": "diagnose-no-reproduction",
-      "arm": "baseline",
-      "benchmarkFingerprint": "34821c12f038",
-      "pluginFingerprint": "5a6093705b18",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "diagnose-no-reproduction-baseline-1787233202027-33215.json",
-        "diagnose-no-reproduction-baseline-1787233247267-35760.json",
-        "diagnose-no-reproduction-baseline-1787233288226-37709.json"
-      ]
-    },
-    {
-      "benchmark": "diagnose-no-reproduction",
-      "arm": "candidate",
-      "benchmarkFingerprint": "34821c12f038",
-      "pluginFingerprint": "f050b0ec4443",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "diagnose-no-reproduction-candidate-1787375665937-87298.json",
-        "diagnose-no-reproduction-candidate-1787375718049-88356.json",
-        "diagnose-no-reproduction-candidate-1787375763444-89413.json"
-      ]
-    },
-    {
-      "benchmark": "python-clear-task",
-      "arm": "baseline",
-      "benchmarkFingerprint": "eec15df7e8fa",
-      "pluginFingerprint": "5a6093705b18",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "python-clear-task-baseline-1787230450822-25894.json",
-        "python-clear-task-baseline-1787230514437-28682.json",
-        "python-clear-task-baseline-1787230569755-31144.json"
-      ]
-    },
-    {
-      "benchmark": "python-clear-task",
-      "arm": "candidate",
-      "benchmarkFingerprint": "eec15df7e8fa",
-      "pluginFingerprint": "f050b0ec4443",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "python-clear-task-candidate-1787375802673-90429.json",
-        "python-clear-task-candidate-1787375879322-91558.json",
-        "python-clear-task-candidate-1787375973968-92771.json"
-      ]
-    },
-    {
-      "benchmark": "develop-fact-solution-alignment",
-      "arm": "baseline",
-      "benchmarkFingerprint": "e00108b19172",
-      "pluginFingerprint": "5a6093705b18",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "develop-fact-solution-alignment-baseline-1787230840936-42435.json",
-        "develop-fact-solution-alignment-baseline-1787230963478-47859.json",
-        "develop-fact-solution-alignment-baseline-1787231071623-52744.json"
-      ]
-    },
-    {
-      "benchmark": "develop-fact-solution-alignment",
-      "arm": "candidate",
-      "benchmarkFingerprint": "e00108b19172",
-      "pluginFingerprint": "f050b0ec4443",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "develop-fact-solution-alignment-candidate-1787376037190-93846.json",
-        "develop-fact-solution-alignment-candidate-1787376148461-96052.json",
-        "develop-fact-solution-alignment-candidate-1787376267278-98347.json"
-      ]
-    },
-    {
-      "benchmark": "justified-novelty",
-      "arm": "baseline",
-      "benchmarkFingerprint": "e5b7d0e0d5af",
-      "pluginFingerprint": "5a6093705b18",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "justified-novelty-baseline-1787231519707-72200.json",
-        "justified-novelty-baseline-1787231565545-74392.json",
-        "justified-novelty-baseline-1787231631407-77202.json"
-      ]
-    },
-    {
-      "benchmark": "justified-novelty",
-      "arm": "candidate",
-      "benchmarkFingerprint": "e5b7d0e0d5af",
-      "pluginFingerprint": "f050b0ec4443",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "justified-novelty-candidate-1787376392532-781.json",
-        "justified-novelty-candidate-1787376450812-1855.json",
-        "justified-novelty-candidate-1787376512278-2967.json"
-      ]
-    },
-    {
-      "benchmark": "diagnose-cleanup",
-      "arm": "baseline",
-      "benchmarkFingerprint": "a17c48ee6ed0",
-      "pluginFingerprint": "5a6093705b18",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "diagnose-cleanup-baseline-1787231879371-87658.json",
-        "diagnose-cleanup-baseline-1787231962436-91716.json",
-        "diagnose-cleanup-baseline-1787232047440-95890.json"
-      ]
-    },
-    {
-      "benchmark": "diagnose-cleanup",
-      "arm": "candidate",
-      "benchmarkFingerprint": "a17c48ee6ed0",
-      "pluginFingerprint": "f050b0ec4443",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "diagnose-cleanup-candidate-1787376568276-4051.json",
-        "diagnose-cleanup-candidate-1787376661604-6090.json",
-        "diagnose-cleanup-candidate-1787376814164-8217.json"
+        "configuration-only-candidate-1787800100378-15779.json",
+        "configuration-only-candidate-1787803087912-5394.json",
+        "configuration-only-candidate-1787803113759-6383.json"
       ]
     }
   ]
