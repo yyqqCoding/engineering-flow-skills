@@ -7,15 +7,15 @@
     </picture>
   </a>
   <br><br>
-  <strong>Task-level development workflows and evaluation for Codex CLI and Claude Code</strong>
+  <strong>🧭 Align first, then act; finish production code before selecting critical evidence</strong>
   <br><br>
-  <a href="https://engineering-flow-web.vercel.app"><strong>Documentation site</strong></a>
+  <a href="https://engineering-flow-web.vercel.app"><strong>📖 Documentation</strong></a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
-  <a href="#quick-start">Quick start</a>
+  <a href="#quick-start">🚀 Quick start</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
-  <a href="#five-workflows">Workflows</a>
+  <a href="#five-workflows">🧩 Workflows</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
-  <a href="#validation">Validation</a>
+  <a href="#validation">📊 Validation</a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
   <a href="docs/user-guide.md">User guide</a>
   <br><br>
@@ -23,16 +23,20 @@
   <br><br>
   <img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-supported-111820?style=flat-square">
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-supported-D97757?style=flat-square">
+  <img alt="Release 1.0.2" src="https://img.shields.io/badge/release-v1.0.2-2467CE?style=flat-square">
   <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-4C5D6B?style=flat-square">
 </div>
 
 ---
 
-## Core idea
+> [!IMPORTANT]
+> **Engineering Flow does not take over every task.** Clear small tasks proceed directly; full workflows load only when you explicitly name one and then stay with that task.
+
+## 🧭 Core idea
 
 > Understand the requirement well enough to implement safely. Make the smallest clear change at the right boundary. Prove it with useful feedback. Reconcile documentation with facts, and promote only durable lessons into project rules.
 
-| Understand | Align | Implement | Prove |
+| 🔎 Understand | 🎯 Align | 💻 Implement | ✅ Prove |
 |---|---|---|---|
 | Read project rules, authoritative docs, the relevant code, and tests | Clarify only unresolved behavior that changes acceptance, then present one checkpoint | Reuse the right domain capability and change the module that owns the rule | Verify with risk-matched tests and fresh evidence, then reconcile the facts |
 
@@ -40,11 +44,13 @@ Strong coding models already know these techniques; the problem is that they app
 
 | Imbalance | How it shows up | What this project does |
 |---|---|---|
-| **Process weight** | A trivial task is dragged through a full process, or a hard one gets none | Clear small tasks are handled directly; full workflows load only when you name one |
-| **Multi-turn continuity** | The next message forgets what the task was, so you restate it | Answers, approval, corrections, and omissions stay in the same task without re-invoking |
-| **Clarification vs. authority** | Answering a question is treated as consent to start coding | Independent questions are batched; only action language after the checkpoint authorizes code |
+| **⚖️ Process weight** | A trivial task is dragged through a full process, or a hard one gets none | Clear small tasks are handled directly; full workflows load only when you name one |
+| **🔁 Multi-turn continuity** | The next message forgets what the task was, so you restate it | Answers, approval, corrections, and omissions stay in the same task without re-invoking |
+| **🛑 Clarification vs. authority** | Answering a question is treated as consent to start coding | Independent questions are batched; only action language after the checkpoint authorizes code |
 
-## Five workflows
+<a id="five-workflows"></a>
+
+## 🧩 Five workflows
 
 <picture>
   <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="assets/readme/workflow-map-mobile-dark.svg">
@@ -56,15 +62,15 @@ Strong coding models already know these techniques; the problem is that they app
 
 | Workflow | When to use it | Will it change your code? | Invocation |
 |---|---|---|---|
-| **Develop** | A feature, refactor, added tests, or maintainability work | Only after you approve | `$engineering-flow:develop` |
-| **Diagnose** | A bug, regression, wrong output, or intermittent fault | Only after you authorize a repair | `$engineering-flow:diagnose` |
-| **Code Design** | A goal with no settled solution, or a draft to refine | No — it returns a proposal | `$engineering-flow:code-design` |
-| **Review** | Reviewing a diff, branch, pull request, or uncommitted work | No — strictly read-only | `$engineering-flow:review` |
-| **Handoff** | A session is ending and the next one must continue | No | `$engineering-flow:handoff` |
+| **💻 Develop** | A feature, refactor, added tests, or maintainability work | Only after you approve | `$engineering-flow:develop` |
+| **🔍 Diagnose** | A bug, regression, wrong output, or intermittent fault | Only after you authorize a repair | `$engineering-flow:diagnose` |
+| **🧠 Code Design** | A goal with no settled solution, or a draft to refine | No — it returns a proposal | `$engineering-flow:code-design` |
+| **👀 Review** | Reviewing a diff, branch, pull request, or uncommitted work | No — strictly read-only | `$engineering-flow:review` |
+| **🤝 Handoff** | A session is ending and the next one must continue | No | `$engineering-flow:handoff` |
 
 Claude Code uses the same names with `/engineering-flow:` instead of `$engineering-flow:`. Until you name one, no full workflow is loaded.
 
-## Task-level continuity
+## 🔁 Task-level continuity
 
 An explicit invocation selects how the whole task is handled, not only the current message. What you say therefore decides what happens next:
 
@@ -78,17 +84,19 @@ An explicit invocation selects how the whole task is handled, not only the curre
 
 Diagnose behaves the same way: if you reject its conclusion it stays read-only and tests a new hypothesis, and a later authorization moves it straight into repair and regression verification without switching to Develop.
 
-## Engineering judgment
+## 🛠️ Engineering judgment
 
 | Concern | Default decision |
 |---|---|
 | **Requirements** | You decide product behavior; the agent owns reversible details discoverable from the repository |
 | **Code** | Reuse only domain rules that should evolve together; never abstract two blocks just because they look alike |
-| **Tests** | Red before green for regressions and high-risk behavior; direct validation for mechanical work, not ceremonial unit tests |
+| **Tests** | Finish new production behavior before selecting critical contract and boundary tests; retain red-before-green for reproducible regressions |
 | **Safety** | Review is strictly read-only; commits, releases, global configuration, and destructive actions never inherit development authority |
 | **Documentation** | Small checkpoints stay in the conversation; substantial ones follow project convention, falling back to `docs/requirements/` |
 
-## Quick start
+<a id="quick-start"></a>
+
+## 🚀 Quick start
 
 ### Codex CLI
 
@@ -106,6 +114,8 @@ codex plugin add engineering-flow@engineering-flow
 
 Start a new session after installation. Describe clear small tasks directly; invoke the full development workflow when you want the deeper process:
 
+> 💡 **One rule to remember:** without a named workflow, only the compact Core loads; once named, approval, correction, and continuation for the same task inherit it automatically.
+
 ```text
 $engineering-flow:develop
 Implement order batch export. Inspect the existing design, ownership, and acceptance behavior first; present the final checkpoint after clarification and pause. Do not commit.
@@ -117,7 +127,9 @@ Read the checkpoint it presents, and reply once it is correct:
 Proceed with the plan above.
 ```
 
-## Validation
+<a id="validation"></a>
+
+## 📊 Validation
 
 <picture>
   <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="assets/readme/evidence-mobile-dark.svg">
@@ -129,13 +141,24 @@ Proceed with the plan above.
 
 The same tasks were run under two configurations — one with the plugin installed, one without — with everything else identical. Pass or fail is decided by an external scoring script from the actual file changes and test output; a claim of having verified something counts for nothing.
 
-For the v1.0.2 closeout, 68/68 deterministic tests pass and 32 configured scenarios map all 45 behavior IDs. The refreshed same-environment paired cohort selects 60 completed reports across ten scenarios: the 1.0.1 control passed 22/30 and the v1.0.2 candidate passed 23/30. All selected runs passed invocation, fixture-verification, contamination, and unauthorized-commit guards. A separate direct durable-repair comparison improved from 0/6 to 1/6, so completion reconciliation remains a documented limitation rather than a solved claim. Scenario mapping and completed model trials are reported separately.
+### v1.0.2 release gates
+
+| Evidence | Result |
+|---|---:|
+| 🧪 Static and deterministic tests | **84/84 passed** |
+| 🗺️ Behavioral coverage | **37 scenarios, 46/46 behavior IDs** |
+| 🎯 Final-fingerprint paired cohort | **candidate 6/6, control 3/6** |
+| 🔒 Contamination and unauthorized commits | **0** |
+
+The final paired cohort selects 12 completed reports across the two scenarios directly owned by the testing-policy change. Production-before-tests improved from 0/3 on the 1.0.1 control to 3/3 on the candidate; the no-test configuration control remained 3/3 in both arms. Invocation and fixture verification passed for every selected report.
+
+Earlier ten-scenario results belong to an older candidate fingerprint. They remain historical evidence and are not combined with the final release cohort.
 
 Process is not free: averaged across the behavior cohort, the workflow side used about 17.6% more tool calls and 16.5% more input tokens. That is precisely why all five workflows are invoked by name.
 
 [Evaluation method](docs/testing-strategy.md) · [Full record](docs/benchmark-log.md) · [Read it online](https://engineering-flow-web.vercel.app/en/evidence)
 
-## Documentation
+## 📚 Documentation
 
 | Use | Design | Evidence |
 |---|---|---|
@@ -148,6 +171,6 @@ The same material is also published as a browsable site, with a reference page p
 
 Engineering Flow focuses on Coding Agent workflows, context, multi-turn interaction, and reliability evaluation. It is not a general Agent runtime and does not take over issues, branches, commits, or releases.
 
-## License
+## 📄 License
 
 Released under the [MIT License](LICENSE). See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for attribution.
