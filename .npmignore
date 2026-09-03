@@ -1,0 +1,11 @@
+# Local benchmark control artifacts and generated reports
+.baseline-plugin/
+benchmark-results/
+
+# Local credentials and development dependencies
+.env
+node_modules/
+
+# Repository metadata
+.git/
+.github/

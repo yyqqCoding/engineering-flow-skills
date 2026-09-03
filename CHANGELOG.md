@@ -2,6 +2,28 @@
 
 All notable changes to Engineering Flow are documented here.
 
+## 1.0.3 - 2026-09-03
+
+Adds requirement-derived Test Contracts to Develop and Code Design, with release evidence for the focused workflow changes.
+
+### Added
+
+- Test Contracts derived at the alignment checkpoint for functional correctness, feature interaction, and boundary conditions.
+- Explicit Test Contract fulfillment after production implementation, with supplementary evidence reported as deviations.
+- A six-scenario paired release cohort covering Develop lifecycle, requirement lifecycle, approval scope, post-implementation testing, and both Code Design modes.
+
+### Changed
+
+- Develop and Code Design now derive verification intent from accepted behavior instead of selecting tests only after implementation.
+- Develop checkpoints explicitly state that approval is pending before implementation can begin.
+- The post-implementation benchmark scorer recognizes ordered production and test changes within one batched file-change event.
+- Release evidence records the current candidate fingerprint and exact selected reports without mixing superseded cohorts.
+
+### Updating from 1.0.2
+
+- Codex CLI users refresh the marketplace, reinstall the plugin, and start a new session.
+- Claude Code users update the marketplace and plugin, then start a new session.
+
 ## 1.0.2 - 2026-08-27
 
 Adds production-first, risk-selective testing guidance, reduces workflow prompt weight, and hardens release evidence without adding another workflow.

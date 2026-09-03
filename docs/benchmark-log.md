@@ -878,3 +878,33 @@ All twelve selected reports completed with no contamination, infrastructure fail
 Invocation and fixture verification passed in every selected report. The deterministic suite passes 84/84,
 semantic coverage maps all 46 behavior IDs across 37 configured scenarios, strict Claude plugin validation passes,
 and `npm run benchmark:release-verify` matches the final package, benchmark, and candidate fingerprints.
+
+## 2026-09-03 — v1.0.3 Test Contract release cohort
+
+The Test Contract change was evaluated in the six directly affected scenarios rather than rerunning the full
+corpus. After the first versioned candidate cohort (`faecfb50224d`) exposed intermittent checkpoints that did not
+explicitly say approval was pending, a manual review led to one narrow Develop instruction: every checkpoint must
+state that approval is pending. The revised candidate was rerun under a fresh fingerprint; no scorer was relaxed.
+
+Common environment:
+
+- Provider `ABtest`, model `gpt-5.6-luna`, low reasoning, timeout 240 seconds
+- Released v1.0.2 control plugin `a1d44ed59b97`
+- Final v1.0.3 candidate plugin `8a4e28e1ca0c`
+- Three completed, uncontaminated samples per arm and scenario
+- Exact selected reports: `config/evidence-manifest.json`
+
+| Scenario | Benchmark fingerprint | v1.0.2 control | v1.0.3 candidate |
+|---|---|---:|---:|
+| post-implementation-testing | `e31e42b673ce` | 3/3 | 3/3 |
+| develop-lifecycle | `f9d3df340e04` | 3/3 | 3/3 |
+| develop-requirement-lifecycle | `c56a4b124dfc` | 3/3 | 3/3 |
+| develop-scope-in-approval | `6d367cba87f4` | 2/3 | 3/3 |
+| code-design-greenfield | `219258d673d1` | 3/3 | 3/3 |
+| code-design-refinement | `0afd7d3ba1bd` | 3/3 | 3/3 |
+| **Total** | — | **17/18** | **18/18** |
+
+All final selected reports completed without contamination, infrastructure failure, or unauthorized commit.
+Invocation and fixture verification passed in every selected report. The deterministic suite passes 84/84,
+semantic coverage maps all 47 behavior IDs across 37 configured scenarios, and
+`npm run benchmark:release-verify` matches the final package, benchmark, and candidate fingerprints.

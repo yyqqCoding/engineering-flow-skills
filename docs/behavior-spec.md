@@ -210,6 +210,27 @@ When expected behavior at a material boundary is not established by requirements
 
 For a defect with a stable automated seam, the agent turns the minimized reproduction into a focused regression test, observes that test fail before editing production code, and retains sensitive passing coverage after the fix. When no correct seam exists, it reports the limitation rather than adding a misleading test.
 
+### TEST-07: Test Contract derivation and fulfillment
+
+For a non-mechanical change, the agent derives a Test Contract from Goal and Acceptance behavior during the alignment checkpoint, before implementation. The contract declares verification intent in three categories:
+
+- **Functional correctness:** single-function behavior stated in requirement terms, not implementation terms (e.g., "results ordered by creation time descending", not "results are sorted").
+- **Feature interaction:** correctness where behaviors intersect within the checkpoint scope. Only interactions identifiable from the checkpoint are included; all possible callers are not enumerated.
+- **Boundary conditions:** edge cases whose expected behavior is established by requirements or repository precedent. Undefined product behavior is not invented.
+
+A mechanical-only change (configuration, documentation, framework wiring, presentation) omits the Test Contract without requiring an explicit declaration.
+
+After implementation, the agent fulfills every declared contract item by translating it into automated coverage against a stable public seam that would fail if the declared behavior breaks. Supplementary coverage beyond the contract is allowed when implementation reveals an unanticipated risk, and is reported as a deviation note for traceability.
+
+Failure signals:
+
+- Derives test expectations from implementation structure rather than from Goal and Acceptance behavior (e.g., asserts "sorted" instead of "sorted descending").
+- Implements a feature without a corresponding Test Contract item for non-mechanical behavior.
+- Skips contract fulfillment and re-derives tests from the implementation after the fact.
+- Enumerates all possible callers for Feature interaction instead of restricting to checkpoint-visible intersections.
+- Invents boundary behavior not established by requirements or precedent.
+- Adds supplementary tests beyond the contract without reporting them as deviations.
+
 ### DEBUG-01: Reproduction before hypothesis
 
 For a diagnosable bug, the agent builds the tightest practical feedback signal before committing to a cause. If an automated reproduction is impossible, it records the evidence limitation rather than fabricating certainty.

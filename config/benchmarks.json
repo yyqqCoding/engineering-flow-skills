@@ -220,7 +220,7 @@
       "allowed": ["develop"]
     },
     "coverage": {
-      "behaviors": ["REQ-03", "REQ-05", "REQ-06", "TEST-01", "TEST-03", "TEST-04", "DONE-01"],
+      "behaviors": ["REQ-03", "REQ-05", "REQ-06", "TEST-01", "TEST-03", "TEST-04", "TEST-07", "DONE-01"],
       "profiles": ["positive", "negative", "continuity"],
       "risks": ["data-integrity", "boundary", "test-ceremony"],
       "workflow": "develop",

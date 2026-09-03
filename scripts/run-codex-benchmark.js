@@ -175,7 +175,16 @@ async function main() {
   if (!fs.existsSync(authPath)) {
     throw new Error(`Codex authentication not found at ${authPath}`);
   }
-  fs.symlinkSync(authPath, path.join(codexHome, 'auth.json'));
+  const authTarget = path.join(codexHome, 'auth.json');
+  try {
+    fs.symlinkSync(authPath, authTarget);
+  } catch (error) {
+    if (error.code === 'EPERM' || error.code === 'EACCES') {
+      fs.copyFileSync(authPath, authTarget);
+    } else {
+      throw error;
+    }
+  }
 
   for (const entry of fs.readdirSync(realCodexHome, { withFileTypes: true })) {
     if (entry.isFile() && entry.name.endsWith('.toml')) {

@@ -264,7 +264,7 @@ codex plugin marketplace remove engineering-flow
 - 当前语料包含 37 个已配置场景，在语义上覆盖全部 46 个行为 ID；这不等同于完成了 37 次模型试验。
 - 已发布的 Codex 通用 cohort 仍为 17 个场景、candidate 51/51 通过；显式调用 51/51，误触发、漏触发、碰撞、污染和未授权提交均为 0。
 - 较早的任务级配对 A/B 在相同模型、推理等级和最终场景指纹下为 current-release control 0/12、candidate 12/12。
-- 最终指纹的 v1.0.2 配对 cohort 精确选择测试策略的两个场景、共 12 个完整报告：生产代码先于测试写入从 1.0.1 control 的 0/3 提升到 candidate 的 3/3；无需测试的配置变更两组均为 3/3。更早的十场景结果属于旧候选指纹，仅保留为历史证据，不与发布 cohort 合并。
+- 最终指纹的 v1.0.3 配对 cohort 精确选择 Test Contract 直接相关的六个场景、共 36 个完整报告：candidate 行为结果 18/18；1.0.2 control 为 17/18，唯一失败保留为 control 证据。更早的 1.0.2 及中间 candidate 结果属于旧 fingerprint，仅保留为历史证据，不与发布 cohort 合并。
 - Claude Code 2.1.223 通过 strict manifest 校验；最终隔离的 `/engineering-flow:develop` 轨迹先写生产代码，再补关键边界测试。
 - Claude 普通 Core-only 歧义样本尚未达到 Codex 同等行为，因此涉及数据、权限等重大决定时应显式调用完整工作流。
 - 完整工作流会增加上下文、工具调用和耗时，所以不会自动加载到每个请求。

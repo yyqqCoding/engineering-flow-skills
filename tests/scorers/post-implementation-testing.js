@@ -50,13 +50,37 @@ function fileChangePaths(events) {
   return changes;
 }
 
+function isProductionPath(filename) {
+  return filename.endsWith('/src/wallet.js') || filename === 'src/wallet.js';
+}
+
+function isTestPath(filename) {
+  return filename.endsWith('/wallet.test.js') || filename === 'wallet.test.js';
+}
+
 function observedProductionBeforeTests(events) {
   const changes = fileChangePaths(events);
-  const productionIndex = changes.findIndex((paths) =>
-    paths.some((filename) => filename.endsWith('/src/wallet.js') || filename === 'src/wallet.js'));
-  const testIndex = changes.findIndex((paths) =>
-    paths.some((filename) => filename.endsWith('/wallet.test.js') || filename === 'wallet.test.js'));
-  return productionIndex >= 0 && testIndex > productionIndex;
+  let productionPosition = null;
+  let testPosition = null;
+
+  for (let changeIndex = 0; changeIndex < changes.length; changeIndex += 1) {
+    const paths = changes[changeIndex];
+    for (let pathIndex = 0; pathIndex < paths.length; pathIndex += 1) {
+      const filename = paths[pathIndex];
+      if (productionPosition === null && isProductionPath(filename)) {
+        productionPosition = [changeIndex, pathIndex];
+      }
+      if (testPosition === null && isTestPath(filename)) {
+        testPosition = [changeIndex, pathIndex];
+      }
+    }
+  }
+
+  if (productionPosition === null || testPosition === null) return false;
+  if (productionPosition[0] !== testPosition[0]) {
+    return testPosition[0] > productionPosition[0];
+  }
+  return testPosition[1] > productionPosition[1];
 }
 
 function mutationSensitiveTests(workspace, modulePath) {

@@ -23,7 +23,7 @@
   <br><br>
   <img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-supported-111820?style=flat-square">
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-supported-D97757?style=flat-square">
-  <img alt="Release 1.0.2" src="https://img.shields.io/badge/release-v1.0.2-2467CE?style=flat-square">
+  <img alt="Release 1.0.3" src="https://img.shields.io/badge/release-v1.0.3-2467CE?style=flat-square">
   <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-4C5D6B?style=flat-square">
 </div>
 
@@ -141,18 +141,18 @@ $engineering-flow:develop
 
 同一批任务在两组配置下各跑一遍：一组装了本插件，一组没装，其余条件完全一致。是否通过由外部评分脚本判定，依据是实际的文件变更与测试输出，不接受"我已验证"这类自述。
 
-### v1.0.2 发布门禁
+### v1.0.3 发布门禁
 
 | 证据 | 结果 |
 |---|---:|
 | 🧪 静态与确定性测试 | **84/84 通过** |
-| 🗺️ 行为覆盖 | **37 个场景，46/46 行为 ID** |
-| 🎯 最终指纹配对 cohort | **candidate 6/6，control 3/6** |
+| 🗺️ 行为覆盖 | **37 个场景，47/47 行为 ID** |
+| 🎯 最终指纹配对 cohort | **candidate 18/18，control 17/18** |
 | 🔒 污染与未授权提交 | **0** |
 
-最终配对 cohort 精确选择本次测试策略直接相关的两个场景、共 12 个完整报告：生产代码先于测试写入从 1.0.1 control 的 0/3 提升到 candidate 的 3/3；无需测试的配置变更两组均为 3/3。所有入选样本的调用与 fixture 验证均通过。
+最终配对 cohort 精确选择本次 Test Contract 直接相关的六个场景、共 36 个完整报告。candidate 六个场景均为 3/3；control 为 17/18，其中唯一失败属于旧版本 control 的初始批准措辞。所有入选样本的调用与 fixture 验证均通过。
 
-此前十场景 cohort 属于更早的候选指纹，保留为历史证据但不与最终发布结果合并。
+此前的 1.0.2 及中间 candidate cohort 属于更早的候选指纹，保留为历史证据但不与最终发布结果合并。
 
 流程本身有成本：在行为对照组上取平均，安装工作流的一组工具调用多约 17.6%、输入 token 多约 16.5%。这正是五个工作流都必须点名调用的原因。
 

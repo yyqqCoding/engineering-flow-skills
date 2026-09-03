@@ -40,6 +40,10 @@ Include only relevant sections:
 - Recommended boundaries, responsibilities, contracts, data/state ownership, and dependency direction
 - Material failure, security, compatibility, migration, and operational behavior
 - Decisions, trade-offs, rejected alternatives, assumptions, and open questions
+- Test Contract (omit for mechanical-only changes; when present, include applicable categories)
+  - Functional correctness — single-function behavior from accepted behavior
+  - Feature interaction — intersection of behaviors within the proposed scope
+  - Boundary conditions — edge cases established by requirements or precedent
 - Acceptance evidence and an implementation sequence
 
 Do not claim assumptions are accepted. Do not prescribe internal classes or patterns before pressure justifies them, and do not implement the proposal in this invocation.

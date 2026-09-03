@@ -259,7 +259,7 @@ test('fact alignment scorer distinguishes approval from reversible implementatio
   assert.equal(hasFocusedCoverage('    formatOrderLabel({ name: validName })'), false);
 });
 
-test('post-implementation scorer requires a separate production write before test writes', () => {
+test('post-implementation scorer requires production changes before test changes', () => {
   const {
     observedProductionBeforeTests,
   } = require('./scorers/post-implementation-testing');
@@ -278,6 +278,10 @@ test('post-implementation scorer requires a separate production write before tes
   assert.equal(observedProductionBeforeTests(event([
     '/workspace/src/wallet.js',
     '/workspace/wallet.test.js',
+  ])), true);
+  assert.equal(observedProductionBeforeTests(event([
+    '/workspace/wallet.test.js',
+    '/workspace/src/wallet.js',
   ])), false);
   assert.equal(observedProductionBeforeTests([
     event(['/workspace/wallet.test.js']),

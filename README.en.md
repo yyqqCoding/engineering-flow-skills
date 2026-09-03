@@ -23,7 +23,7 @@
   <br><br>
   <img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-supported-111820?style=flat-square">
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-supported-D97757?style=flat-square">
-  <img alt="Release 1.0.2" src="https://img.shields.io/badge/release-v1.0.2-2467CE?style=flat-square">
+  <img alt="Release 1.0.3" src="https://img.shields.io/badge/release-v1.0.3-2467CE?style=flat-square">
   <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-4C5D6B?style=flat-square">
 </div>
 
@@ -141,18 +141,18 @@ Proceed with the plan above.
 
 The same tasks were run under two configurations — one with the plugin installed, one without — with everything else identical. Pass or fail is decided by an external scoring script from the actual file changes and test output; a claim of having verified something counts for nothing.
 
-### v1.0.2 release gates
+### v1.0.3 release gates
 
 | Evidence | Result |
 |---|---:|
 | 🧪 Static and deterministic tests | **84/84 passed** |
-| 🗺️ Behavioral coverage | **37 scenarios, 46/46 behavior IDs** |
-| 🎯 Final-fingerprint paired cohort | **candidate 6/6, control 3/6** |
+| 🗺️ Behavioral coverage | **37 scenarios, 47/47 behavior IDs** |
+| 🎯 Final-fingerprint paired cohort | **candidate 18/18, control 17/18** |
 | 🔒 Contamination and unauthorized commits | **0** |
 
-The final paired cohort selects 12 completed reports across the two scenarios directly owned by the testing-policy change. Production-before-tests improved from 0/3 on the 1.0.1 control to 3/3 on the candidate; the no-test configuration control remained 3/3 in both arms. Invocation and fixture verification passed for every selected report.
+The final paired cohort selects 36 completed reports across the six scenarios directly owned by the Test Contract change. The candidate passed 3/3 in every scenario; the control passed 17/18, with the only failure in the older control's initial approval wording. Invocation and fixture verification passed for every selected report.
 
-Earlier ten-scenario results belong to an older candidate fingerprint. They remain historical evidence and are not combined with the final release cohort.
+Earlier 1.0.2 and intermediate candidate results belong to older fingerprints. They remain historical evidence and are not combined with the final release cohort.
 
 Process is not free: averaged across the behavior cohort, the workflow side used about 17.6% more tool calls and 16.5% more input tokens. That is precisely why all five workflows are invoked by name.
 

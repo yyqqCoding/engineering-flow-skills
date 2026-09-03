@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "release": "1.0.2",
+  "release": "1.0.3",
   "deterministicChecks": [
     "npm test",
     "npm run benchmark:coverage -- --json"
@@ -9,61 +9,181 @@
     {
       "benchmark": "post-implementation-testing",
       "arm": "baseline",
-      "benchmarkFingerprint": "211cacbfbd05",
-      "pluginFingerprint": "5a6093705b18",
+      "benchmarkFingerprint": "e31e42b673ce",
+      "pluginFingerprint": "a1d44ed59b97",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "post-implementation-testing-baseline-1787802817134-25184.json",
-        "post-implementation-testing-baseline-1787802817135-25185.json",
-        "post-implementation-testing-baseline-1787802894663-28956.json"
+        "post-implementation-testing-baseline-1788367214694-18574.json",
+        "post-implementation-testing-baseline-1788367281438-22374.json",
+        "post-implementation-testing-baseline-1788367342318-25662.json"
       ]
     },
     {
       "benchmark": "post-implementation-testing",
       "arm": "candidate",
-      "benchmarkFingerprint": "211cacbfbd05",
-      "pluginFingerprint": "a1d44ed59b97",
+      "benchmarkFingerprint": "e31e42b673ce",
+      "pluginFingerprint": "8a4e28e1ca0c",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "post-implementation-testing-candidate-1787800021638-13664.json",
-        "post-implementation-testing-candidate-1787802901205-29541.json",
-        "post-implementation-testing-candidate-1787802971016-32500.json"
+        "post-implementation-testing-candidate-1788405087682-11242.json",
+        "post-implementation-testing-candidate-1788405087682-11243.json",
+        "post-implementation-testing-candidate-1788405166400-14967.json"
       ]
     },
     {
-      "benchmark": "configuration-only",
+      "benchmark": "develop-lifecycle",
       "arm": "baseline",
-      "benchmarkFingerprint": "18c7ec0173ac",
-      "pluginFingerprint": "5a6093705b18",
-      "modelProvider": "ABtest",
-      "model": "gpt-5.6-luna",
-      "reasoningEffort": "low",
-      "targetCompleted": 3,
-      "reports": [
-        "configuration-only-baseline-1787802993939-1014.json",
-        "configuration-only-baseline-1787803046689-3296.json",
-        "configuration-only-baseline-1787803071939-4449.json"
-      ]
-    },
-    {
-      "benchmark": "configuration-only",
-      "arm": "candidate",
-      "benchmarkFingerprint": "18c7ec0173ac",
+      "benchmarkFingerprint": "f9d3df340e04",
       "pluginFingerprint": "a1d44ed59b97",
       "modelProvider": "ABtest",
       "model": "gpt-5.6-luna",
       "reasoningEffort": "low",
       "targetCompleted": 3,
       "reports": [
-        "configuration-only-candidate-1787800100378-15779.json",
-        "configuration-only-candidate-1787803087912-5394.json",
-        "configuration-only-candidate-1787803113759-6383.json"
+        "develop-lifecycle-baseline-1788362747888-12626.json",
+        "develop-lifecycle-baseline-1788362829616-18050.json",
+        "develop-lifecycle-baseline-1788362931772-24971.json"
+      ]
+    },
+    {
+      "benchmark": "develop-lifecycle",
+      "arm": "candidate",
+      "benchmarkFingerprint": "f9d3df340e04",
+      "pluginFingerprint": "8a4e28e1ca0c",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-lifecycle-candidate-1788405172587-15141.json",
+        "develop-lifecycle-candidate-1788405240488-18924.json",
+        "develop-lifecycle-candidate-1788405292065-21985.json"
+      ]
+    },
+    {
+      "benchmark": "develop-requirement-lifecycle",
+      "arm": "baseline",
+      "benchmarkFingerprint": "c56a4b124dfc",
+      "pluginFingerprint": "a1d44ed59b97",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-requirement-lifecycle-baseline-1788363018942-31528.json",
+        "develop-requirement-lifecycle-baseline-1788363165979-6174.json",
+        "develop-requirement-lifecycle-baseline-1788363314582-12945.json"
+      ]
+    },
+    {
+      "benchmark": "develop-requirement-lifecycle",
+      "arm": "candidate",
+      "benchmarkFingerprint": "c56a4b124dfc",
+      "pluginFingerprint": "8a4e28e1ca0c",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-requirement-lifecycle-candidate-1788405354825-25448.json",
+        "develop-requirement-lifecycle-candidate-1788405409587-28286.json",
+        "develop-requirement-lifecycle-candidate-1788405555237-681.json"
+      ]
+    },
+    {
+      "benchmark": "develop-scope-in-approval",
+      "arm": "baseline",
+      "benchmarkFingerprint": "6d367cba87f4",
+      "pluginFingerprint": "a1d44ed59b97",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-scope-in-approval-baseline-1788363497800-18979.json",
+        "develop-scope-in-approval-baseline-1788363636370-26516.json",
+        "develop-scope-in-approval-baseline-1788363702422-29957.json"
+      ]
+    },
+    {
+      "benchmark": "develop-scope-in-approval",
+      "arm": "candidate",
+      "benchmarkFingerprint": "6d367cba87f4",
+      "pluginFingerprint": "8a4e28e1ca0c",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "develop-scope-in-approval-candidate-1788405611354-2032.json",
+        "develop-scope-in-approval-candidate-1788405731439-6755.json",
+        "develop-scope-in-approval-candidate-1788405790583-7988.json"
+      ]
+    },
+    {
+      "benchmark": "code-design-greenfield",
+      "arm": "baseline",
+      "benchmarkFingerprint": "219258d673d1",
+      "pluginFingerprint": "a1d44ed59b97",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "code-design-greenfield-baseline-1788363820215-2115.json",
+        "code-design-greenfield-baseline-1788363921757-6129.json",
+        "code-design-greenfield-baseline-1788364046105-8359.json"
+      ]
+    },
+    {
+      "benchmark": "code-design-greenfield",
+      "arm": "candidate",
+      "benchmarkFingerprint": "219258d673d1",
+      "pluginFingerprint": "8a4e28e1ca0c",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "code-design-greenfield-candidate-1788405884728-11949.json",
+        "code-design-greenfield-candidate-1788405919201-12534.json",
+        "code-design-greenfield-candidate-1788405991880-14457.json"
+      ]
+    },
+    {
+      "benchmark": "code-design-refinement",
+      "arm": "baseline",
+      "benchmarkFingerprint": "0afd7d3ba1bd",
+      "pluginFingerprint": "a1d44ed59b97",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "code-design-refinement-baseline-1788364122221-10316.json",
+        "code-design-refinement-baseline-1788364176591-11976.json",
+        "code-design-refinement-baseline-1788364233340-13564.json"
+      ]
+    },
+    {
+      "benchmark": "code-design-refinement",
+      "arm": "candidate",
+      "benchmarkFingerprint": "0afd7d3ba1bd",
+      "pluginFingerprint": "8a4e28e1ca0c",
+      "modelProvider": "ABtest",
+      "model": "gpt-5.6-luna",
+      "reasoningEffort": "low",
+      "targetCompleted": 3,
+      "reports": [
+        "code-design-refinement-candidate-1788406027985-14634.json",
+        "code-design-refinement-candidate-1788406110647-16583.json",
+        "code-design-refinement-candidate-1788406135771-16743.json"
       ]
     }
   ]
