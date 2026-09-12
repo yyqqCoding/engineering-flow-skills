@@ -6,44 +6,22 @@ disable-model-invocation: true
 
 # Code Design
 
-Produce a solution proposal without implementing production code. Update a design document only when the user explicitly asks; otherwise return the proposal in the response.
+Produce a solution proposal without implementing production code. Update a design document only when requested; otherwise return the proposal in the response.
 
-## Choose the mode
+## Establish the decision
 
-- **Greenfield:** turn an unsettled goal or problem into the smallest coherent solution.
-- **Refinement:** correct, complete, or simplify an existing proposal.
+- Use the user's goal, authoritative documents, existing capabilities, representative code, and tests. Distinguish accepted behavior, repository facts, assumptions, and unresolved product decisions; ask only about material choices that this evidence cannot resolve.
+- For an existing proposal, preserve settled decisions and focus on missing behavior, contradictions, feasibility, ownership, and unnecessary complexity. Report changed decisions and their reasons instead of repeating the full background unless a complete rewrite is requested.
+- Recommend the smallest coherent solution. Put rules with their owner and prefer existing boundaries. An abstraction or dependency needs demonstrated pressure and a concrete benefit; visual duplication and hypothetical variation are insufficient. Compare alternatives only when their trade-offs materially differ.
 
-Use Develop for implementation of an accepted design and Diagnose for broken existing behavior.
+## Explain the proposal
 
-## Establish context
+Include what the decision needs:
 
-- Clarify the desired outcome, accepted behavior, constraints, and out of scope.
-- In a repository, read applicable instructions, authoritative documents, existing capabilities, representative code, and tests.
-- Separate accepted requirements, repository facts, reversible design choices, assumptions, and unresolved product decisions. Ask only when an unresolved answer materially changes behavior or the viable solution space.
+- Goal, accepted behavior, constraints, and remaining scope questions.
+- Recommended responsibilities, interfaces, data/state ownership, and important failure, security, compatibility, migration, or operational behavior.
+- Decisions and reasons, material alternatives, assumptions, and unresolved choices.
+- Verification intent tied to acceptance: concrete distinguishing examples and appropriate evidence for applicable interactions and boundaries. Expected results come from requirements or authoritative precedent, not a proposed implementation.
+- An implementation sequence when dependencies or risk make it useful.
 
-## Design from demonstrated pressure
-
-Name the problem before selecting a technique. Relevant pressure includes scattered ownership of one invariant, hidden effects or transitions, semantic duplication that must evolve together, repeated branching on one real variation axis, an unstable dependency, complex lifecycle rules, or a missing stable public seam. Similar-looking independent rules and hypothetical variation do not justify abstraction.
-
-For refinement, identify missing behavior, contradictions, unclear ownership, infeasible assumptions, accidental complexity, and unsupported decisions. For greenfield work, account only for known behavior and credible near-term variation.
-
-Compare alternatives only when their trade-offs are materially different. Evaluate ownership, coupling, state and failure behavior, compatibility, security, testability, operability, migration cost, and expected change pressure. Prefer existing repository boundaries and dependencies unless a concrete problem justifies change.
-
-Recommend the option with the lowest necessary complexity. Keep effects, failures, state, and dependency direction explicit. An uncommon construct, dependency, abstraction, or pattern must remove more complexity than it introduces and provide a concrete correctness, performance, framework, or maintenance benefit.
-
-## Produce the proposal
-
-Include only relevant sections:
-
-- Problem, goals, accepted behavior, constraints, and out of scope
-- Existing capabilities and authoritative context
-- Recommended boundaries, responsibilities, contracts, data/state ownership, and dependency direction
-- Material failure, security, compatibility, migration, and operational behavior
-- Decisions, trade-offs, rejected alternatives, assumptions, and open questions
-- Test Contract (omit for mechanical-only changes; when present, include applicable categories)
-  - Functional correctness — single-function behavior from accepted behavior
-  - Feature interaction — intersection of behaviors within the proposed scope
-  - Boundary conditions — edge cases established by requirements or precedent
-- Acceptance evidence and an implementation sequence
-
-Do not claim assumptions are accepted. Do not prescribe internal classes or patterns before pressure justifies them, and do not implement the proposal in this invocation.
+Do not present assumptions as accepted requirements. When the user selects Develop afterward, carry this proposal and its evidence forward; only missing or changed facts need alignment, and Develop retains its implementation approval checkpoint.

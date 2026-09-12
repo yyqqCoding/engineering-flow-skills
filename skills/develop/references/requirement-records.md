@@ -12,10 +12,7 @@ Write the record as timeless constraints, never as work deferred until approval.
 - Out of scope
 - Assumptions
 - Solution boundary
-- `## Test Contract` (omit for mechanical-only changes; when present, include applicable categories)
-  - `### Functional correctness` — single-function behavior from Goal and Acceptance
-  - `### Feature interaction` — intersection of behaviors within the checkpoint scope
-  - `### Boundary conditions` — edge cases established by requirements or precedent
+- `## Test Contract` for non-mechanical behavior: acceptance-linked verification intent, distinguishing examples where useful, and the public boundaries/evidence that protect it. Consider applicable functional behavior, interactions, and established boundaries; separate category headings are optional.
 - `## Completion evidence`
 - `Implementation files: Pending`
 - `Test files: Pending`

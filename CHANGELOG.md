@@ -2,6 +2,34 @@
 
 All notable changes to Engineering Flow are documented here.
 
+## 1.0.4 - 2026-09-13
+
+Shortens the five workflows while preserving requirement alignment, approval boundaries, same-task continuation, and useful verification.
+
+### Changed
+
+- Simplified Core, workflow instructions, bilingual guides, and workflow diagrams; all five workflows remain explicitly invoked on both clients.
+- Develop keeps ordinary local checkpoints in the conversation and uses durable requirement records when recovery, coordination, or project conventions call for them.
+- Implementation and verification follow accepted behavior and risk; reproducible regression repair retains failing evidence before production changes.
+- Review, Handoff, contract, and command-result scorers distinguish actual failures, preserved records, and unnecessary artifacts more accurately.
+
+### Added
+
+- Actual native-compaction diagnostics for pending and approved Develop tasks.
+- Execution-environment identities and separate evidence cohorts for different clients, configurations, and benchmark inputs.
+- A Chinese Python Develop variant with mutation-sensitive contract and test-coverage checks.
+
+### Release basis
+
+- The maintainer approved this stable release using the existing 219 passing deterministic checks and bounded model diagnostics, without additional verification or sampling.
+- The Python diagnostic's missing retained large-integer coverage remains a documented, accepted limitation. Original failed reports and historical manifests retain their original results and identities.
+- This release makes no statistical claim of improved model reliability or reduced average cost.
+
+### Updating from 1.0.3
+
+- Codex CLI users refresh the marketplace, reinstall the plugin, and start a new session.
+- Claude Code users update the marketplace and plugin, then start a new session.
+
 ## 1.0.3 - 2026-09-03
 
 Adds requirement-derived Test Contracts to Develop and Code Design, with release evidence for the focused workflow changes.

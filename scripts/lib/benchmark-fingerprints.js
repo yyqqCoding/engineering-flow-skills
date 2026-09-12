@@ -25,15 +25,25 @@ function fingerprint(root, paths, additionalValue = '') {
 }
 
 function fingerprintBenchmark(root, benchmark) {
+  const inputs = benchmark.fingerprintInputs || [];
+  if (!Array.isArray(inputs) || inputs.some((input) => typeof input !== 'string'
+      || input.trim() === '' || path.isAbsolute(input)
+      || path.relative(root, path.resolve(root, input)).startsWith('..'))) {
+    throw new Error('fingerprintInputs must contain repository-relative dependency paths');
+  }
   return fingerprint(root, [
     path.join(root, benchmark.fixture),
     path.join(root, benchmark.scorer),
     ...(benchmark.setup ? [path.join(root, benchmark.setup)] : []),
+    ...inputs.map((input) => path.join(root, input)),
   ], JSON.stringify({
     prompt: benchmark.prompt,
     followUps: benchmark.followUps || [],
     freshSessionTurns: benchmark.freshSessionTurns || [],
     verification: benchmark.verification || null,
+    ...(benchmark.nativeCompactionTurns
+      ? { nativeCompactionTurns: benchmark.nativeCompactionTurns }
+      : {}),
   }));
 }
 

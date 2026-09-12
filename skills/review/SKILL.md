@@ -7,47 +7,19 @@ argument-hint: "[fixed-point]"
 
 # Review
 
-Perform an evidence-backed, read-only review. Do not edit files, commit, or push.
+Perform an evidence-backed, read-only review. Do not edit files, commit, or push during review.
 
-## 1. Define the comparison
+## Fix the scope and recover intent
 
-- Use the supplied fixed point when present.
-- For a branch comparison, resolve the merge base and inspect commits plus the three-dot diff.
-- For current uncommitted work, inspect staged, unstaged, and relevant untracked files against `HEAD`.
-- Fail clearly on a bad reference or empty scope instead of reviewing the wrong change.
+- Use the supplied comparison point. For a branch, resolve its merge base and inspect commits plus the three-dot diff. For uncommitted work, inspect staged, unstaged, and relevant untracked files against `HEAD`.
+- Fail clearly on a bad reference or empty scope instead of reviewing another change.
+- Read the user's request, project instructions, originating requirements/design, and relevant tests and documentation. Without a specification, state the limit on assessing requirement fidelity.
 
-## 2. Recover intent
+## Check and report
 
-Read, in priority order:
+- Compare accepted behavior with the diff for missing, partial, incorrect, or unrequested behavior. Trace credible failure conditions through affected callers, state, permissions, trust, data integrity, compatibility, and accessibility.
+- Apply repository engineering standards to ownership, semantic reuse, explicit effects, abstraction cost, and dependencies. Check whether tests detect the protected behavior and whether documentation still describes the accepted requirement. Include unrelated edits and temporary artifacts in the scope check.
+- Report substantive findings by impact, with severity, precise location, triggering conditions or evidence, and the consequence. Give a correction direction when supported. Skip tooling-enforced style and subjective alternatives without a concrete impact.
+- If no material findings exist, say so and identify verification gaps. Internal review dimensions do not require separate output sections.
 
-- The user's current review request
-- Project instructions
-- The originating requirement, issue, design, or acceptance criteria
-- Relevant tests and documentation
-
-If no specification exists, state that the review can assess correctness risks and maintainability but not complete requirement fidelity.
-
-## 3. Review independent axes
-
-- **Requirements:** missing, partial, incorrect, or unrequested behavior
-- **Correctness:** edge cases, failure handling, concurrency, state, and call-site impact
-- **Safety:** permissions, trust boundaries, data integrity, destructive effects, compatibility, and accessibility
-- **Design:** ownership, semantic reuse, false deduplication, abstraction cost, and unnecessary dependencies
-- **Readability:** explicit flow/effects, meaningful names, local reasoning, debuggability, and unjustified novelty
-- **Tests:** whether tests exercise stable public behavior and can detect the defect
-- **Documentation:** stale or contradictory facts and requirements rewritten to fit implementation
-- **Scope:** unrelated edits, temporary diagnostics, generated artifacts, and unauthorized operations
-
-Apply the `code-design` pressure, ownership, and abstraction-cost standards when needed. Do not flag preferences already enforced by tooling or purely subjective alternatives with no maintenance impact.
-
-## 4. Report findings
-
-Order by impact. Each finding includes:
-
-- Severity
-- File and precise location
-- Evidence from the diff and relevant requirement or invariant
-- User-visible or maintenance impact
-- Smallest credible correction direction
-
-Do not hide important findings inside a summary. If no material findings exist, say so and note any verification gap.
+A later explicit request to fix selected findings grants authority for that scope. Verify the findings against the original requirements, then carry the authorized repair through verification without requiring another workflow token. With a stable public seam, observe the focused regression test fail before editing production behavior. Preserve any existing task approval gate; align unresolved product decisions or added scope before implementing them. Findings alone never authorize repair.

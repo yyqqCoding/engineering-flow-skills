@@ -4,7 +4,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
+// Nested fixture/scorer test processes must run independently of this outer Node test worker.
+// Register through Node's hook so its own worker reporter is initialized first.
+test.before(() => { delete process.env.NODE_TEST_CONTEXT; });
+
 const { ROOT, readJson } = require('./helpers/repository');
+const { promptsForBenchmark } = require('../scripts/lib/benchmark-conversation');
 const {
   runFixtureVerification,
   verificationForBenchmark,
@@ -29,13 +34,7 @@ test('benchmark fixtures and scorers exist', () => {
       assert.ok(fs.existsSync(path.join(ROOT, benchmark.setup)), `${name} setup is missing`);
     }
     assert.ok(benchmark.prompt.length >= 80, `${name} prompt is too weak to define the task`);
-    if (benchmark.followUps) {
-      assert.ok(Array.isArray(benchmark.followUps), `${name} followUps must be an array`);
-      assert.ok(
-        benchmark.followUps.every((prompt) => typeof prompt === 'string' && prompt.length > 0),
-        `${name} followUps must contain non-empty prompts`,
-      );
-    }
+    assert.doesNotThrow(() => promptsForBenchmark(benchmark), `${name} has invalid conversation turns`);
     assert.ok(Array.isArray(benchmark.invocation?.expected), `${name} expected invocation list is missing`);
     assert.ok(Array.isArray(benchmark.invocation?.allowed), `${name} allowed invocation list is missing`);
     assert.doesNotThrow(
@@ -47,9 +46,11 @@ test('benchmark fixtures and scorers exist', () => {
 
 test('Codex explicit-skill benchmarks use the plugin namespace', () => {
   for (const [name, benchmark] of Object.entries(benchmarks)) {
+    const prompts = promptsForBenchmark(benchmark)
+      .map((entry) => typeof entry === 'string' ? entry : entry.prompt).join('\n');
     for (const skill of benchmark.invocation.expected) {
       assert.match(
-        benchmark.prompt,
+        prompts,
         new RegExp(`\\$engineering-flow:${skill}(?:\\s|$)`),
         `${name} must explicitly invoke ${skill} with the plugin namespace`,
       );
@@ -62,6 +63,21 @@ test('fixture public tests pass before model changes', () => {
     const result = runFixtureVerification(path.join(ROOT, benchmark.fixture), benchmark);
     assert.equal(result.passed, true, `${name} fixture baseline tests failed\n${result.stdout}\n${result.stderr}`);
   }
+});
+
+test('fixture verifier runs a failing nested Node test instead of returning an empty success', (t) => {
+  const workspace = fs.mkdtempSync(path.join(require('node:os').tmpdir(), 'engineering-flow-verifier-red-'));
+  t.after(() => fs.rmSync(workspace, { recursive: true, force: true }));
+  fs.writeFileSync(path.join(workspace, 'package.json'), JSON.stringify({ scripts: { test: 'node --test' } }));
+  fs.writeFileSync(path.join(workspace, 'failure.test.js'), [
+    "const assert = require('node:assert/strict');",
+    "require('node:test')('known failing fixture', () => assert.equal(1, 2));",
+    '',
+  ].join('\n'));
+  const result = runFixtureVerification(workspace, {});
+  assert.equal(result.status, 1, `The nested test must execute and fail:\n${result.stdout}\n${result.stderr}`);
+  assert.equal(result.passed, false);
+  assert.match(result.stdout + result.stderr, /known failing fixture|ERR_ASSERTION/);
 });
 
 test('hidden scorers reject the unmodified fixtures', () => {

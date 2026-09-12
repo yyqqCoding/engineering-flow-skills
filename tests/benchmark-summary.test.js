@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const crypto = require('node:crypto');
 const test = require('node:test');
 
 const { summarizeGroup } = require('../scripts/summarize-benchmarks');
@@ -42,6 +43,28 @@ function report(overrides = {}) {
       collisions: [],
     },
     ...overrides,
+  };
+}
+
+function recordedEnvironment(overrides = {}) {
+  const identity = {
+    schemaVersion: 1,
+    cliName: 'codex',
+    cliVersion: '0.153.4',
+    nodeVersion: 'v22.21.1',
+    platform: 'linux',
+    arch: 'x64',
+    modelProvider: 'provider-a',
+    model: 'model-a',
+    reasoningEffort: 'low',
+    timeoutMs: 240000,
+    configurationFingerprint: 'a'.repeat(64),
+    ...overrides,
+  };
+  return {
+    ...identity,
+    complete: true,
+    fingerprint: crypto.createHash('sha256').update(JSON.stringify(identity)).digest('hex'),
   };
 }
 
@@ -166,6 +189,49 @@ test('keeps providers, models, and reasoning levels in separate summary groups',
   assert.equal(Object.keys(result).length, 2);
 });
 
+test('keeps CLI versions and execution settings in separate environment cohorts', () => {
+  const { summarize } = require('../scripts/summarize-benchmarks');
+  const original = recordedEnvironment();
+  for (const changed of [
+    recordedEnvironment({ cliVersion: '0.154.0' }),
+    recordedEnvironment({ timeoutMs: 480000 }),
+    recordedEnvironment({ configurationFingerprint: 'b'.repeat(64) }),
+  ]) {
+    const result = summarize([
+      { benchmark: 'example', arm: 'candidate', cohort: 'same', reportFile: 'old.json', environment: original, ...report() },
+      { benchmark: 'example', arm: 'candidate', cohort: 'same', reportFile: 'new.json', environment: changed, ...report({ score: { passed: false } }) },
+    ]);
+    assert.equal(Object.keys(result).length, 2);
+    assert.ok(Object.keys(result).some(key => key.includes(original.fingerprint)));
+    assert.ok(Object.keys(result).some(key => key.includes(changed.fingerprint)));
+  }
+});
+
+test('reports without environment identity retain separate legacy provenance', () => {
+  const { summarize } = require('../scripts/summarize-benchmarks');
+  const result = summarize(['old-one.json', 'old-two.json'].map(reportFile => ({
+    benchmark: 'example', arm: 'candidate', cohort: 'same', reportFile, ...report(),
+  })));
+  assert.equal(Object.keys(result).length, 2);
+  for (const filename of ['old-one.json', 'old-two.json']) {
+    assert.ok(Object.keys(result).some(key => key.includes(filename)));
+  }
+  assert.ok(Object.values(result).every(group => group.environmentIdentityVerified === false));
+});
+
+test('matching complete environments aggregate without selecting only successful behavior', () => {
+  const { summarize } = require('../scripts/summarize-benchmarks');
+  const result = summarize([true, false].map(passed => ({
+    benchmark: 'example', arm: 'candidate', cohort: 'same', environment: recordedEnvironment(),
+    ...report({ score: { passed } }),
+  })));
+  assert.equal(Object.keys(result).length, 1);
+  const group = Object.values(result)[0];
+  assert.equal(group.environmentIdentityVerified, true);
+  assert.equal(group.completedRuns, 2);
+  assert.equal(group.passRate, 0.5);
+});
+
 test('evidence manifest filters exact benchmark, plugin, and environment cohorts', () => {
   const manifest = {
     schemaVersion: 1,
@@ -204,4 +270,23 @@ test('evidence manifest filters exact benchmark, plugin, and environment cohorts
     { ...matching, pluginFingerprint: 'plugin-b' },
     { ...matching, modelRun: { ...matching.modelRun, reasoningEffort: 'high' } },
   ], manifest), [matching]);
+});
+
+test('version 2 evidence selectors require matching complete execution identities', () => {
+  const environment = recordedEnvironment();
+  const original = { benchmark: 'example', arm: 'candidate', benchmarkFingerprint: 'bench',
+    pluginFingerprint: 'plugin', reportFile: 'first.json', environment, ...report() };
+  const changed = { ...original, reportFile: 'second.json',
+    environment: recordedEnvironment({ cliVersion: 'new-cli' }) };
+  const legacy = { ...original, environment: undefined };
+  const cohort = { benchmark: 'example', arm: 'candidate', benchmarkFingerprint: 'bench',
+    pluginFingerprint: 'plugin', modelProvider: 'provider-a', model: 'model-a', reasoningEffort: 'low',
+    environmentFingerprint: environment.fingerprint, targetCompleted: 1,
+    reports: ['first.json', 'second.json'] };
+  const manifest = { schemaVersion: 2, release: '1.0.3', cohorts: [cohort] };
+  assert.deepEqual(validateEvidenceManifest(manifest), []);
+  assert.deepEqual(filterReportsByManifest([original, changed, legacy], manifest), [original]);
+  assert.notDeepEqual(validateEvidenceManifest({ ...manifest, schemaVersion: 1 }), []);
+  const unknownSelector = { ...manifest, cohorts: [{ ...cohort, cliVersion: 'ignored-before' }] };
+  assert.match(validateEvidenceManifest(unknownSelector).join('\n'), /cliVersion is not a selector/);
 });

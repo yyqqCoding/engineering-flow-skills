@@ -6,7 +6,7 @@
 2. All full workflows are currently user-invoked because they change the shape and cost of the session.
 3. A minimal core is injected at session boundaries so common engineering, completion, and safety rules remain automatic.
 4. A full skill may become model-invoked only after isolated positive, negative, and overlap benchmarks demonstrate acceptable precision, recall, and ceremony cost.
-5. Workflow references are one-way guidance. They do not imply automatic skill injection.
+5. Workflow references identify methods, not automatic skill loading or transfers of task authority.
 
 ## Layers
 
@@ -46,20 +46,20 @@ The invocation corpus remains in place so future host/model versions can re-eval
 
 ## Priority
 
-When the user explicitly names overlapping workflows, preserve the strictest authority boundary:
+When the user explicitly names overlapping workflows, use the requested outcome and preserve the strictest applicable authority boundary. Workflow names do not form a mandatory pipeline:
 
-1. `review` remains read-only.
+1. `review` remains read-only until a later explicit repair request.
 2. `code-design` produces a proposal without production-code implementation.
 3. `diagnose` is used for broken existing behavior.
-4. `develop` aligns non-defect implementation, pauses for approval, and then owns implementation.
+4. `develop` retains its implementation approval checkpoint, including when diagnostic methods are useful.
 5. `handoff` captures state rather than continuing work.
 
 Examples:
 
-- Supplied reviewer comments are verified by Core before routing a valid behavioral defect to diagnosis.
-- A clear bug begins with diagnosis rather than generic development orchestration. If the original request or a later same-task message authorizes a fix, Diagnose continues through repair and verification without switching to Develop.
-- A read-only review never transitions to implementation without a new user request.
-- A design proposal never transitions to production-code implementation without a new user request.
+- Supplied reviewer comments are verified against code and requirements before any authorized repair.
+- In Diagnose, an initial or later same-task request to fix the defect authorizes repair and verification without switching to Develop. Undefined product behavior or added scope receives an incremental checkpoint inside the task.
+- Review stays read-only until a later explicit request authorizes specified fixes, subject to any existing task approval gate; that repair does not require a Develop invocation or authorize unrelated changes.
+- An existing design feeds Develop's single implementation checkpoint. Reuse established facts and decisions, resolve only gaps or changes, and retain the approval gate; the proposal alone grants no implementation authority.
 
 ## Task continuity and termination
 
@@ -68,6 +68,8 @@ Workflow selection is explicit; workflow continuation is contextual. Once select
 - Develop answers continue clarification, action language approves its checkpoint, and omissions reopen implementation.
 - A material Develop scope change returns only the increment to alignment and approval.
 - A rejected diagnosis remains read-only Diagnose; later repair authority continues into the fix.
+- Borrowing diagnosis, design analysis, or self-review methods neither loads another full skill nor changes the active workflow or its authority.
+- Handoff exports the source task and workflow, phase, approved and pending scope, and next step. It records existing authority without granting approval or continuing implementation.
 - An explicit cancellation or workflow switch ends the active workflow.
 - An unrelated new task starts from Core and does not inherit stale workflow authority.
 
@@ -77,7 +79,7 @@ The first implementation relies on the transcript, Core, and durable requirement
 
 ```text
 develop
-  -> diagnose process (when the request is broken existing behavior)
+  -> diagnostic methods (when the request is broken existing behavior)
   -> design-pressure analysis (when non-local pressure exists)
   -> boundary hardening (only when applicable risk exists)
   -> maintainability hardening (only when demonstrated pressure exists)
@@ -91,7 +93,7 @@ diagnose
   -> focused verification and reconciliation
 
 review
-  -> code-design reference
+  -> design-pressure, ownership, and abstraction-cost checks
 
 handoff
   -> no dependency
@@ -99,7 +101,7 @@ handoff
 
 Cycles are forbidden.
 
-Registry references document allowable one-way guidance. The deterministic prompt hook injects only workflows explicitly named by the user; it never recursively injects referenced workflows. Diagnose does not reference Develop, avoiding a cycle with Develop's Diagnose guidance.
+Registry references document allowable one-way guidance. Use these methods within the current workflow without loading another complete skill or transferring its permissions. The deterministic prompt hook injects only explicitly named workflows and never follows references recursively. Diagnose owns its repair and any incremental alignment without a Develop dependency.
 
 ## Description rules
 

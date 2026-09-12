@@ -13,6 +13,9 @@ const ROOT = path.resolve(__dirname, '..');
 
 function verifyReleaseEvidence(root, manifest, benchmarks, packageJson) {
   const errors = validateEvidenceManifest(manifest);
+  if (manifest.schemaVersion !== 2) {
+    errors.push('Current release evidence requires schemaVersion 2 with complete execution environment identities');
+  }
   if (manifest.release !== packageJson.version) {
     errors.push(
       `manifest release ${manifest.release} does not match package version ${packageJson.version}`,

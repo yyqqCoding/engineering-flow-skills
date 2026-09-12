@@ -48,14 +48,13 @@ test('release workflow runs strict evidence checks without stochastic cohort fil
   assert.doesNotMatch(workflow, /benchmark:(?:ab|fill)|run-codex-benchmark/);
 });
 
-test('frozen release evidence manifest retains complete paired cohorts', () => {
+test('frozen 1.0.3 evidence manifests retain their historical identity and paired cohorts', () => {
   const manifest = readJson('config/evidence-manifest.json');
   const durableRepairManifest = readJson('config/durable-repair-evidence-manifest.json');
-  const packageJson = readJson('package.json');
   const benchmarks = readJson('config/benchmarks.json');
 
   assert.deepEqual(validateEvidenceManifest(manifest), []);
-  assert.equal(manifest.release, packageJson.version);
+  assert.equal(manifest.release, '1.0.3');
   const releaseBenchmarks = new Set(manifest.cohorts.map((cohort) => cohort.benchmark));
   assert.ok(releaseBenchmarks.size > 0);
   assert.equal(manifest.cohorts.length, releaseBenchmarks.size * 2);
@@ -84,7 +83,7 @@ test('frozen release evidence manifest retains complete paired cohorts', () => {
   );
 
   assert.deepEqual(validateEvidenceManifest(durableRepairManifest), []);
-  assert.equal(durableRepairManifest.release, packageJson.version);
+  assert.equal(durableRepairManifest.release, '1.0.3');
   assert.equal(durableRepairManifest.cohorts.length, 4);
   assert.equal(
     new Set(durableRepairManifest.cohorts.map((cohort) => cohort.benchmark)).size,
@@ -120,8 +119,12 @@ test('explicit release verification compares frozen evidence with current inputs
   const benchmarks = readJson('config/benchmarks.json');
   const candidateFingerprint = fingerprintCandidate(ROOT);
 
+  assert.match(verifyReleaseEvidence(ROOT, manifest, benchmarks, packageJson).join('\n'),
+    /requires schemaVersion 2/);
+  manifest.schemaVersion = 2;
   manifest.release = packageJson.version;
   for (const cohort of manifest.cohorts) {
+    cohort.environmentFingerprint = 'a'.repeat(64);
     cohort.benchmarkFingerprint = fingerprintBenchmark(ROOT, benchmarks[cohort.benchmark]);
     if (cohort.arm === 'candidate') cohort.pluginFingerprint = candidateFingerprint;
   }

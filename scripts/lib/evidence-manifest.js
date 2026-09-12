@@ -1,5 +1,6 @@
 const fs = require('node:fs');
 const path = require('node:path');
+const { environmentFingerprint } = require('./benchmark-environment');
 
 const REQUIRED_COHORT_FIELDS = [
   'benchmark',
@@ -16,7 +17,7 @@ function validateEvidenceManifest(manifest) {
   if (!manifest || typeof manifest !== 'object' || Array.isArray(manifest)) {
     return ['evidence manifest must be an object'];
   }
-  if (manifest.schemaVersion !== 1) errors.push('schemaVersion must be 1');
+  if (![1, 2].includes(manifest.schemaVersion)) errors.push('schemaVersion must be 1 or 2');
   if (typeof manifest.release !== 'string' || !/^\d+\.\d+\.\d+$/.test(manifest.release)) {
     errors.push('release must be a semantic version string');
   }
@@ -31,10 +32,20 @@ function validateEvidenceManifest(manifest) {
       errors.push(`cohorts[${index}] must be an object`);
       continue;
     }
-    for (const field of REQUIRED_COHORT_FIELDS) {
+    const requiredFields = manifest.schemaVersion === 2
+      ? [...REQUIRED_COHORT_FIELDS, 'environmentFingerprint'] : REQUIRED_COHORT_FIELDS;
+    for (const field of requiredFields) {
       if (typeof cohort[field] !== 'string' || cohort[field].length === 0) {
         errors.push(`cohorts[${index}].${field} must be a non-empty string`);
       }
+    }
+    for (const field of Object.keys(cohort)) {
+      if (![...requiredFields, 'targetCompleted', 'reports'].includes(field)) {
+        errors.push(`cohorts[${index}].${field} is not a selector in schemaVersion ${manifest.schemaVersion}`);
+      }
+    }
+    if (manifest.schemaVersion === 2 && !/^[a-f0-9]{64}$/.test(cohort.environmentFingerprint || '')) {
+      errors.push(`cohorts[${index}].environmentFingerprint must be a SHA-256 identity`);
     }
     if (!['baseline', 'candidate'].includes(cohort.arm)) {
       errors.push(`cohorts[${index}].arm must be baseline or candidate`);
@@ -51,24 +62,30 @@ function validateEvidenceManifest(manifest) {
       );
     }
 
-    const selector = REQUIRED_COHORT_FIELDS.map((field) => cohort[field]).join('\0');
+    const selector = requiredFields.map((field) => cohort[field]).join('\0');
     if (selectors.has(selector)) errors.push(`cohorts[${index}] duplicates an earlier selector`);
     selectors.add(selector);
   }
   return errors;
 }
 
-function reportMatchesCohort(report, cohort) {
-  const reportFile = report.reportFile
-    || (report.events ? `${path.basename(report.events, '.jsonl')}.json` : null);
-  return cohort.reports.includes(reportFile)
-    && report.benchmark === cohort.benchmark
+function matchesCohortIdentity(report, cohort) {
+  return report.benchmark === cohort.benchmark
     && report.arm === cohort.arm
     && report.benchmarkFingerprint === cohort.benchmarkFingerprint
     && report.pluginFingerprint === cohort.pluginFingerprint
     && report.modelRun?.modelProvider === cohort.modelProvider
     && report.modelRun?.model === cohort.model
-    && report.modelRun?.reasoningEffort === cohort.reasoningEffort;
+    && report.modelRun?.reasoningEffort === cohort.reasoningEffort
+    && (cohort.environmentFingerprint
+      ? environmentFingerprint(report) === cohort.environmentFingerprint
+      : !report.environment);
+}
+
+function reportMatchesCohort(report, cohort) {
+  const reportFile = report.reportFile
+    || (report.events ? `${path.basename(report.events, '.jsonl')}.json` : null);
+  return cohort.reports.includes(reportFile) && matchesCohortIdentity(report, cohort);
 }
 
 function filterReportsByManifest(reports, manifest) {
@@ -89,6 +106,7 @@ function loadEvidenceManifest(filename) {
 module.exports = {
   filterReportsByManifest,
   loadEvidenceManifest,
+  matchesCohortIdentity,
   reportMatchesCohort,
   validateEvidenceManifest,
 };

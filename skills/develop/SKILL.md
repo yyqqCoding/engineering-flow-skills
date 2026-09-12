@@ -1,79 +1,41 @@
 ---
 name: develop
-description: Align and approve an implementation task with a Test Contract, then complete production code before fulfilling the contract.
+description: Align and approve an implementation task, then deliver accepted behavior with verification evidence.
 disable-model-invocation: true
 ---
 
 # Develop
 
-Own one implementation task across alignment, approval, implementation, correction, and verification. Same-task follow-ups remain in Develop until cancellation, an explicit workflow switch, or unrelated work.
+Own one implementation task through alignment, approval, implementation, correction, and verification. Same-task follow-ups stay in Develop until cancellation, an explicit workflow switch, or unrelated work.
 
-## State gates
+## 1. Align and pause
 
-- Ask only when the answer materially changes accepted behavior, interfaces, data/state, permissions, security, compatibility, migration, destructive effects, or acceptance, and neither the request nor authoritative same-domain evidence resolves it. Repository mechanics are not user choices.
-- Inventory and batch all independent material questions. An explicitly undefined unknown-resource result for a write or delete is a product decision; never infer it from a success result, absent precedent, or a neighboring read API. After answers, ask only genuinely dependent questions or resolve a newly discovered authoritative contradiction.
-- A complete contract closes its stated inputs and operations. Derive covered values from it and leave unmentioned optional or malformed inputs out of scope instead of expanding the interview.
-  - Present Goal, Acceptance behavior, Out of scope, Assumptions, and Solution boundary, explicitly state that approval is pending, then pause. A checkpoint heading or an empty diff alone does not signal that approval is pending. Only action language sent after this checkpoint grants approval. The initial request, answers to clarification questions, and reading acknowledgements do not grant approval.
-- A follow-up that materially changes accepted behavior receives an incremental checkpoint. If it also approves the prior checkpoint, the whole turn remains alignment-only; implement the combined scope only after later action language approves the revision.
-- A reported omission from accepted behavior resumes implementation directly. Return an `Implemented` requirement record to `Accepted` until the omission is verified; do not require another checkpoint.
-- For broken existing behavior, use the Diagnose lifecycle, including its regression-first exception.
+- Reuse authoritative requirements, existing designs, and repository evidence. Inspect missing facts and changes instead of restarting discovery or rewriting settled decisions.
+- Ask only about unresolved choices that materially change behavior, interfaces, data, permissions, security, compatibility, destructive effects, or acceptance. Infer reversible implementation details from authoritative same-domain evidence.
+- Batch all independent material questions. Treat an explicitly undefined write/delete result as an unanswered product decision and include it in that batch; “undefined” alone does not put it out of scope. Never infer an unknown-resource result from a success result, absent precedent, or a neighboring read API. After answers, ask only genuinely dependent questions or resolve a newly discovered authoritative contradiction.
+- A complete contract resolves its stated inputs and operations. Do not reopen covered values or expand the interview to unmentioned optional or malformed inputs.
+- Present Goal, Acceptance behavior, Out of scope, Assumptions, and Solution boundary. Explicitly state that approval is pending and request it, then pause. Only action language sent after this checkpoint grants approval. The initial request, answers to clarification questions, and reading acknowledgements do not grant approval.
+- Keep a self-contained local checkpoint in the response. Do not create a fallback file or run its validator just because the contract is complete or the project lacks a documentation convention. Substantial work needing durable recovery or coordination uses the project's authoritative convention, or `docs/requirements/<feature-slug>.md` with status `Draft`. A complete initial substantial request gets its verified Draft in that first turn. Before creating, resuming, or completing a fallback record, read [Fallback requirement records](references/requirement-records.md).
+- For non-mechanical behavior, include a Test Contract alongside acceptance: the behavior to protect, concrete examples where they distinguish plausible interpretations, and the intended verification boundary. Ground expected results in accepted rules, worked examples, or authoritative evidence. Consider applicable functional behavior, feature interactions, and established boundaries without requiring three separate sections or inventing undefined behavior.
+- Before approval, production code, tests, and configuration stay unchanged. Read-only discovery and the pending requirement record are allowed. An existing design supplies checkpoint content; it does not bypass this approval gate.
 
-## 1. Discover and align once
+On later approval, mark a durable record `Accepted` and proceed immediately.
 
-- Read applicable instructions and authoritative requirements/designs.
-- Inspect version-control state, relevant implementation, tests, callers, and nearby patterns. Preserve unrelated work and reuse this evidence instead of repeating discovery for narration.
-- Locate the owning boundary and existing same-domain behavior. Ask the user only about unresolved product decisions, not fields, associations, helper choice, test layout, or other reversible implementation details.
-- Apply design-pressure and trade-off reasoning only for material interfaces, state, dependencies, module boundaries, or competing approaches.
+## 2. Implement and verify
 
-When no material question remains, proceed directly to the checkpoint.
+- Make the smallest clear change at the owner of the domain rule, following Core. Use design, diagnosis, and self-review techniques within this task without loading another full workflow or changing its authority.
+- Work in independently verifiable behavior slices. A local change can be implemented and then tested immediately; important stable rules benefit from early executable examples, and uncertain integrations need early feedback. Choose the order by risk instead of postponing all test authoring until the entire feature is complete. For a reproducible regression with a stable seam, observe the focused test fail before changing production behavior.
+- Fulfill the Test Contract through stable public interfaces. Retain automated coverage for critical accepted behavior and established risk boundaries; a temporary probe cannot replace it. One meaningful test may support several acceptance items. Mechanical, presentation, configuration, documentation, and wiring changes can use more appropriate build, type, lint, integration, smoke, or visual evidence.
+- Silence about tests is neutral. Do not infer a test prohibition from restrictions on dependencies, documentation, commits, or other artifacts. If tests are explicitly prohibited, use the strongest allowed evidence and report the coverage gap.
+- Add supplementary coverage for risks revealed by implementation, including applicable permission, data-integrity, state, concurrency, migration, compatibility, and external-failure boundaries. Derive expectations from established behavior. Additional tests alone are not requirement deviations.
+- Correct defects exposed by verification and rerun affected checks. Broaden verification when scope or new evidence warrants it; do not repeat unchanged checks without a reason.
 
-## 2. Record the checkpoint and pause
+## 3. Reconcile and complete
 
-- Keep a concise checkpoint in the response. A local task that fits there does not get a fallback record. For substantial work needing repository-backed recovery or coordination, use the project's authoritative convention or create `docs/requirements/<feature-slug>.md` with status `Draft`.
-- When the initial substantial request already supplies a complete contract, create and verify the Draft in that first turn; hypothetical inputs outside the contract cannot delay it.
-- Before creating, resuming, or completing the fallback record, read [Fallback requirement records](references/requirement-records.md) and follow its deterministic validator procedure.
-- Do not change production code, tests, or configuration before approval. Writing the requirement record is allowed.
-- Derive a Test Contract when the change involves functional behavior rather than only mechanical, presentational, documentation, configuration, or framework-wiring changes. The contract declares verification intent from requirements, not from implementation structure:
-  - **Functional correctness:** single-function behavior derived directly from Goal and Acceptance behavior (e.g., "results ordered by creation time descending", not "results are sorted").
-  - **Feature interaction:** correctness where behaviors intersect within the checkpoint scope (e.g., "sorting × pagination: first item on page 2 has earlier time than last item on page 1"). Include only interactions identifiable from the checkpoint; do not enumerate all possible callers.
-  - **Boundary conditions:** edge cases whose expected behavior is established by requirements or repository precedent (e.g., "empty list returns [], not null"). Do not invent undefined product behavior.
-  A mechanical-only change omits the Test Contract without requiring an explicit declaration.
-- Absence of a test request is not a prohibition. Do not add `no test edits` to the checkpoint unless the user explicitly forbids them, and do not extend restrictions on dependencies, documentation, commits, or other artifacts to tests.
-- End the checkpoint turn with an explicit request for approval. The original Develop invocation is not implementation approval.
+- Re-read accepted behavior and inspect the diff for omissions, incorrect behavior, scope, and temporary artifacts. Reconcile each acceptance item with evidence or an explicit gap; report material deviations without rewriting requirements to excuse them.
+- Reconcile authoritative documentation with actual facts and confirmed decisions. Remove diagnostics and promote only durable cross-task rules to project instructions.
+- For a fallback record, record exact implementation paths, test paths or `None`, the complete canonical verification command and result, and deviations while status remains `Accepted`. Use the reference's validator finalization to make `Implemented` the final record write.
 
-On later approval, mark a durable record `Accepted` and continue directly without another Develop invocation or a repeated checkpoint.
+A reported omission from accepted behavior reopens implementation directly; an `Implemented` record returns to `Accepted` until verified. A material scope change gets an incremental checkpoint. If the same message also approves the prior checkpoint, the whole turn remains alignment-only: implement neither portion until later action language approves the revision.
 
-## 3. Complete the production implementation
-
-- Make the smallest clear change at the module that owns the relevant data and invariant. Inspect sibling callers before changing shared behavior.
-- Reuse only identical domain behavior that should evolve together. Keep control flow, effects, failures, and state transitions explicit; avoid speculative abstractions, dependencies, configuration, and unrelated cleanup.
-- Preserve validation, permissions, security, data integrity, compatibility, accessibility, and unrelated work.
-- Existing tests may be read or run for context and regression detection, but do not add or edit test files until the approved production behavior is implemented. This phase boundary adds no user checkpoint and requires no commit.
-- Use a meaningful build, type, lint, integration, smoke, visual, or behavioral signal during implementation when useful, without creating test-first slices for new behavior.
-
-If implementation exposes a material requirement change, align only that increment, update the checkpoint, and pause. An explicit user-requested change is already the increment to checkpoint; do not ask whether it was intended.
-
-## 4. Fulfill Test Contract and select supplementary evidence
-
-After production implementation is complete, write tests and verification evidence:
-
-- Fulfill every item declared in the Test Contract by translating it into automated coverage against a stable public seam. Each contract item must have a corresponding test that would fail if the declared behavior breaks.
-- For supplementary evidence beyond the contract, add automated coverage only when implementation reveals a risk not captured in the contract—such as an unexpected boundary interaction, a domain invariant, or a newly discovered external-failure mode—and the coverage can detect that behavior breaking through a stable public seam.
-- Treat permissions/trust, money or data integrity, destructive effects, lifecycle/state transitions, duplicate/concurrent/idempotent behavior, migration, compatibility, and external failures as strong reasons for supplementary coverage even when not in the contract.
-- Add only applicable adjacent boundary cases whose behavior is established by requirements or repository precedent. Do not enumerate every theoretical category or invent product behavior.
-- Do not add unit tests for mechanical, presentation, documentation, configuration, or framework-wiring changes when build, type, lint, integration, smoke, or visual evidence is more meaningful.
-- An ad-hoc probe may supplement but cannot replace fulfilled contract coverage or supplementary automated coverage. Lack of an explicit test request is not a reason to skip fulfillment; if the user explicitly forbids test changes, use the best non-test evidence and report the retained coverage gap.
-- When the accepted request explicitly requires automated coverage, leave it in the project's established test convention. An ad-hoc probe alone does not satisfy that requirement.
-- Report any supplementary test added beyond the contract as a deviation note for traceability.
-
-If selected evidence exposes an implementation defect, correct production code and rerun the affected checks. Improve the touched design only when the change demonstrates scattered ownership, hidden effects, semantic duplication, repeated branching on one real variation axis, distributed state transitions, an unstable dependency, or a boundary that blocks testing or debugging.
-
-## 5. Complete and continue correctly
-
-- Re-read accepted behavior and inspect the diff for correctness, safety, ownership, readability, necessary test sensitivity, scope, and temporary artifacts.
-- Run fresh focused verification and at most one broader check when scope warrants it. Do not rerun an unchanged command against unchanged state.
-- Reconcile each accepted behavior as verified, partially verified, incomplete, or deviated. Update authoritative documentation only for changed facts and confirmed decisions; promote only durable cross-task rules to project instructions.
-- Remove temporary diagnostics and report remaining gaps.
-- For a fallback record, reconcile exact implementation paths, test paths or `None`, the complete canonical verification command and result, and deviations while it remains `Accepted`; then use the reference's validator finalization so `Implemented` is the final record write.
-
-Do not commit, push, publish, create external issues, install dependencies, or change global configuration unless authorized.
+Do not commit, push, merge, publish, create external issues, install dependencies, or change global configuration unless authorized.

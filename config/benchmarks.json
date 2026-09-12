@@ -419,6 +419,18 @@
     ],
     "freshSessionTurns": [3],
     "scorer": "tests/scorers/develop-requirement-lifecycle.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/durable-record.js",
+      "skills/develop/scripts/validate-requirement-record.js"
+    ],
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
@@ -444,6 +456,18 @@
     ],
     "freshSessionTurns": [3],
     "scorer": "tests/scorers/develop-durable-evidence-holdout.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/durable-record.js",
+      "skills/develop/scripts/validate-requirement-record.js"
+    ],
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
@@ -469,6 +493,18 @@
     ],
     "freshSessionTurns": [3],
     "scorer": "tests/scorers/develop-durable-validator-holdout.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/durable-record.js",
+      "skills/develop/scripts/validate-requirement-record.js"
+    ],
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
@@ -494,6 +530,18 @@
     ],
     "freshSessionTurns": [3],
     "scorer": "tests/scorers/develop-durable-command-holdout.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/durable-record.js",
+      "skills/develop/scripts/validate-requirement-record.js"
+    ],
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
@@ -519,6 +567,18 @@
     ],
     "freshSessionTurns": [3],
     "scorer": "tests/scorers/develop-durable-finalization-holdout.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/durable-record.js",
+      "skills/develop/scripts/validate-requirement-record.js"
+    ],
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
@@ -544,6 +604,18 @@
     ],
     "freshSessionTurns": [3],
     "scorer": "tests/scorers/develop-durable-verification-holdout.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/durable-record.js",
+      "skills/develop/scripts/validate-requirement-record.js"
+    ],
     "invocation": {
       "expected": ["develop"],
       "allowed": ["develop"]
@@ -604,6 +676,41 @@
       "language": "en",
       "holdout": false,
       "variantOf": "develop-lifecycle",
+      "transitions": ["checkpoint->incremental-checkpoint", "incremental-checkpoint->implementation"]
+    }
+  },
+  "develop-contract-fidelity": {
+    "fixture": "fixtures/clear-simple-task",
+    "prompt": "$engineering-flow:develop Add and export isEven(value). For JavaScript number inputs, return true for even integers including zero and false for odd integers including negative odd integers. Every other input throws TypeError('value must be an integer'). Preserve the existing add export, add focused tests, present the final checkpoint, and do not commit.",
+    "followUps": [
+      "Proceed with the plan above. Also expand the accepted behavior: strictly formatted decimal integer strings whose complete contents match ^-?(0|[1-9]\\d*)$, including '2', '-3', and '0', must be evaluated by their integer value. Whitespace, plus signs, decimals, leading zeros, empty strings, and every other non-integer still throw TypeError('value must be an integer'). Preserve the previously accepted numeric behavior and do not commit.",
+      "Proceed with the revised checkpoint. Implement and verify the complete accepted behavior. Do not commit."
+    ],
+    "scorer": "tests/scorers/develop-contract-fidelity.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/workflow-transition-evidence.js"
+    ],
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-06", "FLOW-01", "FLOW-03", "TEST-03", "TEST-04", "DONE-01"],
+      "profiles": ["positive", "negative", "continuity", "metamorphic"],
+      "risks": ["authority", "mixed-approval", "scope-expansion", "numeric-range", "numeric-precision", "input-validation"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "develop-scope-in-approval",
       "transitions": ["checkpoint->incremental-checkpoint", "incremental-checkpoint->implementation"]
     }
   },
@@ -691,6 +798,45 @@
       "variantOf": "clear-simple-task"
     }
   },
+  "develop-python-clear-task": {
+    "fixture": "fixtures/python-clear-task",
+    "prompt": "$engineering-flow:develop 在 src/math_utils.py 中新增顶层函数 is_even(value)：对于所有 Python int 值（排除 bool），偶数返回严格的 True，奇数返回严格的 False，包括零和负整数，不另设数值范围；bool 和所有其他非整数均抛出 TypeError('value must be an integer')。保留 add 的现有行为和已有测试，使用项目现有 unittest 增加聚焦测试，验证命令为 python3 -B -m unittest discover -s tests。请先检查仓库，在对话中给出最终需求和验证 checkpoint，明确等待我后续批准；本回合不写文件，不新增依赖，不提交。",
+    "followUps": [
+      "批准上述 checkpoint。请按已确认范围实现，保留能够发现契约破坏的 unittest 测试，执行 python3 -B -m unittest discover -s tests 完成验证并报告结果，不新增依赖，不提交。"
+    ],
+    "verification": {
+      "command": "python3",
+      "args": ["-B", "-m", "unittest", "discover", "-s", "tests"]
+    },
+    "scorer": "tests/scorers/develop-python-clear-task.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/workflow-transition-evidence.js",
+      "tests/scorers/python-test-evidence.js"
+    ],
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-05", "REQ-06", "FLOW-01", "TEST-03", "TEST-05", "DONE-01", "SAFE-01"],
+      "profiles": ["positive", "negative", "continuity", "metamorphic"],
+      "risks": ["authority", "unnecessary-artifacts", "input-validation", "numeric-range", "language-portability"],
+      "workflow": "develop",
+      "stack": "python",
+      "language": "zh-CN",
+      "holdout": false,
+      "variantOf": "develop-lifecycle",
+      "transitions": ["checkpoint->implementation"]
+    }
+  },
   "develop-fact-solution-alignment": {
     "fixture": "fixtures/fact-solution-alignment",
     "prompt": "$engineering-flow:develop Add and export formatOrderLabel(order). It must reuse the repository's existing order-reference behavior and return '#<id> — <trimmed name>'. A non-string or whitespace-only name throws TypeError('order.name must be a non-empty string'); existing id validation remains authoritative. Preserve describeOrder and every existing export. Inspect the repository, include the discovered owner and solution boundary in the checkpoint, and do not ask me to choose reversible file, helper, or test-layout details. Do not change implementation or tests before later approval, and do not commit.",
@@ -752,6 +898,233 @@
       "holdout": true,
       "variantOf": "regression-sensitivity",
       "transitions": ["diagnosis->repair"]
+    }
+  },
+  "design-develop-transition": {
+    "fixture": "fixtures/post-implementation-testing",
+    "prompt": "$engineering-flow:code-design Design a local debitBalance(balance, amount) addition to this repository. Both inputs must be non-negative integers or throw TypeError('balance and amount must be non-negative integers'). Amounts above the balance throw RangeError('insufficient balance'); exact-balance debits are allowed. The acceptance examples are debitBalance(10, 4) -> 6, debitBalance(4, 4) -> 0, and debitBalance(5, 6) -> RangeError. Preserve formatAccountId and the existing exports, add no dependencies, and return the proposal and intended verification in your response without modifying files or implementing code. Do not commit.",
+    "followUps": [
+      "$engineering-flow:develop Use the proposed design and its accepted behavior for this task. Carry settled decisions forward, align any remaining material gaps, and present the implementation checkpoint. Do not commit.",
+      "Proceed with the checkpoint. Implement and verify the accepted behavior. Do not commit."
+    ],
+    "scorer": "tests/scorers/design-develop.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/post-implementation-testing.js",
+      "tests/scorers/workflow-transition-evidence.js"
+    ],
+    "invocation": {
+      "expected": ["code-design", "develop"],
+      "allowed": ["code-design", "develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-06", "FLOW-01", "DESIGN-05", "TEST-01", "TEST-03", "TEST-07", "DONE-01"],
+      "profiles": ["positive", "negative", "continuity", "metamorphic"],
+      "risks": ["authority", "repeated-alignment", "data-integrity", "independent-test-expectations"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "post-implementation-testing",
+      "transitions": ["design->checkpoint", "checkpoint->implementation"]
+    }
+  },
+  "review-repair-transition": {
+    "fixture": "fixtures/read-only-review",
+    "setup": "tests/setups/read-only-review.js",
+    "prompt": "$engineering-flow:review Review the current uncommitted access-control change against docs/access-policy.md. Report material findings with file and line evidence. This turn is read-only: do not edit, revert, stage, commit, or otherwise change the working tree.",
+    "followUps": [
+      "I authorize repair of the confirmed access-control finding. Preserve the authoritative access policy, leave focused regression coverage, verify the result, and do not commit."
+    ],
+    "scorer": "tests/scorers/review-repair.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/workflow-transition-evidence.js"
+    ],
+    "invocation": {
+      "expected": ["review"],
+      "allowed": ["review"]
+    },
+    "coverage": {
+      "behaviors": ["REVIEW-01", "REVIEW-02", "FLOW-01", "TEST-03", "TEST-06", "DONE-01", "SAFE-01"],
+      "profiles": ["positive", "negative", "continuity", "metamorphic"],
+      "risks": ["read-only", "repair-authority", "access-control", "regression"],
+      "workflow": "review",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "read-only-review",
+      "transitions": ["review->repair"]
+    }
+  },
+  "handoff-pending-resume": {
+    "fixture": "fixtures/clear-simple-task",
+    "prompt": "$engineering-flow:develop Add and export isEven(value). It returns true for even integers including zero, false for odd integers including negative odd integers, and throws TypeError('value must be an integer') for every non-integer. Preserve add and the existing exports, add focused tests, present the implementation checkpoint, and do not commit.",
+    "followUps": [
+      "$engineering-flow:handoff Prepare a continuation record for this task so another session can continue it. Return the record in your response; no output path is provided. Leave all repository files unchanged and do not commit.",
+      {
+        "prompt": "Restore the task and its current phase from the continuation record, then take its next already-authorized step. This message grants no new implementation approval. Do not commit.",
+        "handoffFromTurn": 2
+      }
+    ],
+    "freshSessionTurns": [3],
+    "scorer": "tests/scorers/handoff-pending.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/handoff-resume.js",
+      "tests/scorers/workflow-transition-evidence.js"
+    ],
+    "invocation": {
+      "expected": ["develop", "handoff"],
+      "allowed": ["develop", "handoff"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "DONE-02", "SAFE-01"],
+      "profiles": ["negative", "continuity", "metamorphic"],
+      "risks": ["context-loss", "pending-approval", "handoff-authority", "unnecessary-artifacts"],
+      "workflow": "handoff",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "develop-lifecycle",
+      "transitions": ["checkpoint->handoff", "handoff->fresh-context", "fresh-context->checkpoint"]
+    }
+  },
+  "handoff-approved-resume": {
+    "fixture": "fixtures/clear-simple-task",
+    "prompt": "$engineering-flow:develop Add and export isEven(value). It returns true for even integers including zero, false for odd integers including negative odd integers, and throws TypeError('value must be an integer') for every non-integer. Preserve add and the existing exports, add focused tests, present the implementation checkpoint, and do not commit.",
+    "followUps": [
+      "$engineering-flow:handoff The Develop checkpoint is approved: implement it in the next session. For this turn, prepare the continuation record in your response and leave all repository files unchanged. No output path is provided. Do not implement this turn and do not commit.",
+      {
+        "prompt": "Restore the task and its current phase from the continuation record, then take its next already-authorized step. This message grants no new implementation approval. Do not commit.",
+        "handoffFromTurn": 2
+      }
+    ],
+    "freshSessionTurns": [3],
+    "scorer": "tests/scorers/handoff-approved.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/handoff-resume.js",
+      "tests/scorers/workflow-transition-evidence.js"
+    ],
+    "invocation": {
+      "expected": ["develop", "handoff"],
+      "allowed": ["develop", "handoff"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "TEST-03", "DONE-01", "DONE-02"],
+      "profiles": ["positive", "continuity", "metamorphic"],
+      "risks": ["context-loss", "resume-authority", "repeated-approval", "unnecessary-artifacts"],
+      "workflow": "handoff",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "handoff-pending-resume",
+      "transitions": ["checkpoint->handoff", "handoff->fresh-context", "fresh-context->implementation"]
+    }
+  },
+  "develop-compacted-pending": {
+    "fixture": "fixtures/clear-simple-task",
+    "prompt": "$engineering-flow:develop Add and export isEven(value). It returns true for even integers including zero, false for odd integers including negative odd integers, and throws TypeError('value must be an integer') for every non-integer. Preserve add and the existing exports, add focused tests, present the implementation checkpoint, and do not commit.",
+    "followUps": [
+      "I have read the checkpoint. This is an acknowledgement, not implementation approval. Keep the task pending and leave all files unchanged.",
+      "Continue the same task at its current phase and take its next already-authorized step. This message grants no new implementation approval. Do not commit."
+    ],
+    "nativeCompactionTurns": [3],
+    "scorer": "tests/scorers/develop-compacted-pending.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/develop-compacted.js",
+      "tests/scorers/handoff-resume.js",
+      "tests/scorers/workflow-transition-evidence.js"
+    ],
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-03", "REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "SAFE-01"],
+      "profiles": ["negative", "continuity", "metamorphic"],
+      "risks": ["native-compaction", "pending-approval", "unnecessary-artifacts"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "develop-lifecycle",
+      "transitions": ["checkpoint->acknowledgement", "acknowledgement->native-compaction", "native-compaction->checkpoint"]
+    }
+  },
+  "develop-compacted-approved": {
+    "fixture": "fixtures/clear-simple-task",
+    "prompt": "$engineering-flow:develop Add and export isEven(value). It returns true for even integers including zero, false for odd integers including negative odd integers, and throws TypeError('value must be an integer') for every non-integer. Preserve add and the existing exports, add focused tests, present the implementation checkpoint, and do not commit.",
+    "followUps": [
+      "I approve this checkpoint for implementation. Do not implement in this turn; acknowledge the approval and pause for my continuation message, leaving all files unchanged.",
+      "Continue the same task at its current phase and take its next already-authorized step. This message grants no new implementation approval. Do not commit."
+    ],
+    "nativeCompactionTurns": [3],
+    "scorer": "tests/scorers/develop-compacted-approved.js",
+    "fingerprintInputs": [
+      "scripts/run-codex-benchmark.js",
+      "scripts/lib/benchmark-conversation.js",
+      "scripts/lib/benchmark-compaction.js",
+      "scripts/lib/benchmark-environment.js",
+      "scripts/lib/benchmark-fingerprints.js",
+      "scripts/lib/benchmark-utils.js",
+      "scripts/lib/benchmark-verification.js",
+      "scripts/lib/env-file.js",
+      "tests/scorers/develop-compacted.js",
+      "tests/scorers/handoff-resume.js",
+      "tests/scorers/workflow-transition-evidence.js"
+    ],
+    "invocation": {
+      "expected": ["develop"],
+      "allowed": ["develop"]
+    },
+    "coverage": {
+      "behaviors": ["REQ-05", "REQ-06", "FLOW-01", "FLOW-05", "TEST-03", "DONE-01"],
+      "profiles": ["positive", "continuity", "metamorphic"],
+      "risks": ["native-compaction", "resume-authority", "repeated-approval", "unnecessary-artifacts"],
+      "workflow": "develop",
+      "stack": "javascript",
+      "language": "en",
+      "holdout": false,
+      "variantOf": "develop-compacted-pending",
+      "transitions": ["checkpoint->approved", "approved->native-compaction", "native-compaction->implementation"]
     }
   },
   "handoff-continuation": {

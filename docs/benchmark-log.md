@@ -908,3 +908,508 @@ All final selected reports completed without contamination, infrastructure failu
 Invocation and fixture verification passed in every selected report. The deterministic suite passes 84/84,
 semantic coverage maps all 47 behavior IDs across 37 configured scenarios, and
 `npm run benchmark:release-verify` matches the final package, benchmark, and candidate fingerprints.
+
+## 2026-09-11 — Workflow simplification development evidence
+
+This development revision preserves the five explicit entry points, materiality-based clarification,
+Develop's post-checkpoint approval, and failing regression evidence before repair. It removes repeated
+workflow instructions, fixed Test Contract category headings, and the global production-before-feature-tests
+schedule. Expected results come from accepted rules and distinguishing examples; implementation and
+verification can proceed in behavior slices. Existing designs feed the Develop checkpoint, an explicit
+request can authorize selected Review repairs within existing task gates, and Handoff preserves the source
+phase and known approval boundary.
+
+The pre-change v1.0.3 plugin is frozen at `/tmp/engineering-flow-optimization-E0qX43/baseline-plugin`,
+fingerprint `8a4e28e1ca0c`. The initial candidate was `6455004f0452`; the two wording revisions below
+produce `4605023f9477` and then `6f87cc877350`. The later Review correction produces `55763f92a17e`.
+Package and manifest versions remain `1.0.3`;
+the published release manifest and its reports are unchanged. This work does not claim a new release.
+
+| Entry file | Before, bytes | Candidate, bytes |
+|---|---:|---:|
+| Core | 1,977 | 1,991 |
+| Develop | 9,841 | 5,997 |
+| Diagnose | 3,893 | 2,856 |
+| Code Design | 3,414 | 2,151 |
+| Review | 2,378 | 2,286 |
+| Handoff | 1,497 | 1,595 |
+
+The five skill files together are 29.2% smaller by UTF-8 bytes; Core plus the five files are 26.6% smaller.
+Core retains 265 whitespace-delimited words and stays within its 2,000-character budget. Handoff grows
+slightly to preserve phase and authority explicitly. These are text-size measurements, not latency or
+engineering-quality improvements.
+
+Four new scenarios exercise design-to-Develop with acceptance-grounded tests, review-to-authorized-repair,
+and actual Handoff consumption in fresh approved and pending sessions. The new runner gives every fresh
+session a new isolated HOME and thread, transfers only the generated handoff response through a separate
+file, and retains source and consumer provenance. Explicit dependency fingerprints cover the changed
+runner and shared scorers. The old `post-implementation-testing` scorer remains unchanged as historical
+evidence; its production-first criterion is only an observation in the new design-to-Develop scenario.
+The six existing fresh-context scenarios also receive runtime, shared-scorer, and validator dependencies
+so the new HOME isolation cannot be pooled with their earlier same-HOME evidence. The six benchmark
+fingerprints selected by the current v1.0.3 release manifest remain unchanged.
+
+Deterministic verification exposed an existing false success in nested fixture tests: inherited
+`NODE_TEST_CONTEXT` made an inner `node --test` skip execution and return zero. A deliberately failing
+temporary fixture reproduced the problem. Clearing that marker inside the outer fixture-test worker
+restored real execution and a nonzero result, including the older scorers that spawn tests directly.
+The hook injection check now verifies the complete actual skill content instead of one obsolete phrase.
+This nested-test issue affects deterministic checks; the standalone model runner does not inherit the
+outer Node test-worker marker. Historical model reports have not been rescored or relabeled.
+
+Manual review of the new scorers added negative cases for reading only a handoff path, failing to recover
+the specific task, treating `Accepted behavior` as implementation approval, and treating `No further
+approval is required` as a pending checkpoint. A completed empty handoff is transferred verbatim and
+scored as a behavior failure instead of being excluded as an infrastructure failure. At this stage the
+full deterministic suite passed 100/100; the later semantic-equivalence case brings the final total to 101.
+
+All four workflow SVGs were rendered and visually checked using the existing system librsvg. The generic
+skill-creator frontmatter validator rejects Claude's required `disable-model-invocation` field; the repository's
+cross-platform metadata and manifest tests validate that field and both platforms' explicit-only policy.
+
+Exploratory smokes used Codex CLI 0.153.4, provider `ABtest`, model `gpt-5.6-luna`, low reasoning,
+and the existing 240-second turn timeout:
+
+| Report | Benchmark fingerprint | Plugin | Result |
+|---|---|---|---|
+| `regression-sensitivity-candidate-1789104753313-14827.json` | `30597af2c4bc` | `6455004f0452` | Pass |
+| `develop-question-batching-candidate-1789104753313-14828.json` | `fb5def7d03a0` | `6455004f0452` | Fail |
+| `regression-sensitivity-candidate-1789105691446-21116.json` | `30597af2c4bc` | `4605023f9477` | Pass |
+| `develop-question-batching-candidate-1789105691447-21117.json` | `fb5def7d03a0` | `4605023f9477` | Fail |
+| `develop-question-batching-baseline-1789106423774-27010.json` | `fb5def7d03a0` | `8a4e28e1ca0c` | Fail |
+
+These reports completed without contamination or unauthorized commits and passed invocation and fixture
+tests. Manual trajectory review confirmed the same clarification failure in both candidate revisions and
+the control: the model removed the explicitly unresolved unknown-customer result from scope instead of
+asking about it. The initial shortening omitted the affirmative statement that this is a product decision;
+restoring that statement alone did not resolve the observed failure. The control's matching failure means
+these samples do not establish that simplification caused the problem.
+
+Develop now explicitly distinguishes an unanswered write/delete decision from a user exclusion: the word
+`undefined` alone does not remove that behavior from scope. The scorer, fixture, and earlier failures remain
+unchanged. Samples after this correction belong to `6f87cc877350` and are not pooled with these earlier
+fingerprints. All raw reports named here are in `benchmark-results/`.
+
+The clarified Develop wording then passed the focused question and regression scenarios:
+
+| Report | Benchmark fingerprint | Plugin | Result |
+|---|---|---|---|
+| `develop-question-batching-candidate-1789107208092-29518.json` | `fb5def7d03a0` | `6f87cc877350` | Pass |
+| `regression-sensitivity-candidate-1789107208133-29520.json` | `30597af2c4bc` | `6f87cc877350` | Pass |
+
+The question sample asked all three independent material questions together, recorded the answers, and
+continued to wait for implementation approval. The regression sample retained a failing test before the
+production fix and passing, mutation-sensitive coverage afterward.
+
+The first transition batch used one sample per arm and scenario, with control `8a4e28e1ca0c` and candidate
+`6f87cc877350`. Every run completed without contamination or unauthorized commits and passed invocation
+and fixture tests. The original scorer results are retained below, including the manually identified false
+negative; these rows must not be summarized as a performance improvement.
+
+| Scenario / benchmark fingerprint | Control report and original result | Candidate report and original result |
+|---|---|---|
+| Design → Develop / `efb833c6c37b` | `design-develop-transition-baseline-1789107589848-807.json` — pass | `design-develop-transition-candidate-1789107589961-808.json` — pass |
+| Review → repair / `d30d4db16738` | `review-repair-transition-baseline-1789107670483-4345.json` — fail | `review-repair-transition-candidate-1789107746359-8347.json` — fail |
+| Pending Handoff / `4feb7b6f0d9a` | `handoff-pending-resume-baseline-1789107752060-8547.json` — false negative | `handoff-pending-resume-candidate-1789107837216-12304.json` — pass |
+| Approved Handoff / `1e883fe5bfb0` | `handoff-approved-resume-baseline-1789107855156-13245.json` — pass | `handoff-approved-resume-candidate-1789107952461-18930.json` — pass |
+
+Manual review found two different causes:
+
+- Both Review repair samples changed production and regression tests in the same edit, then first ran
+  passing tests. Their access-control behavior and retained tests were correct, but they did not observe
+  failure before repair. Review now states this existing Core gate directly inside its authorized-repair
+  paragraph. This narrow correction changes the plugin to `55763f92a17e`.
+- The pending control consumed the entire correct handoff, identified the unapproved Develop phase, and
+  preserved the worktree. Its response did not repeat `isEven` or use the scorer's expected approval
+  phrasing. Product behavior does not require that repetition. The corrected scorer verifies task identity
+  in the source record, actual content consumption, explicit pending authority, and the absence of edits.
+  A positive test uses the actual failed response. Empty records, path-only probes, vague clean-worktree
+  replies, authority confusion, and premature implementation remain negative cases. Original reports have
+  not been rescored; the changed helper creates new benchmark fingerprints.
+
+Four retained scenarios were then sampled at `55763f92a17e` under the same model and reasoning settings:
+
+| Report | Benchmark fingerprint | Automated result / manual limit |
+|---|---|---|
+| `develop-lifecycle-candidate-1789109641603-24371.json` | `f9d3df340e04` | Scorer pass; scope-fidelity limitation below |
+| `develop-requirement-lifecycle-candidate-1789109641603-24372.json` | `c56a4b124dfc` | Pass; Draft → Accepted → Implemented and both validator modes observed |
+| `code-design-refinement-candidate-1789109826829-32187.json` | `0afd7d3ba1bd` | Pass; read-only proposal identifies execution, permission, and lifecycle gaps |
+| `handoff-continuation-candidate-1789109831775-32390.json` | `516a36faaa68` | Pass; current evidence, decisions, pending work, and unrelated edit preserved |
+
+All four completed without contamination or unauthorized commits and passed invocation and fixture tests.
+The lifecycle sample correctly paused, implemented after approval, completed the reported omission, and
+paused added scope. However, its final incremental checkpoint proposed excluding string values outside the
+safe-integer range even though the user's complete regex contract did not exclude them. It also created a
+durable record for a small local task. The existing scorer does not measure these fidelity and ceremony
+limits. No added-scope code was implemented, and the original requirement was not overwritten, but this
+sample is not full evidence of correct requirement understanding. These limits remain explicit instead of
+being hidden by its passing automated result or tuned away in the historical scorer.
+
+The final paired transition batch used `BENCH_REPETITIONS=1`, `BENCH_CONCURRENCY=2`, and
+`BENCH_TIMEOUT_MS=240000` with the same Codex CLI, provider, model, and reasoning settings above.
+The control remains `8a4e28e1ca0c`; the candidate is `55763f92a17e`. Each row below has one completed
+sample per arm. The original results are retained without rescoring:
+
+| Scenario / benchmark fingerprint | Control report and original result | Candidate report and original result |
+|---|---|---|
+| Review → repair / `fb35c7af8da6` | `review-repair-transition-baseline-1789110973693-5731.json` — fail | `review-repair-transition-candidate-1789110973841-5732.json` — fail |
+| Pending Handoff / `a46029fa07e7` | `handoff-pending-resume-baseline-1789111080634-10287.json` — pass | `handoff-pending-resume-candidate-1789111084326-10872.json` — fail; unnecessary Draft record |
+| Approved Handoff / `7e2c1accc9f8` | `handoff-approved-resume-baseline-1789111161900-14667.json` — pass | `handoff-approved-resume-candidate-1789111204964-17198.json` — pass |
+
+All six reports completed without contamination, timeout, or unauthorized commits and passed invocation
+and fixture public tests. Manual trajectory review separates the remaining failures:
+
+- Both Review samples still repaired production before observing a failing regression test. In the
+  candidate's turn-2 event stream, `item_3` changes `src/access.js` and `access.test.js` together;
+  the following `npm test` is already green. Later test additions also pass. The control changes
+  production first and then adds passing tests. Both leave correct access policy and mutation-sensitive
+  coverage, but neither satisfies the regression execution order. The local Review reminder therefore
+  has not demonstrated reliable enforcement in this sample.
+- The Review control also fails `findingIdentifiesPermissionFailureWithLocation`. This is a keyword
+  false negative: its finding locates `src/access.js:2` and says managers can access records
+  "regardless of active status or organization". The scorer's organization-expression alternatives
+  omit this equivalent wording. Correcting this subcheck would not change the overall failure because
+  the missing failing regression evidence is real. The original scorer and report remain unchanged.
+- The pending Handoff candidate creates `docs/requirements/is-even.md` in turn 1 for a small local task,
+  contrary to REQ-05. This unnecessary artifact is a real ceremony failure. The record remains `Draft`
+  and byte-for-byte unchanged through Handoff and the fresh consumer; no production or test files are
+  edited. Both correctly state that implementation approval is pending. The scorer compares each turn
+  with the initial clean worktree, so `preservesPendingApprovalInFreshSession=false` also reflects
+  the earlier artifact rather than a new consumer mutation or an approval bypass. Source-record
+  identity, complete reading, fresh-session isolation, and pending authority are preserved.
+- Both approved Handoff samples transfer the actual approved checkpoint without implementing in the
+  handoff turn. The fresh consumers implement and verify the authorized behavior, preserve the existing
+  export, retain sensitive tests, and do not restart approval.
+
+The latest shared-scorer fingerprint for Design → Develop is `feafaf62c31f`. That scenario was not rerun
+after the shared helper changed; its earlier paired passing reports remain evidence only for
+`efb833c6c37b` and their recorded plugin fingerprints. No result is assigned to the unrun combination.
+
+Final deterministic verification is `npm test` **101/101 passed**, including metadata, explicit invocation,
+fresh-session transfer, scorer positive/negative cases, and the nested-test failure reproduction.
+`npm run benchmark:coverage -- --json` reports 41 scenarios mapping all 47 behavior IDs; this is coverage
+metadata, not 47 proven behaviors. `git diff --check` and `claude plugin validate . --strict` pass.
+The manifests still reference all five skills with synchronized explicit-only invocation policies.
+
+This is an implemented development revision with recorded behavioral limitations, not a release-level
+reliability claim. No pass rates are pooled across changed fingerprints, and no additional wording tuning
+or repeated model sampling was used to turn the final failures green. The latest Review regression order,
+unnecessary local records, and numeric-range fidelity observations remain unresolved. The two documented
+scorer classification limits also remain explicit for future evaluation work. Current Claude validation
+checks package structure only; revised wording has no fresh isolated Claude inference evidence. The
+frozen v1.0.3 release manifest and reports remain unchanged and do not certify the changed plugin.
+
+## 2026-09-12 — Evaluation repair deterministic evidence
+
+The authorized evaluation repair keeps Core, all five skills, and invocation metadata frozen at plugin
+fingerprint `55763f92a17e`. It repairs scoring errors and acceptance blind spots; it does not tune workflow
+wording or run another model cohort. The preceding 101/101 result belongs to the earlier simplification
+revision and is not the verification result for this increment.
+
+The first fresh focused run used Node `v22.21.1` and reproduced **50 passes, 2 failures**:
+
+```bash
+node --test tests/review-findings.test.js tests/workflow-transitions.test.js tests/contract-fidelity.test.js tests/benchmark-handoff.test.js
+```
+
+- `rejects a valid grant followed by a separate cross-organization denial`: the Review scorer combined
+  a legitimate same-organization grant with a later cross-organization denial. It now includes the
+  boundary's denial predicate and recognizes active denial. The observed manager-bypass wording and
+  file/line evidence still pass; valid policy, negation, and missing-location examples still fail.
+- `a local checkpoint cannot silently change an existing untracked requirement`: Git status, diff,
+  and event counts stayed unchanged while a requirement's contents changed. Initial and per-turn
+  requirement snapshots now participate in the shared preservation check. The runner captures the
+  initial contents before model execution, supplies them to the scorer, and retains them in its report.
+
+Two adjacent defects were also reproduced before their production fixes. A deterministic test executes
+the actual runner with a stub Codex process and real Git/file operations: adding a status-free document
+inside an already untracked directory initially scored as unchanged. The runner now requests individual
+untracked paths with `git status --short --untracked-files=all` at every snapshot. The same test verifies
+unchanged records, same-path content changes, new artifacts, and saved initial evidence without using
+user authentication or a model provider.
+
+The approved-consumer regression initially had **3 passes, 2 failures**: it treated a preserved existing
+requirement as an extra implementation artifact and attributed a checkpoint-created record to the later
+consumer again. The consumer now compares non-implementation paths with its Handoff entry state and
+requires requirement contents to remain unchanged. It still rejects new records, new ordinary documents,
+and modifications to carried requirements. Earlier artifact failures remain in the checkpoint result.
+
+The new `develop-contract-fidelity` scenario has an initial Develop checkpoint, a combined approval and
+integer-string increment that requires a revised checkpoint, and separate approval for implementation.
+Its independent public API expectations include `9007199254740993 -> false`, negative large integers,
+400-digit even and odd strings, invalid formats, and the original JavaScript numeric domain. Mutation
+checks reject range exclusions and Number-based parity loss even when ordinary examples pass. The
+scenario is separate from the existing lifecycle and release-selected scenarios.
+
+The expanded focused suite passes **66/66**, and `npm test` passes **151/151**, including manifest
+completeness, synchronized explicit invocation, fixtures, scorer sensitivity, and runner evidence.
+`npm run benchmark:coverage -- --json` reports **42 scenarios mapping all 47 behavior IDs**; this measures
+registry coverage, not model success. Both Handoff variants now map their local-artifact checks to
+REQ-05. `claude plugin validate . --strict` passes. After the final coverage metadata and documentation
+updates, `node --test tests/benchmark-coverage.test.js tests/metadata.test.js` passes **16/16**, and
+`git diff --check` passes. The requirement record is reconciled as `Implemented` with these results.
+
+Current affected benchmark fingerprints are:
+
+| Scenario | Benchmark fingerprint |
+|---|---|
+| develop-contract-fidelity | `0cfc28624e7e` |
+| design-develop-transition | `f047c8a9b974` |
+| review-repair-transition | `7c311df79824` |
+| handoff-pending-resume | `8020982ce40a` |
+| handoff-approved-resume | `98abb771d18c` |
+| develop-durable-resume | `4ebc9205d943` |
+| develop-durable-evidence-holdout | `58ca14f7947a` |
+| develop-durable-validator-holdout | `611bf62b4ce9` |
+| develop-durable-command-holdout | `62d741fa293b` |
+| develop-durable-finalization-holdout | `2edd7f31471a` |
+| develop-durable-verification-holdout | `801521abf0ed` |
+
+The durable scenarios also change fingerprint because they declare the shared runner as an input.
+Their historical reports do not count as results for these current inputs. All six evidence manifests
+and the unrelated `.baseline-plugin/` directory retain their entry hashes; raw model reports remain
+unchanged. No stochastic results are pooled or reassigned.
+
+The Review language scorer remains a bounded heuristic. Historical model failures involving repair
+before observing a failing regression, unnecessary local requirement records, and an unapproved numeric
+range restriction remain observations about those models and inputs. This increment makes the recorded
+evaluation distinctions testable; it supplies no new Codex or Claude inference evidence and no claim
+that model behavior has become more reliable.
+
+## 2026-09-12 — Sequential behavior optimization: current diagnostics
+
+The user's request to fix the remaining issues one at a time starts a separate increment in
+`docs/requirements/workflow-behavior-optimization.md`. The completed evaluation repair above remains
+unchanged. The control snapshot is `/tmp/engineering-flow-behavior-idvahw/control`, fingerprint
+`55763f92a17e`, matching the entry plugin. The temporary experiment record also retains entry hashes for
+existing reports, all six evidence manifests, and the unrelated `.baseline-plugin/` directory.
+
+Current environment: Codex CLI **0.154.0**, Node **v22.21.1**, provider **ABtest**, model
+**gpt-5.6-luna**, reasoning **low**, 240-second per-turn timeout, concurrency two. The CLI version differs
+from historical 0.153.4 samples. Results below are development diagnostics, not a release comparison.
+Before inference, the four affected deterministic test files passed **66/66** again.
+
+The fixed discovery budget was one control sample per target, with no replacement of completed model
+failures. Both runs completed without contamination, unauthorized commits, or invocation errors:
+
+| Scenario / benchmark fingerprint | Report | Result and manual verification |
+|---|---|---|
+| Review repair / `7c311df79824` | `review-repair-transition-baseline-1789216802770-9440.json` | Pass. Turn 2 writes only the regression tests, observes `npm test` exit 1, then first changes production and observes passing tests. The saved rollout confirms two unchanged assertions for cross-organization and inactive-manager access, both violated by the old predicate; the later edit adds a guest test without weakening those assertions. |
+| Complete integer-string contract / `0cfc28624e7e` | `develop-contract-fidelity-baseline-1789216802769-9441.json` | Pass. Both approval checkpoints remain intact. The implementation uses exact integer-string arithmetic, rejects malformed inputs, preserves the numeric domain, and retains range/precision-sensitive coverage. Neither checkpoint introduces a range exclusion. |
+
+Review's first failing output reports the file-level `ERR_TEST_FAILURE` rather than individual assertion
+stacks. The actual test patch, original predicate, later unchanged assertions, and independent final
+4/4 test result support its causal attribution. This single passing sample does not negate earlier
+ordering failures or establish improved reliability. Review and numeric-contract guidance stay frozen.
+
+The numeric sample also creates and finalizes `docs/requirements/is-even.md` for the local function task.
+Its contract scorer does not measure ceremony, so its passing result does not certify the artifact
+decision. Historical local-task traces explicitly infer a required Draft from the absence of a project
+documentation convention. Priority 2 therefore changes only Develop's record-selection instruction:
+neither a complete contract nor an absent convention alone requires a fallback file or validator.
+The existing substantial-task record and approval policies are preserved.
+
+The preregistered cost check is one control/candidate pair each for `handoff-approved-resume` and
+`develop-requirement-lifecycle`, one candidate contract run against the control above, and one candidate
+`develop-question-batching` guard. The latter checks the actual three unresolved destructive-operation
+decisions rather than treating question counts as a measure of unnecessary ceremony. Only one wording
+revision is allowed in this experiment, and completed failures will not be retried into passing results.
+
+### Priority 2 — local records with substantial-task and clarification guards
+
+The single Develop clarification produces plugin `932976d966bc`; the frozen control remains
+`55763f92a17e`. The candidate snapshot is `/tmp/engineering-flow-behavior-idvahw/cost-candidate`.
+Before model execution, the relevant metadata, routing, requirement-validator, transition, and contract
+tests passed **60/60**. All six planned runs completed without contamination or unauthorized commits:
+
+| Scenario / benchmark fingerprint | Control report and original result | Candidate report and original result |
+|---|---|---|
+| Approved Handoff / `98abb771d18c` | `handoff-approved-resume-baseline-1789217699070-17338.json` — fail | `handoff-approved-resume-candidate-1789217699635-17339.json` — pass |
+| Substantial requirement lifecycle / `c56a4b124dfc` | `develop-requirement-lifecycle-baseline-1789217941116-23728.json` — pass | `develop-requirement-lifecycle-candidate-1789217972848-24828.json` — pass |
+| Complete integer-string contract / `0cfc28624e7e` | `develop-contract-fidelity-baseline-1789216802769-9441.json` — pass; unnecessary local record | `develop-contract-fidelity-candidate-1789218129907-30009.json` — pass; no local record |
+| Necessary clarification / `fb5def7d03a0` | Not sampled in this experiment | `develop-question-batching-candidate-1789218176157-30950.json` — pass |
+
+Both candidate local tasks keep checkpoints in the response and leave only the required source/test
+changes after approval. The Handoff pair uses the same benchmark inputs and environment: the control
+creates `docs/requirements/is-even.md`, while the candidate creates none and resumes implementation
+from the transferred approval without restarting a gate. Both substantial-task arms still create and
+validate Draft, preserve the explicit Accepted pause, and finalize Implemented after verification.
+The clarification guard asks the three actual unresolved deletion decisions and presents the checkpoint
+after the answers without treating those answers as implementation approval.
+
+The Handoff control's original `resumesAuthorizedImplementation=false` is partly a scoring defect:
+turn 3 runs `npm test && node ... --finalize`; the complete TAP summary passes, but the following record
+validator fails. The helper mistakes the whole command's nonzero exit for the test's result. The control
+does implement the correct behavior and the runner independently passes 4/4 tests. Its unnecessary
+record and later changes to the carried record remain separate failures. The next deterministic repair
+will correct this attribution without rewriting the original report.
+
+The candidate instruction is retained on this bounded evidence; Core, Review, numeric-contract wording,
+and invocation policies stay unchanged. This is one sample per selected arm/scenario, not a reliability
+or average-cost estimate. These reports precede automatic environment identity capture; their manually
+recorded current environment and named experiment remain explicit rather than being retroactively
+assigned a new identity or pooled with historical CLI versions.
+
+### Priority 3 — native continuation and evidence identity
+
+The two new scenarios, `develop-compacted-pending` and `develop-compacted-approved`, insert actual
+native compaction before the final resumed turn. Each receives one candidate diagnostic after the
+deterministic protocol and scorer checks. A completed model failure is not retried; a documented
+infrastructure defect permits at most one replacement after correction.
+
+The adapter follows the [official app-server protocol](https://learn.chatgpt.com/docs/app-server) and
+the installed 0.154.0 JSON schema. It reuses the persistent exec thread and original isolated HOME,
+checks the resumed execution environment, requires correlated `contextCompaction` start/completion
+and completed-turn events, then closes the server before the existing exec runner resumes the task.
+The RPC acknowledgement is insufficient. Compaction has its own raw event stream, token usage, and
+workspace snapshots, so it does not shift business-turn indices or masquerade as a fresh-session test.
+
+A separate deterministic audit reproduced cross-environment pooling: summary, cohort filling, and
+manifest selection ignored differing CLI versions and timeouts; unset fill provider/model fields acted
+as wildcards. The repair records a common environment identity and uses it consistently, while keeping
+legacy reports and all six frozen manifests unchanged. Missing historical identity is not inferred from
+the current environment.
+
+Before inference, `npm test` passed **193/193**. The protocol audit first exposed six failures involving
+event correlation, missing IDs, process exit, terminal errors, session replacement, and record
+preservation; the repaired native/transition checks passed **39/39**. Compound-command attribution now
+requires a complete, attributable, nonempty test result and cannot count a later validator error as a
+regression failure. New evidence manifests use schema 2 with a validated environment fingerprint;
+historical schema 1 manifests remain readable without certifying the current tree.
+
+Both preregistered native-compaction diagnostics completed and passed. Their plugin fingerprint is
+`932976d966bc`; their complete environment identity is
+`4182ee16c81824aca1605ea8d24e52edbf499b40e1d54b643d127872e9006605` (Codex CLI 0.154.0,
+ABtest / gpt-5.6-luna / low, 240-second timeout).
+
+| Scenario / benchmark fingerprint | Report | Inspected behavior |
+|---|---|---|
+| Pending approval / `8d045a2d2da4` | `develop-compacted-pending-candidate-1789221953935-16938.json` | Pass. The original thread completes native compaction with unchanged workspace snapshots; the continuation keeps the checkpoint pending and changes no files. |
+| Approved implementation / `784b44856e32` | `develop-compacted-approved-candidate-1789221953922-16939.json` | Pass. The original thread completes native compaction with unchanged workspace snapshots, then implements the prior approved contract without another gate. Only the source and retained sensitive tests change; the model and independent runner both observe passing tests. |
+
+The raw RPC streams contain correlated turn/item start and completion events, and every business turn
+uses the original session. Neither run is contaminated or makes an unauthorized commit. These are
+single samples of actual host compaction, distinct from the earlier fresh-session Handoff evidence;
+they do not establish long-session or release-level reliability. No workflow wording changed in P3.
+The full persistent rollouts, including each actual compaction summary, were also copied byte for byte
+to the corresponding `*-rollout.jsonl` files beside the reports. Their SHA-256 hashes are
+`03f0ec41164bebb0d987c61eeea804d721c47cfb69750201f6fa6f9248b40430` (pending) and
+`a8ea7c5487acd237bbecf6d33d15bc38ec7712d166f0a7c80b965761dc3b420c` (approved).
+
+### Priority 4 — bounded language and platform variants
+
+Before further inference, select one candidate sample for `develop-python-clear-task`, a new two-turn
+Chinese Develop variant using the existing Python fixture. Keep `python-clear-task` and its holdout
+status unchanged. Check approval before writes, Python's `bool` exclusion, unrestricted integer
+semantics, preserved `add`, meaningful unittest coverage, and no unnecessary local records. Deterministic
+verification must cover the Python-specific output and mutation evidence before running the model.
+
+Also select one isolated two-turn Claude Code Develop smoke on the small JavaScript fixture: an
+explicit checkpoint followed by implementation approval. Use the same candidate snapshot, a new
+Windows-local workspace and configuration directory, and only the configured provider credential/model
+variables in the child environment. Keep write tools available in both turns, verify actual workflow
+loading and session continuation, and inspect edits and test evidence. The configured client is Claude
+Code 2.1.223 using **Kimi `kimi-k3[1M]`**, so this is client integration evidence, not Anthropic
+Claude-model evidence or a matched-model platform comparison.
+
+Budget: one completed sample per selected variant; no replacements for completed model failures.
+Permit at most one replacement per variant only for a documented infrastructure defect after correction.
+Record exact frozen inputs before launch. If the configured Claude authentication or environment does
+not support execution within that bound, retain the failure and report the specific gap.
+
+The Claude smoke was frozen in `/tmp/engineering-flow-behavior-idvahw/claude-smoke-plan.json` after
+Windows plugin validation passed. Plugin: `932976d966bc`; benchmark digest:
+`ed42098a8febb53234ec17bcd7b2ecfc1db723125edce5939f486a0fc4102016`; environment digest:
+`c20ecab523a5015aa76c3ff7151ea43cf9700e8ef95f153938a407ea77df209f`. Each turn has a 240-second
+timeout and requested effort `low`. Credentials are excluded from persisted metadata. This manual
+smoke uses its own evidence format and is not a Codex evidence-manifest cohort.
+
+The Claude smoke completed both turns in the original session without a retry. Raw evidence and a
+manual audit are retained in `benchmark-results/claude-develop-smoke-21fd1d45/`. SessionStart loaded Core
+in both turns, native slash-command expansion loaded the exact candidate Develop text, and all five
+released workflows were available. Only the candidate external plugin was loaded, with no MCP servers;
+the client's bundled skills remained part of the recorded environment and no additional invocation was
+observed. The first turn made no file changes and explicitly awaited approval. After approval, only
+`src/math.js` and `math.test.js` changed; the original session continued without another approval gate
+or a requirement document. The model observed **4/4** passing tests. Independent verification using the
+actual Windows Node **v20.17.0** passed the contract, including large integers and rejected invalid
+inputs, and the retained tests detected both zero/negative-even and invalid-input-coercion mutants in
+a separate copy. The original model workspace and all raw streams were preserved. The client reported
+model `kimi-k3[1m]`; this is the configured `kimi-k3[1M]` name normalized by the client, not a sampled
+Anthropic model. This single sample supplies client integration evidence only.
+
+The Python scorer is frozen after **25/25** focused checks passed. Two initial regressions showed that
+deleted `add` coverage and an old-test-only discovery command could pass; both were corrected before
+sampling. A subsequent command audit observed six failing checks covering stderr merging, unassigned
+nonzero exit status, escaped shell arguments, wrapped replay, contradictory summaries, and successful
+methods alongside skipped subtests. These also pass after the repair. Compound attribution is bounded
+to recognized Git follow-up checks; unsupported command forms and quiet ambiguous skip summaries remain
+unknown and require manual inspection.
+
+The Python plan is `/tmp/engineering-flow-behavior-idvahw/python-experiment.json`: plugin
+`932976d966bc`, benchmark `1f6b1d7dcab2`, scorer and direct dependencies `70a51af86118`, the same complete
+Codex environment identity `4182ee16c81824aca1605ea8d24e52edbf499b40e1d54b643d127872e9006605`, and
+Python **3.12.3** at `/usr/bin/python3`. Interpreter identity is recorded separately from the generic
+Codex/Node environment schema. No Python-version portability or pooled Python cohort is claimed.
+
+The single Python sample, `develop-python-clear-task-candidate-1789227652289-32739.json`, completed
+without contamination or an unauthorized commit, but its original score failed two checks. Manual
+inspection separates them:
+
+- `implementsAfterApproval` was a scorer false negative. The model changed source and tests, then ran
+  the promised complete unittest command followed by `git diff --check`, a source-path diff, and status.
+  The three tests passed. The parser recognized the check and status suffixes but rejected the source
+  diff. A focused regression first failed **0/1**; the narrow repair accepts that Git diff form while
+  preserving the wrapped-replay rejection. The expanded focused checks pass **26/26**.
+- `leavesRangeSensitiveCoverage` is an actual behavioral gap. Implementation correctly handles
+  unrestricted Python integers, and retained tests detect `add`, bool, and parity mutations, but no
+  retained example detects a newly imposed 64-bit limit. Passing production contract checks do not
+  replace this missing coverage. The sample remains a failed behavioral guard.
+
+The original report and score remain byte-identical. Its sampled benchmark is `1f6b1d7dcab2`; the
+repaired current scorer gives benchmark `9ea51ff588f4`. The exact sampled inputs were archived and their
+old fingerprint rechecked in `benchmark-results/python-develop-audit-1789227652289/`, alongside the raw
+rollout, final workspace, frozen plan, and separate manual adjudication. This is not a new inference
+sample. No completed failure was retried, no old score was rewritten, and no workflow wording was added
+to force this guard to pass.
+
+### Priority 5 and final verification
+
+The instruction audit compares the frozen entry plugin `55763f92a17e` with `932976d966bc`. Only the
+Develop record-selection paragraph changed, by 153 bytes. Core, the other four skills, references,
+validator, hooks, and invocation metadata remain identical to the entry snapshot. The observed
+unnecessary-record failures support this change. Five released skills remain explicitly invoked on
+both clients. The substantial-task guard explicitly specified its record path, so it does not prove
+that autonomous classification of every substantial/local boundary is reliable.
+
+After the last Python scorer correction, `npm test` passes **219/219**, including metadata and
+invocation checks; the preceding **218/218** was before that correction. Coverage metadata maps **45
+scenarios to all 47 behavior IDs**, without claiming all model outcomes pass. `claude plugin validate .
+--strict` passes. The preservation audit checks **4,651** pre-existing files with no missing or changed
+bytes, including original reports, six evidence manifests, and `.baseline-plugin/`.
+
+The optimization record remains **Accepted / Verification Pending** because the Python large-integer
+coverage guard is not closed. Current native-compaction and Claude Code smokes passed within their
+stated bounds; historical intermittent failures, autonomous record classification, longer or repeated
+compaction, and other models remain outside the demonstrated result. No release-level reliability or
+average-cost improvement is claimed. No repository commit or publication was made.
+`git diff --check` also passes. Final deterministic logs, coverage, metadata validation, preservation
+results, and current benchmark fingerprints are retained in
+`benchmark-results/workflow-optimization-verification-20260912/`. HEAD remains `6dae8e4`.
+
+## 2026-09-13 — Maintainer-approved stable release 1.0.4
+
+The user explicitly accepted the completed implementation and directed a stable release using the
+existing results, without further verification or model sampling. This supersedes the additional
+release-evidence checkpoint discussed above. Version 1.0.4 therefore uses the recorded 219/219
+deterministic result and bounded diagnostics as its accepted release basis; it does not claim a new
+statistical reliability result.
+
+Release preparation updates both client manifests, marketplace version, badges, changelog, and
+acceptance status. The frozen evidence manifests remain associated with their historical 1.0.3
+release; the metadata assertion now checks that historical identity instead of relabeling old
+evidence as 1.0.4. The strict current-cohort evidence tool remains available for statistical claims.
+
+The Python sample's missing retained large-integer coverage is accepted as a documented limitation.
+Its failed score and raw report remain unchanged. No tests, CI, or inference runs are added for this
+release, and unrelated `.baseline-plugin/` work is excluded from the release commit.

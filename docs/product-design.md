@@ -12,7 +12,7 @@ This project aims to correct a smaller set of high-value failure modes without t
 2. Proceed autonomously when requirements are clear or details are safely inferable from the repository, except when an explicitly invoked workflow defines a user checkpoint.
 3. Locate existing behavior and the correct ownership boundary before adding code.
 4. Prefer familiar, idiomatic, explicit, locally understandable code over compressed or clever code.
-5. Derive a Test Contract from requirements before implementation, then fulfill the contract and add supplementary evidence after implementation, while retaining test-first evidence for reproducible regressions.
+5. Derive a Test Contract from requirements before implementation, then implement and verify by accepted behavior and risk, retaining failing regression evidence before a reproducible defect is fixed.
 6. Diagnose root causes through a reproducible feedback loop.
 7. Verify with fresh, scope-appropriate evidence before claiming completion.
 8. Reconcile authoritative documentation with implemented behavior without rewriting accepted requirements to excuse an incorrect implementation.
@@ -55,6 +55,8 @@ The project repository remains the source of domain truth. Skills discover and c
 An explicitly invoked workflow owns the active task, not only the message that named it. Answers, approvals, corrections, reports of omitted acceptance behavior, and continuation requests remain in that workflow while they concern the same task. This continuity survives normal follow-up turns and session resume or compaction when the transcript remains available.
 
 The active workflow ends when the user explicitly cancels it, switches workflows, or starts an unrelated task. An agent's completion claim does not prevent a same-task correction from reopening the appropriate phase. A new unrelated task must not inherit a stale workflow or approval.
+
+Using diagnosis, design analysis, or self-review inside a task does not load another full skill, switch workflows, or change authority. A Handoff exports the source task and workflow, current phase, approved and pending scope, and next step; it preserves existing authority without granting approval or continuing implementation.
 
 `develop` uses these task phases:
 
@@ -113,6 +115,8 @@ After clarification, present one final alignment checkpoint and pause without ch
 
 A local task whose checkpoint fits in the conversation does not receive a fallback requirement record. Durable records are for substantial work that needs repository-backed recovery or coordination, not a default artifact of invoking `develop`.
 
+When Develop follows an existing design, reuse its facts, decisions, and accepted behavior, refreshing only changed or uncertain facts and resolving remaining gaps. The design feeds Develop's single implementation checkpoint; it does not introduce a separate approval stage or grant implementation authority by itself.
+
 Approval bundled with a material scope increment is not post-checkpoint approval for the revised
 task. Align the increment and pause the whole turn; a later approval authorizes the revised
 checkpoint.
@@ -129,17 +133,18 @@ An explicit complete predicate plus the semantic operation to apply resolves eve
 - Keep entry points thin and place behavior with the module that owns the relevant data and invariant.
 - Do not deduplicate code that merely looks similar but represents independently changing rules.
 
-### 4. Derive Test Contract, implement, then fulfill contract and add supplementary evidence
+### 4. Derive the Test Contract, then implement and verify by risk
 
-- During the alignment checkpoint, derive a Test Contract from Goal and Acceptance behavior for non-mechanical changes. The contract declares verification intent in three categories—functional correctness, feature interaction, and boundary conditions—using requirement language, not implementation structure. A mechanical-only change omits the contract without requiring an explicit declaration.
-- For new or changed behavior, use accepted requirements, existing tests, and repository conventions to complete the production implementation first. Existing tests may be read or run, but test files are not added or edited until the approved production behavior is implemented. This phase boundary does not add another user checkpoint or require a commit.
-- After the production implementation is complete, fulfill every item declared in the Test Contract by translating it into automated coverage against a stable public seam that would fail if the declared behavior breaks. Then add supplementary coverage when implementation reveals an unanticipated risk not captured in the contract, and report such additions as deviations.
+- During the alignment checkpoint, derive a concise Test Contract from Goal and Acceptance behavior for non-mechanical changes. Once approved, its business rules and, where useful, checkable input/output examples determine expected results independently of the implementation. Functional correctness, feature interaction, and boundary conditions are thinking dimensions to use where applicable, not mandatory sections or a one-test-per-item template. A mechanical-only change omits the contract without requiring an explicit declaration.
+- After approval, implement and verify in increments chosen by risk and independently checkable behavior. Production and test changes may proceed together within the authorized scope; neither a global production-first nor a universal test-first schedule is required. This adds no user checkpoint or commit requirement.
+- Support every key accepted behavior with appropriate evidence. Critical behavior, domain invariants, and material risk boundaries with a stable public seam require retained automated coverage that would fail if the behavior breaks; one check may support multiple acceptance items.
+- Add supplementary coverage when new evidence reveals an applicable risk. Coverage of established behavior is not a requirement deviation; changes to accepted behavior or scope require confirmation.
 - A request that does not mention tests is neutral, not a prohibition. Only an explicit no-test constraint suppresses test-file changes; restrictions on dependencies, documentation, commits, or other artifacts do not implicitly extend to tests.
 - A temporary probe may supplement fulfilled contract or supplementary coverage but does not replace it when critical behavior or an established risk boundary has a stable test seam. If the user explicitly prohibits test changes, use the strongest applicable non-test evidence and report the remaining coverage gap.
 - Treat permissions and trust, money or data integrity, destructive effects, lifecycle/state transitions, duplicate or concurrent operations, migrations, compatibility, and external-failure handling as strong reasons for supplementary coverage even when not in the contract. Add only applicable adjacent boundary cases whose expected behavior is established by requirements or repository precedent.
-- For regressions, first build the narrowest reliable reproduction available. When a stable automated seam exists, materialize it as a regression test and observe that test fail before editing production code; this is the exception to production-first test authoring.
+- For regressions, first build the narrowest reliable reproduction available. When a stable automated seam exists, materialize it as a regression test and observe that test fail before editing production code.
 - For mechanical, presentation-only, configuration, documentation, or framework-wiring changes, prefer the smallest meaningful build, type, lint, integration, smoke, or visual check instead of ceremonial unit tests.
-- If post-implementation verification exposes an implementation defect, correct the production code and rerun the selected evidence. Refactor only when it improves clarity, locality, or proven semantic reuse.
+- If verification exposes an implementation defect, correct the production code and rerun the selected evidence. Refactor only when it improves clarity, locality, or proven semantic reuse.
 
 Apply two conditional hardening passes only when evidence justifies them:
 
@@ -168,14 +173,14 @@ Re-read the accepted requirements and review the diff from a fixed point. Check 
 - Do not modify accepted requirements after implementation without explicit confirmation.
 - Update project instructions only when a durable rule applies across future tasks.
 
-Focused verification and reconciliation are completion responsibilities of `develop` and `diagnose`, not a separate mandatory workflow.
+Design analysis, self-review, focused verification, and reconciliation belong inside `develop` and `diagnose` when needed. Separate full workflows remain explicit user choices.
 
 ## User-visible workflows
 
 - **develop:** align features, refactors, and test-only changes, pause for explicit approval, then implement and verify within the same task.
 - **diagnose:** reproduce broken existing behavior, find the supported root cause, and continue into a repair when the original request or a later same-task message authorizes it.
 - **code-design:** create a greenfield solution proposal or refine an existing design without implementing production code.
-- **review:** perform an evidence-backed read-only review from a fixed point.
+- **review:** perform an evidence-backed read-only review from a fixed point. A later explicit request to fix specified findings authorizes repair within that scope without requiring a Develop invocation, subject to any existing task approval gate; undefined product behavior or added scope still requires alignment and approval.
 - **handoff:** capture the minimum durable state needed by another session.
 
 ## Maintainable-code standard

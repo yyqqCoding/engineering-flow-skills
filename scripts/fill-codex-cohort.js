@@ -9,6 +9,11 @@ const {
   fingerprintCandidate,
 } = require('./lib/benchmark-fingerprints');
 const { loadEnvFile } = require('./lib/env-file');
+const {
+  captureBenchmarkEnvironment,
+  environmentFingerprint,
+  matchesEnvironment,
+} = require('./lib/benchmark-environment');
 
 const ROOT = path.resolve(__dirname, '..');
 loadEnvFile(path.join(ROOT, '.env'));
@@ -55,16 +60,11 @@ function isUsable(report) {
     && (report.metrics?.turns || 0) > 0;
 }
 
-function matchesEnvironment(report) {
-  const provider = process.env.BENCH_MODEL_PROVIDER || '';
-  const model = process.env.BENCH_MODEL || '';
-  const effort = process.env.BENCH_REASONING_EFFORT || 'medium';
-  return (!provider || report.modelRun?.modelProvider === provider)
-    && (!model || report.modelRun?.model === model)
-    && report.modelRun?.reasoningEffort === effort;
-}
-
-function buildMissingJobs(reports) {
+function buildMissingJobs(reports, expectedEnvironment = captureBenchmarkEnvironment()) {
+  if (environmentFingerprint({ environment: expectedEnvironment }) === null) {
+    throw new Error('Cohort filling requires a complete execution environment: set BENCH_MODEL_PROVIDER '
+      + 'and BENCH_MODEL and verify the CLI version and selected provider configuration.');
+  }
   const candidateFingerprint = fingerprintCandidate(ROOT);
   const baselineFingerprint = baselinePluginRoot ? fingerprintCandidate(baselinePluginRoot) : null;
   const jobs = [];
@@ -77,7 +77,7 @@ function buildMissingJobs(reports) {
         && report.benchmarkFingerprint === benchmarkFingerprint
         && (report.pluginFingerprint || null)
           === (arm === 'candidate' ? candidateFingerprint : baselineFingerprint)
-        && matchesEnvironment(report)
+        && matchesEnvironment(report, expectedEnvironment)
         && isUsable(report)).length;
       const missing = Math.max(0, targetCompleted - completed);
       process.stderr.write(

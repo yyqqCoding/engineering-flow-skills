@@ -1,6 +1,6 @@
 interface:
   display_name: "Develop"
   short_description: "Align, approve, implement, then verify a change"
-  default_prompt: "Use $engineering-flow:develop to align this change, pause for my approval, complete production code, then select necessary tests and verification."
+  default_prompt: "Use $engineering-flow:develop to align this change and its verification, pause for my approval, then implement and verify accepted behavior."
 policy:
   allow_implicit_invocation: false

@@ -75,8 +75,9 @@ When one message both approves the current checkpoint and materially adds or cha
 approval precedes the revised checkpoint and therefore authorizes no implementation in that turn.
 The agent aligns the increment, presents the revised checkpoint, and waits for later action
 language before implementing either the prior scope or the increment.
-The whole turn is alignment-only: no commands, file edits, requirement-status changes, test changes,
-or configuration changes occur before the revised checkpoint is approved.
+The whole turn is alignment-only: read-only discovery and writing the pending requirement record
+are allowed, but production code, tests, and configuration remain unchanged. Pending scope is not
+marked `Accepted` before later approval of the revised checkpoint.
 After later action language approves that revised checkpoint, the agent resumes implementation and
 verification immediately; it does not only restate the checkpoint or end with an empty turn.
 
@@ -84,11 +85,15 @@ verification immediately; it does not only restate the checkpoint or end with an
 
 For an implementation task, the agent discovers repository facts and aligns material solution decisions before coding without asking the user to choose reversible internal details.
 
+When Develop follows an existing design, it reuses established facts and decisions, checks only gaps or changed context, and retains its single implementation checkpoint. It does not repeat resolved questions or treat the proposal alone as implementation authority.
+
 ## Workflow continuity
 
 ### FLOW-01: Same-task continuation
 
 After an explicit workflow invocation, later answers, approvals, corrections, and continuation requests for the same task retain that workflow without repeating its token.
+
+Using diagnosis, design analysis, or self-review as a method does not load another full skill, switch the active workflow, or expand task authority.
 
 ### FLOW-02: Completion can reopen
 
@@ -115,6 +120,8 @@ Explicit cancellation, an explicit workflow switch, or an unrelated new task end
 ### FLOW-05: Resume and compact
 
 When the transcript or a durable requirement record identifies an active task and phase after resume or compaction, the agent continues that phase instead of restarting or silently implementing.
+
+A Handoff records the source task and workflow, current phase, approved and pending scope, and next step. It exports existing task state without granting authority; a later session resumes the recorded phase within that authority instead of treating the handoff itself as approval.
 
 ## Change placement and reuse
 
@@ -180,15 +187,14 @@ When explicitly asked for `code-design`, the agent either creates a solution fro
 
 ## Testing and diagnosis
 
-### TEST-01: Production before feature tests
+### TEST-01: Risk-based implementation and verification
 
-For new or changed behavior other than regression repair, the agent may read or run existing tests but completes the approved production implementation before the first test-file write. It then selects and writes necessary tests as a separate phase without another user checkpoint or commit requirement.
+After implementation is authorized, the agent chooses implementation and verification increments by risk and independently checkable accepted behavior. Production and test changes may proceed together; no global production-first or universal test-first order is required. A reproducible regression with a stable automated seam still requires an observed failing test before the fix.
 
 Failure signals:
 
-- Adds or edits feature tests while production implementation is still incomplete.
-- Uses a test-first slice loop for ordinary new behavior.
-- Adds another approval checkpoint between production implementation and test selection.
+- Treats a fixed production-first or test-first schedule as a requirement regardless of task risk.
+- Adds another approval checkpoint between implementation and verification within the accepted scope.
 
 ### TEST-02: No ceremonial tests
 
@@ -206,30 +212,30 @@ When changed or broken behavior crosses a material input, numeric/time, state, c
 
 When expected behavior at a material boundary is not established by requirements or repository precedent, the agent asks for the product decision instead of encoding an arbitrary assertion.
 
-### TEST-06: Regression-first exception
+### TEST-06: Regression evidence before the fix
 
 For a defect with a stable automated seam, the agent turns the minimized reproduction into a focused regression test, observes that test fail before editing production code, and retains sensitive passing coverage after the fix. When no correct seam exists, it reports the limitation rather than adding a misleading test.
 
 ### TEST-07: Test Contract derivation and fulfillment
 
-For a non-mechanical change, the agent derives a Test Contract from Goal and Acceptance behavior during the alignment checkpoint, before implementation. The contract declares verification intent in three categories:
+For a non-mechanical change, the agent derives a concise Test Contract from Goal and Acceptance behavior during the alignment checkpoint, before implementation. Once approved, those business rules and, where useful, checkable input/output examples determine expected results independently of the implementation.
 
-- **Functional correctness:** single-function behavior stated in requirement terms, not implementation terms (e.g., "results ordered by creation time descending", not "results are sorted").
-- **Feature interaction:** correctness where behaviors intersect within the checkpoint scope. Only interactions identifiable from the checkpoint are included; all possible callers are not enumerated.
-- **Boundary conditions:** edge cases whose expected behavior is established by requirements or repository precedent. Undefined product behavior is not invented.
+Functional correctness, interactions identifiable within scope, and established boundary behavior are thinking dimensions used where applicable. They do not require three fixed sections, enumeration of all callers, or one test per contract item.
 
 A mechanical-only change (configuration, documentation, framework wiring, presentation) omits the Test Contract without requiring an explicit declaration.
 
-After implementation, the agent fulfills every declared contract item by translating it into automated coverage against a stable public seam that would fail if the declared behavior breaks. Supplementary coverage beyond the contract is allowed when implementation reveals an unanticipated risk, and is reported as a deviation note for traceability.
+The agent supports every key accepted behavior with appropriate evidence. Critical behavior, domain invariants, and material risk boundaries with a stable public seam require retained automated coverage that detects the behavior breaking; one check may cover multiple acceptance items. Explicit no-test scope retains the evidence and gap-reporting requirements of TEST-03.
+
+Supplementary coverage for established behavior is not a requirement deviation. Actual changes to accepted behavior or scope require confirmation.
 
 Failure signals:
 
-- Derives test expectations from implementation structure rather than from Goal and Acceptance behavior (e.g., asserts "sorted" instead of "sorted descending").
-- Implements a feature without a corresponding Test Contract item for non-mechanical behavior.
-- Skips contract fulfillment and re-derives tests from the implementation after the fact.
+- Derives expected results from the current implementation rather than approved business rules or checkable input/output examples.
+- Leaves a key accepted behavior without verification intent or appropriate evidence.
+- Uses a temporary probe instead of retained automated coverage for critical behavior with a stable public seam.
 - Enumerates all possible callers for Feature interaction instead of restricting to checkpoint-visible intersections.
 - Invents boundary behavior not established by requirements or precedent.
-- Adds supplementary tests beyond the contract without reporting them as deviations.
+- Requires scope approval merely to add coverage for unchanged accepted behavior.
 
 ### DEBUG-01: Reproduction before hypothesis
 
@@ -254,6 +260,8 @@ When a stable automated regression seam exists, repair authority first converts 
 ### REVIEW-01: Read-only review
 
 When asked only to review, the agent reports evidence-backed findings without applying changes.
+
+A later explicit request to fix specified findings authorizes repair within that scope without requiring a separate Develop invocation, subject to any existing task approval gate. The agent verifies the findings before applying them; undefined product behavior or added scope still requires alignment and approval. Finding a defect alone grants no repair authority.
 
 ### REVIEW-02: Feedback verification
 

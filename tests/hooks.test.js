@@ -91,7 +91,10 @@ test('explicit Codex skill tokens inject the complete requested workflow', () =>
     output.hookSpecificOutput.additionalContext,
     /Workflow resource directory: .*skills[\\/]diagnose/,
   );
-  assert.match(output.hookSpecificOutput.additionalContext, /observe red before the fix/i);
+  assert.ok(
+    output.hookSpecificOutput.additionalContext.includes(read('skills/diagnose/SKILL.md').trim()),
+    'the hook must inject the complete current workflow, including its verification rules',
+  );
 });
 
 test('prompt-leading Claude slash commands rely on native expansion and are not re-injected', () => {

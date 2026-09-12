@@ -11,6 +11,13 @@ const {
   parseArguments,
 } = require('../scripts/generate-evidence-manifest');
 const { ROOT, readJson } = require('./helpers/repository');
+const { createBenchmarkEnvironment } = require('../scripts/lib/benchmark-environment');
+
+const ENVIRONMENT = createBenchmarkEnvironment({
+  cliName: 'codex', cliVersion: 'fixture-cli', nodeVersion: 'v22.21.1', platform: 'linux', arch: 'x64',
+  modelProvider: 'provider', model: 'model', reasoningEffort: 'low', timeoutMs: 240000,
+  configurationFingerprint: 'a'.repeat(64),
+});
 
 function passingReport(overrides = {}) {
   return {
@@ -18,6 +25,7 @@ function passingReport(overrides = {}) {
     arm: 'candidate',
     benchmarkFingerprint: 'benchmark-fingerprint',
     pluginFingerprint: 'plugin-fingerprint',
+    environment: ENVIRONMENT,
     modelRun: {
       completed: true,
       status: 0,
@@ -57,7 +65,7 @@ test('generator refreshes current fingerprints and selects deterministic clean r
   const benchmarkFingerprint = fingerprintBenchmark(ROOT, benchmark);
   const pluginFingerprint = fingerprintCandidate(ROOT);
   const template = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     release: '0.0.1',
     cohorts: [{
       benchmark: 'post-implementation-testing',
@@ -67,6 +75,7 @@ test('generator refreshes current fingerprints and selects deterministic clean r
       modelProvider: 'provider',
       model: 'model',
       reasoningEffort: 'low',
+      environmentFingerprint: ENVIRONMENT.fingerprint,
       targetCompleted: 1,
       reports: ['old.json'],
     }],
@@ -76,6 +85,11 @@ test('generator refreshes current fingerprints and selects deterministic clean r
     pluginFingerprint,
     reportFile,
   }));
+  reports.push(
+    passingReport({ benchmarkFingerprint, pluginFingerprint, reportFile: 'aaa-legacy.json', environment: undefined }),
+    passingReport({ benchmarkFingerprint, pluginFingerprint, reportFile: 'aaa-other-cli.json',
+      environment: createBenchmarkEnvironment({ ...ENVIRONMENT, cliVersion: 'different-cli' }) }),
+  );
 
   const generated = generateEvidenceManifest(
     ROOT,
@@ -94,7 +108,7 @@ test('generator refreshes current fingerprints and selects deterministic clean r
 test('generator fails instead of publishing an incomplete cohort', () => {
   const benchmarks = readJson('config/benchmarks.json');
   const template = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     release: '1.0.2',
     cohorts: [{
       benchmark: 'post-implementation-testing',
@@ -104,6 +118,7 @@ test('generator fails instead of publishing an incomplete cohort', () => {
       modelProvider: 'provider',
       model: 'model',
       reasoningEffort: 'low',
+      environmentFingerprint: ENVIRONMENT.fingerprint,
       targetCompleted: 1,
       reports: ['old.json'],
     }],
@@ -112,6 +127,13 @@ test('generator fails instead of publishing an incomplete cohort', () => {
     () => generateEvidenceManifest(ROOT, template, benchmarks, { version: '1.0.2' }, []),
     /has 0\/1 matching clean reports/,
   );
+});
+
+test('historical templates remain readable but cannot generate new environment-certified evidence', () => {
+  const template = readJson('config/evidence-manifest.json');
+  assert.throws(() => generateEvidenceManifest(
+    ROOT, template, readJson('config/benchmarks.json'), readJson('package.json'), [],
+  ), /schemaVersion 2 template with an explicit environmentFingerprint/);
 });
 
 test('generator arguments require a template and keep output opt-in', () => {

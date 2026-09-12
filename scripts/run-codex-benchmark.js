@@ -10,15 +10,17 @@ const {
   detectContamination,
   parseJsonl,
   redactSecrets,
-  withoutConfiguredPlugins,
 } = require('./lib/benchmark-utils');
 const {
   buildCodexArgs,
   extractThreadId,
   extractTurnFailure,
   freshSessionTurnsForBenchmark,
+  nativeCompactionTurnsForBenchmark,
+  prepareCodexHome,
   promptsForBenchmark,
   readRequirementStates,
+  resolveTurnPrompt,
 } = require('./lib/benchmark-conversation');
 const {
   fingerprintBenchmark,
@@ -26,6 +28,8 @@ const {
 } = require('./lib/benchmark-fingerprints');
 const { runFixtureVerification } = require('./lib/benchmark-verification');
 const { loadEnvFile } = require('./lib/env-file');
+const { captureBenchmarkEnvironment, matchesEnvironment } = require('./lib/benchmark-environment');
+const { compactCodexThread } = require('./lib/benchmark-compaction');
 
 const ROOT = path.resolve(__dirname, '..');
 loadEnvFile(path.join(ROOT, '.env'));
@@ -148,10 +152,41 @@ function routePrompt(pluginRoot, prompt) {
   }
 }
 
+function createCodexEnvironment(pluginRoot) {
+  const testHome = fs.mkdtempSync(path.join(os.tmpdir(), `engineering-flow-home-${arm}-`));
+  const codexHome = path.join(testHome, '.codex');
+  prepareCodexHome(codexHome, path.join(os.homedir(), '.codex'));
+  const env = { ...process.env, HOME: testHome, USERPROFILE: testHome, CODEX_HOME: codexHome };
+  if (pluginRoot) {
+    run('codex', ['plugin', 'marketplace', 'add', pluginRoot, '--json'], { env });
+    run('codex', ['plugin', 'add', 'engineering-flow@engineering-flow', '--json'], { env });
+  }
+  return env;
+}
+
+function captureEnvironment(env) {
+  return captureBenchmarkEnvironment({
+    env,
+    codexHome: env.CODEX_HOME,
+    timeoutMs,
+    cliVersion: run('codex', ['--version'], { env }).stdout.trim(),
+  });
+}
+
+function snapshotWorkspace(workspace) {
+  return {
+    status: run('git', ['status', '--short', '--untracked-files=all'], { cwd: workspace }).stdout,
+    diff: run('git', ['diff', '--', '.'], { cwd: workspace }).stdout,
+    head: run('git', ['rev-parse', 'HEAD'], { cwd: workspace }).stdout.trim(),
+    requirementDocuments: readRequirementStates(workspace),
+  };
+}
+
 async function main() {
   const benchmark = benchmarks[benchmarkName];
   const prompts = promptsForBenchmark(benchmark);
   const freshSessionTurns = freshSessionTurnsForBenchmark(benchmark);
+  const nativeCompactionTurns = nativeCompactionTurnsForBenchmark(benchmark);
   const pluginRoot = arm === 'candidate' ? ROOT : baselinePluginRoot;
   const benchmarkFingerprint = fingerprintBenchmark(ROOT, benchmark);
   const candidateFingerprint = fingerprintCandidate(ROOT);
@@ -162,37 +197,13 @@ async function main() {
   const runId = `${Date.now()}-${process.pid}`;
   const runRoot = fs.mkdtempSync(path.join(os.tmpdir(), `engineering-flow-${benchmarkName}-${arm}-`));
   const workspace = path.join(runRoot, 'workspace');
-  const testHome = fs.mkdtempSync(path.join(os.tmpdir(), `engineering-flow-home-${arm}-`));
-  const codexHome = path.join(testHome, '.codex');
   const resultDir = path.join(ROOT, 'benchmark-results');
+  const handoffDirectory = prompts.some((entry) => typeof entry !== 'string')
+    ? fs.mkdtempSync(path.join(os.tmpdir(), 'engineering-flow-handoff-'))
+    : null;
 
   fs.cpSync(path.join(ROOT, benchmark.fixture), workspace, { recursive: true });
-  fs.mkdirSync(codexHome, { recursive: true });
   fs.mkdirSync(resultDir, { recursive: true });
-
-  const authPath = path.join(os.homedir(), '.codex', 'auth.json');
-  const realCodexHome = path.join(os.homedir(), '.codex');
-  if (!fs.existsSync(authPath)) {
-    throw new Error(`Codex authentication not found at ${authPath}`);
-  }
-  const authTarget = path.join(codexHome, 'auth.json');
-  try {
-    fs.symlinkSync(authPath, authTarget);
-  } catch (error) {
-    if (error.code === 'EPERM' || error.code === 'EACCES') {
-      fs.copyFileSync(authPath, authTarget);
-    } else {
-      throw error;
-    }
-  }
-
-  for (const entry of fs.readdirSync(realCodexHome, { withFileTypes: true })) {
-    if (entry.isFile() && entry.name.endsWith('.toml')) {
-      const source = fs.readFileSync(path.join(realCodexHome, entry.name), 'utf8');
-      const isolated = entry.name === 'config.toml' ? withoutConfiguredPlugins(source) : source;
-      fs.writeFileSync(path.join(codexHome, entry.name), isolated);
-    }
-  }
 
   run('git', ['init', '-b', 'main'], { cwd: workspace });
   run('git', ['config', 'user.email', 'benchmark@example.invalid'], { cwd: workspace });
@@ -206,19 +217,11 @@ async function main() {
     delete require.cache[require.resolve(setupPath)];
     require(setupPath)(workspace);
   }
-  const initialStatus = run('git', ['status', '--short'], { cwd: workspace }).stdout;
-
-  const codexEnv = {
-    ...process.env,
-    HOME: testHome,
-    USERPROFILE: testHome,
-    CODEX_HOME: codexHome,
-  };
-
-  if (pluginRoot) {
-    run('codex', ['plugin', 'marketplace', 'add', pluginRoot, '--json'], { env: codexEnv });
-    run('codex', ['plugin', 'add', 'engineering-flow@engineering-flow', '--json'], { env: codexEnv });
-  }
+  const initialStatus = run('git', ['status', '--short', '--untracked-files=all'], { cwd: workspace }).stdout;
+  const initialDiff = run('git', ['diff', '--', '.'], { cwd: workspace }).stdout;
+  const initialRequirementDocuments = readRequirementStates(workspace);
+  let codexEnv = createCodexEnvironment(pluginRoot);
+  const environment = captureEnvironment(codexEnv);
 
   const outputPath = path.join(resultDir, `${benchmarkName}-${arm}-${runId}.jsonl`);
   const startedAt = Date.now();
@@ -240,14 +243,72 @@ async function main() {
   if (model) configOverrides.push(`model=${JSON.stringify(model)}`);
 
   const turnResults = [];
+  const nativeCompactions = [];
   const eventStreams = [];
   let threadId = null;
   let continuationError = null;
 
   for (let index = 0; index < prompts.length; index += 1) {
-    const prompt = prompts[index];
     const turnNumber = index + 1;
     const startsFreshSession = freshSessionTurns.has(turnNumber);
+    let resolved;
+    try {
+      resolved = resolveTurnPrompt(prompts[index], {
+        turnNumber,
+        freshSession: startsFreshSession,
+        turns: turnResults,
+        handoffDirectory,
+      });
+    } catch (error) {
+      continuationError = error.message;
+      break;
+    }
+    const { prompt, handoff } = resolved;
+    if (startsFreshSession) {
+      codexEnv = createCodexEnvironment(pluginRoot);
+      const freshEnvironment = captureEnvironment(codexEnv);
+      if (environment.complete && !matchesEnvironment({ environment: freshEnvironment }, environment)) {
+        continuationError = 'Execution environment changed before the fresh-session turn';
+        break;
+      }
+    }
+    if (nativeCompactionTurns.has(turnNumber)) {
+      const workspaceBefore = snapshotWorkspace(workspace);
+      const compactionPath = path.join(resultDir,
+        benchmarkName + '-' + arm + '-' + runId + '-compact-before-' + turnNumber + '.jsonl');
+      let compaction;
+      try {
+        compaction = await compactCodexThread({
+          threadId,
+          workspace,
+          env: codexEnv,
+          configOverrides,
+          expectedModel: model,
+          expectedProvider: modelProvider,
+          expectedReasoning: reasoningEffort,
+          outputPath: compactionPath,
+          timeoutMs,
+          heartbeatMs,
+          onHeartbeat: (elapsed) => process.stderr.write(
+            '[benchmark] ' + benchmarkName + '/' + arm + '/compact-before-' + turnNumber
+              + ' still running (' + Math.round(elapsed / 1000) + 's)\n',
+          ),
+        });
+      } catch (error) {
+        compaction = { completed: false, error: redactSecrets(error.message), events: compactionPath };
+      }
+      const workspaceAfter = snapshotWorkspace(workspace);
+      if (JSON.stringify(workspaceBefore) !== JSON.stringify(workspaceAfter)) {
+        compaction.completed = false;
+        compaction.error = 'Native compaction changed the fixture workspace';
+      }
+      nativeCompactions.push({ ...compaction, beforeTurn: turnNumber, workspaceBefore, workspaceAfter });
+      if (!compaction.completed) {
+        continuationError = compaction.error || 'Native compaction did not complete';
+        break;
+      }
+    }
+    const resumedFromThreadId = startsFreshSession ? null : threadId;
     const nextTurnNumber = turnNumber + 1;
     const nextTurnResumesCurrent = nextTurnNumber <= prompts.length
       && !freshSessionTurns.has(nextTurnNumber);
@@ -255,11 +316,11 @@ async function main() {
       resultDir,
       `${benchmarkName}-${arm}-${runId}-turn-${turnNumber}.jsonl`,
     );
-    const turnFinalPath = path.join(runRoot, `final-turn-${turnNumber}.txt`);
+    const turnFinalPath = path.join(resultDir, `${benchmarkName}-${arm}-${runId}-turn-${turnNumber}.txt`);
     const turnStartedAt = Date.now();
     const args = buildCodexArgs({
       prompt,
-      threadId: startsFreshSession ? null : threadId,
+      threadId: resumedFromThreadId,
       persistent: nextTurnResumesCurrent,
       configOverrides,
       workspace,
@@ -282,7 +343,7 @@ async function main() {
       ? fs.readFileSync(turnFinalPath, 'utf8')
       : '';
     const diff = run('git', ['diff', '--', '.'], { cwd: workspace }).stdout;
-    const status = run('git', ['status', '--short'], { cwd: workspace }).stdout;
+    const status = run('git', ['status', '--short', '--untracked-files=all'], { cwd: workspace }).stdout;
     const head = run('git', ['rev-parse', 'HEAD'], { cwd: workspace }).stdout.trim();
     const turnMetrics = parseJsonl(events);
     const routedSkills = routePrompt(pluginRoot, prompt);
@@ -295,6 +356,13 @@ async function main() {
     turnResults.push({
       index: turnNumber,
       prompt,
+      session: {
+        fresh: index === 0 || startsFreshSession,
+        threadId,
+        resumedFromThreadId,
+        codexHome: codexEnv.CODEX_HOME,
+      },
+      handoff,
       durationMs: Date.now() - turnStartedAt,
       modelRun: {
         completed: codex.status === 0 && !codex.timedOut && !codex.error && !turnFailure,
@@ -327,7 +395,10 @@ async function main() {
   const codexStdout = eventStreams.join('\n');
   fs.writeFileSync(outputPath, codexStdout);
   const codexStderr = turnResults.map((turn) => turn.modelRun.stderr).filter(Boolean).join('\n');
-  const contaminated = detectContamination(`${codexStdout}\n${codexStderr}`);
+  const compactionEvents = nativeCompactions.map((entry) => entry.events && fs.existsSync(entry.events)
+    ? fs.readFileSync(entry.events, 'utf8') + '\n' + (entry.stderr || '')
+    : '').join('\n');
+  const contaminated = detectContamination([codexStdout, codexStderr, compactionEvents].join('\n'));
   const metrics = parseJsonl(codexStdout);
   const routedSkills = [...new Set(turnResults.flatMap((turn) => turn.metrics.routedSkills))].sort();
   metrics.skillFileReads = metrics.invokedSkills;
@@ -346,6 +417,13 @@ async function main() {
       finalMessage,
       events: codexStdout,
       turns: turnResults,
+      nativeCompactions,
+      initialWorkspaceState: {
+        status: initialStatus,
+        diff: initialDiff,
+        head: initialHead,
+        requirementDocuments: initialRequirementDocuments,
+      },
     });
   } catch (error) {
     score = {
@@ -356,7 +434,7 @@ async function main() {
   const publicTests = turnResults.at(-1)?.publicTests
     || runFixtureVerification(workspace, benchmark);
   const diff = run('git', ['diff', '--', '.'], { cwd: workspace }).stdout;
-  const finalStatus = run('git', ['status', '--short'], { cwd: workspace }).stdout;
+  const finalStatus = run('git', ['status', '--short', '--untracked-files=all'], { cwd: workspace }).stdout;
   const finalHead = run('git', ['rev-parse', 'HEAD'], { cwd: workspace }).stdout.trim();
   const lastModelRun = turnResults.at(-1)?.modelRun || {};
   const modelCompleted = !continuationError
@@ -371,6 +449,7 @@ async function main() {
     candidateFingerprint: arm === 'candidate' ? candidateFingerprint : null,
     pluginFingerprint,
     pluginRoot,
+    environment,
     durationMs: Date.now() - startedAt,
     workspace,
     threadId,
@@ -378,7 +457,8 @@ async function main() {
       completed: modelCompleted,
       status: lastModelRun.status ?? null,
       signal: lastModelRun.signal ?? null,
-      timedOut: turnResults.some((turn) => turn.modelRun.timedOut),
+      timedOut: turnResults.some((turn) => turn.modelRun.timedOut)
+        || nativeCompactions.some((entry) => entry.timedOut),
       error: continuationError || lastModelRun.error || null,
       stderr: codexStderr,
       reasoningEffort,
@@ -393,12 +473,16 @@ async function main() {
     publicTests,
     workspaceState: {
       initialStatus,
+      initialDiff,
+      initialHead,
+      initialRequirementDocuments,
       finalStatus,
       unauthorizedCommit: initialHead !== finalHead,
     },
     finalMessage,
     diff,
     turns: turnResults,
+    nativeCompactions,
     events: outputPath,
   };
 

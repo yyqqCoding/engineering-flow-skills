@@ -7,7 +7,7 @@
     </picture>
   </a>
   <br><br>
-  <strong>🧭 先对齐，再动手；先完成生产代码，再补关键证据</strong>
+  <strong>🧭 用验收实例对齐理解，逐段实现与验证</strong>
   <br><br>
   <a href="https://engineering-flow-web.vercel.app"><strong>📖 在线文档</strong></a>
   &nbsp;&nbsp;·&nbsp;&nbsp;
@@ -23,7 +23,7 @@
   <br><br>
   <img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-supported-111820?style=flat-square">
   <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-supported-D97757?style=flat-square">
-  <img alt="Release 1.0.3" src="https://img.shields.io/badge/release-v1.0.3-2467CE?style=flat-square">
+  <img alt="Release 1.0.4" src="https://img.shields.io/badge/release-v1.0.4-2467CE?style=flat-square">
   <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-4C5D6B?style=flat-square">
 </div>
 
@@ -38,7 +38,7 @@
 
 | 🔎 理解 | 🎯 确认 | 💻 实施 | ✅ 证明 |
 |---|---|---|---|
-| 读项目规则、权威文档、相关代码与测试 | 只澄清会改变验收结果的未决行为，然后给出一个检查点 | 复用正确的领域能力，在拥有该规则的模块内完成最小改动 | 用与风险匹配的测试和新鲜证据验证，并让文档反映事实 |
+| 读项目规则、权威文档、相关代码与测试 | 用具体实例澄清影响验收的未决行为；Develop 在一个检查点等待批准 | 复用正确的领域能力，在拥有该规则的模块内逐段实现可验收行为 | 随每段行为取得与风险匹配的证据，完成前核对整体验收与文档 |
 
 强编码模型已经掌握这些工程技巧，问题在于应用不稳定。Engineering Flow 只针对其中三种反复出现、代价最高的失衡：
 
@@ -52,27 +52,29 @@
 
 ## 🧩 五个工作流
 
+按当前目标选择入口。Develop 自身负责必要设计、诊断修复、自检和交付；需要独立方案、诊断或评审时，再选择对应工作流。
+
 <picture>
   <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="assets/readme/workflow-map-mobile-dark.svg">
   <source media="(max-width: 640px) and (prefers-color-scheme: light)" srcset="assets/readme/workflow-map-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/workflow-map-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/readme/workflow-map-light.svg">
-  <img alt="五个工作流的衔接关系：Code Design 的方案确定后进入 Develop，Develop 需要更深设计时可退回；Develop 改动就绪后交给 Review，Review 的发现交回 Develop；Diagnose 只在行为未定义时进入 Develop；会话结束时可进入 Handoff。Develop 与 Diagnose 都含人工批准关卡。" src="assets/readme/workflow-map-light.svg" width="100%">
+  <img alt="按目标选择五个独立入口：Develop 对齐后批准实施并逐段验证；Diagnose 在请求已授权时完成诊断修复；Code Design 产出可复用方案；Review 默认只读，明确要求后修复指定问题；Handoff 保存状态和已有授权。" src="assets/readme/workflow-map-light.svg" width="100%">
 </picture>
 
 | 工作流 | 什么时候用它 | 会改你的代码吗 | 调用 |
 |---|---|---|---|
 | **💻 Develop** | 新功能、重构、补测试、代码完善 | 你批准之后才改 | `$engineering-flow:develop` |
-| **🔍 Diagnose** | bug、回归、错误输出、间歇故障 | 你授权修复之后才改 | `$engineering-flow:diagnose` |
+| **🔍 Diagnose** | bug、回归、错误输出、间歇故障 | 初始请求或后续消息要求修复时改 | `$engineering-flow:diagnose` |
 | **🧠 Code Design** | 有目标但方案未定，或已有设计需要完善 | 不改，只产出方案 | `$engineering-flow:code-design` |
-| **👀 Review** | 评审 diff、分支、PR 或未提交改动 | 不改，严格只读 | `$engineering-flow:review` |
-| **🤝 Handoff** | 会话结束，需要让下一会话接着做 | 不改 | `$engineering-flow:handoff` |
+| **👀 Review** | 评审 diff、分支、PR 或未提交改动 | 评审只读；明确要求后修复指定问题 | `$engineering-flow:review` |
+| **🤝 Handoff** | 保存任务状态与已有授权，供下一会话续接 | 不改 | `$engineering-flow:handoff` |
 
 Claude Code 使用相同名称，把 `$engineering-flow:` 换成 `/engineering-flow:`。未点名时，任何完整工作流都不会加载。
 
 ## 🔁 任务级连续性
 
-显式调用选择的是整个任务的处理方式，而不只是约束当前这条消息。因此"你说了什么"直接决定"接下来会发生什么"：
+显式调用选择的是整个任务的处理方式。以 Develop 为例，后续消息决定当前任务如何继续：
 
 | 你在检查点之后说 | 会发生什么 |
 |---|---|
@@ -80,9 +82,11 @@ Claude Code 使用相同名称，把 `$engineering-flow:` 换成 `/engineering-f
 | "已阅读" / 回答澄清问题 | **不构成批准**，继续等待明确指令 |
 | 指出原验收项被漏掉了 | 直接恢复实施与验证，不再重新走一遍批准 |
 | 提出新的范围或改变验收行为 | 只就新增部分重新对齐，并给出增量检查点 |
-| "取消" / 切换工作流 / 开始无关的新任务 | 旧工作流与旧授权立即结束，不会被继承 |
+| "取消" / 切换工作流 / 开始无关的新任务 | 结束旧工作流继承；无关新任务不会沿用旧授权 |
 
-Diagnose 的连续性同理：你否定它的诊断结论时，它保持只读并验证新假设；你之后授权修复，它直接进入修复与回归验证，不需要切换到 Develop。
+Diagnose 的原请求已要求修复时，会直接完成诊断、修复与回归验证。只要求诊断时保持只读，后续授权后继续修复；否定诊断会回到证据核查。Review 收到“修复第 1、3 项”等明确请求后，也会核验并完成指定修复，无需切换到 Develop，仍须满足原任务已有的批准检查点。
+
+如果从 Code Design 转入 Develop，已确定的方案会被复用，仅补缺项或变化，再给出实施检查点。Handoff 保存当前进度、已有授权和仍待批准的事项，供下一会话续接。
 
 ## 🛠️ 工程判断
 
@@ -90,8 +94,8 @@ Diagnose 的连续性同理：你否定它的诊断结论时，它保持只读�
 |---|---|
 | **需求** | 产品行为由你决定；可从仓库发现的可逆实现细节由 Agent 自主处理 |
 | **代码** | 只复用应当共同演进的领域规则；不因为两段代码看起来像就强行抽象 |
-| **测试** | 新行为先完成生产代码，再选择关键契约与边界测试；可稳定复现的回归保留先红后绿 |
-| **安全** | Review 严格只读；提交、发布、全局配置和破坏性操作不继承开发授权 |
+| **测试** | 先确定验收实例，按可验收行为逐段实施与验证；风险决定测试时机，稳定回归保留先红后绿 |
+| **安全** | 评审阶段只读；修复授权不扩展到提交、发布、全局配置或额外破坏性操作 |
 | **文档** | 小需求在对话里确认；大需求遵循项目约定，没有约定时落到 `docs/requirements/` |
 
 <a id="快速开始"></a>
@@ -131,17 +135,19 @@ $engineering-flow:develop
 
 ## 📊 验证结果
 
+以下图表与数字来自 v1.0.3 及更早的独立评测，保留为历史证据。本次工作流和测试策略调整的验证须另行记录，不能沿用这些结果。
+
 <picture>
   <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="assets/readme/evidence-mobile-dark.svg">
   <source media="(max-width: 640px) and (prefers-color-scheme: light)" srcset="assets/readme/evidence-mobile-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/readme/evidence-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="assets/readme/evidence-light.svg">
-  <img alt="Engineering Flow 验证结果：日常工程行为 45/51 提升至 51/51，多轮连续性 0/12 提升至 12/12，确定性测试 50/50，显式路由 51/51" src="assets/readme/evidence-light.svg" width="100%">
+  <img alt="Engineering Flow 历史验证结果，来自不同的早期 cohort：日常工程行为 45/51 提升至 51/51，多轮连续性 0/12 提升至 12/12，确定性测试 50/50，显式路由 51/51" src="assets/readme/evidence-light.svg" width="100%">
 </picture>
 
-同一批任务在两组配置下各跑一遍：一组装了本插件，一组没装，其余条件完全一致。是否通过由外部评分脚本判定，依据是实际的文件变更与测试输出，不接受"我已验证"这类自述。
+图中分别保留日常行为、多轮连续性和路由的早期结果；下表单列 v1.0.3 旧发布版与候选版的对照。每个 cohort 单独固定场景、模型、推理等级和环境，依据实际文件变更与测试输出评分；不同指纹的结果分别保留。
 
-### v1.0.3 发布门禁
+### v1.0.3 发布门禁（历史）
 
 | 证据 | 结果 |
 |---|---:|
@@ -150,11 +156,11 @@ $engineering-flow:develop
 | 🎯 最终指纹配对 cohort | **candidate 18/18，control 17/18** |
 | 🔒 污染与未授权提交 | **0** |
 
-最终配对 cohort 精确选择本次 Test Contract 直接相关的六个场景、共 36 个完整报告。candidate 六个场景均为 3/3；control 为 17/18，其中唯一失败属于旧版本 control 的初始批准措辞。所有入选样本的调用与 fixture 验证均通过。
+该版本的最终配对 cohort 精确选择当时 Test Contract 变更直接相关的六个场景、共 36 个完整报告。candidate 六个场景均为 3/3；control 为 17/18，其中唯一失败属于旧版本 control 的初始批准措辞。所有入选样本的调用与 fixture 验证均通过。
 
 此前的 1.0.2 及中间 candidate cohort 属于更早的候选指纹，保留为历史证据但不与最终发布结果合并。
 
-流程本身有成本：在行为对照组上取平均，安装工作流的一组工具调用多约 17.6%、输入 token 多约 16.5%。这正是五个工作流都必须点名调用的原因。
+历史行为对照组中，安装工作流的一组平均工具调用多约 17.6%、输入 token 多约 16.5%。这些成本记录支持按需调用工作流；当前版本的成本需要重新测量。
 
 [评测方法](docs/testing-strategy.md) · [完整记录](docs/benchmark-log.md) · [在线查看](https://engineering-flow-web.vercel.app/zh-CN/evidence)
 

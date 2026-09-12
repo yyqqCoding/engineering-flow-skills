@@ -11,6 +11,7 @@ const {
   filterReportsByManifest,
   loadEvidenceManifest,
 } = require('./lib/evidence-manifest');
+const { environmentFingerprint } = require('./lib/benchmark-environment');
 
 const ROOT = path.resolve(__dirname, '..');
 const RESULT_DIR = path.join(ROOT, 'benchmark-results');
@@ -68,6 +69,9 @@ function summarizeGroup(reports) {
   const falseNegatives = invocations.reduce((sum, value) => sum + value.falseNegatives.length, 0);
 
   return {
+    environmentIdentityVerified: reports.length > 0
+      && environmentFingerprint(reports[0]) !== null
+      && reports.every(report => environmentFingerprint(report) === environmentFingerprint(reports[0])),
     discoveredRuns: reports.length,
     excludedContaminatedRuns: reports.length - cleanReports.length,
     cleanRuns: cleanReports.length,
@@ -130,13 +134,17 @@ function loadReports(filterName) {
 
 function summarize(reports) {
   const grouped = {};
-  for (const report of reports) {
+  for (const [index, report] of reports.entries()) {
     const cohort = report.cohort || 'legacy';
     const provider = report.modelRun?.modelProvider || 'unknown-provider';
     const model = report.modelRun?.model || 'unknown-model';
     const reasoning = report.modelRun?.reasoningEffort || 'unknown-reasoning';
+    const environment = environmentFingerprint(report);
+    // Historical files remain inspectable, but an unknown CLI/configuration is not a shared cohort.
+    const identity = environment ? `environment=${environment}`
+      : `legacy-report=${report.reportFile || report.events || `input-${index + 1}`}`;
     const key = `${report.benchmark}:${report.arm}:${cohort}`
-      + `:provider=${provider}:model=${model}:reasoning=${reasoning}`;
+      + `:provider=${provider}:model=${model}:reasoning=${reasoning}:${identity}`;
     (grouped[key] ||= []).push(report);
   }
 

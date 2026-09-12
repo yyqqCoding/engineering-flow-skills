@@ -7,7 +7,7 @@ const {
   fingerprintBenchmark,
   fingerprintCandidate,
 } = require('./lib/benchmark-fingerprints');
-const { validateEvidenceManifest } = require('./lib/evidence-manifest');
+const { matchesCohortIdentity, validateEvidenceManifest } = require('./lib/evidence-manifest');
 
 const ROOT = path.resolve(__dirname, '..');
 
@@ -30,6 +30,10 @@ function generateEvidenceManifest(root, template, benchmarks, packageJson, repor
   if (templateErrors.length > 0) {
     throw new Error(`Invalid evidence template:\n- ${templateErrors.join('\n- ')}`);
   }
+  if (template.schemaVersion !== 2) {
+    throw new Error('New evidence requires a schemaVersion 2 template with an explicit environmentFingerprint. '
+      + 'Version 1 manifests remain historical records.');
+  }
 
   const candidateFingerprint = fingerprintCandidate(root);
   const cohorts = template.cohorts.map((templateCohort) => {
@@ -45,13 +49,7 @@ function generateEvidenceManifest(root, template, benchmarks, packageJson, repor
       reports: [],
     };
     cohort.reports = reports
-      .filter((report) => report.benchmark === cohort.benchmark
-        && report.arm === cohort.arm
-        && report.benchmarkFingerprint === cohort.benchmarkFingerprint
-        && report.pluginFingerprint === cohort.pluginFingerprint
-        && report.modelRun?.modelProvider === cohort.modelProvider
-        && report.modelRun?.model === cohort.model
-        && report.modelRun?.reasoningEffort === cohort.reasoningEffort
+      .filter((report) => matchesCohortIdentity(report, cohort)
         && isReleaseEvidence(report))
       .map(reportFilename)
       .filter(Boolean)

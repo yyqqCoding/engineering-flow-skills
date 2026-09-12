@@ -9,6 +9,8 @@ Tests must answer two different questions:
 
 Invocation without behavioral improvement is not success.
 
+Verification expectations come from accepted behavior, distinguishing input/output examples, and authoritative repository rules. Test sensitivity matters more than the number of cases or headings: a useful retained test fails when the protected behavior breaks. Ordinary feature-test edit order is diagnostic, not a quality gate; stable reproducible regressions still require observed failure before the production fix.
+
 ## Isolation
 
 The developer environment already contains other skills and plugins. Baseline runs must not load them.
@@ -87,7 +89,17 @@ Run `npm run benchmark:coverage` for the current behavior-ID gaps and corpus dis
 
 Fixtures use `npm test` by default. A benchmark may declare a credential-free `verification` command for another existing toolchain; the first cross-language fixture uses Python's standard-library `unittest`. The harness records the resolved command and includes it in the benchmark fingerprint.
 
-Metamorphic variants change one or two dimensions such as language, workflow-token overlap, turn ordering, or context continuity while preserving the underlying invariant. Prefer pairwise variants over a Cartesian product. `freshSessionTurns` deliberately starts selected follow-ups without the prior thread while retaining the fixture workspace; this tests recovery from durable repository state. It is not evidence for a host's literal `/compact` implementation.
+Metamorphic variants change one or two dimensions such as language, workflow-token overlap, turn ordering, or context continuity while preserving the underlying invariant. Prefer pairwise variants over a Cartesian product. `freshSessionTurns` deliberately starts selected follow-ups with a new isolated HOME, configuration, plugin installation, and thread while retaining the fixture workspace. No prior sessions or history are copied. This tests recovery from supplied or durable state, not a host's literal `/compact` implementation.
+
+`nativeCompactionTurns` instead compacts the existing persistent Codex thread immediately before the
+named resumed turn. It cannot name a fresh-session turn. The app-server adapter reuses the original
+isolated HOME and checks the resumed model, provider, effort, workspace, and sandbox. It requires a
+matching `contextCompaction` item start/completion and successful turn completion; an acknowledgement,
+mixed IDs, missing IDs, an unexpected exit, or a timeout is not a successful compact. Compaction
+events, costs, and workspace snapshots are recorded separately in `nativeCompactions`; business turn
+indices and their token metrics remain unchanged. The next business turn uses native `exec resume`.
+
+For Handoff transitions, a follow-up may declare `{ "prompt": "...", "handoffFromTurn": 2 }`. The source must be an earlier completed turn and the consumer must start a fresh session. The runner saves the source's actual final response verbatim outside both the fixture parent and isolated HOME, then supplies its file path as prior-session context. It does not synthesize task state or inject quoted workflow tokens from the record as a new user invocation. Reports retain the source turn, thread IDs, transfer hash, initial worktree state, and each turn's changes. The paired approved/pending scenarios use the same restoration prompt, which grants no new approval; the record must preserve the difference in existing authority.
 
 ### 4. Engineering behavior
 
@@ -130,9 +142,31 @@ Initial scenarios:
 | B31 | Diagnose uses temporary probes before an authorized repair | Leave no temporary log, probe, fixture, or debug-only artifact in the completed worktree |
 | B32 | An unseen fallback requirement must survive fresh-context completion without approval-relative prose | Use timeless Draft constraints, pass both validator modes, reconcile exact paths and evidence, and make `Implemented` the final record write |
 | B33 | A fresh context cannot recover an installation-specific validator from transcript state | Persist the exact ready command in the Accepted record, execute it, then replace its machine path with stable passing evidence |
-| B34 | A clear new feature protects a data invariant but does not request tests | Complete production code before the first test-file write, then leave only sensitive coverage for the critical invariant and established adjacent boundary |
+| B34 | Historical production-first testing policy | Preserve the original scorer and evidence for that policy; its feature-edit ordering gate is not a current quality requirement |
+| B35 | An explicit design is carried into Develop and later approved | Preserve the worktree through design and checkpoint, carry concrete acceptance examples forward, then implement with sensitive invariant and boundary coverage |
+| B36 | A read-only review is followed by an explicit scoped repair request | Preserve the reviewed diff, report the access-control failure, then observe regression failure before the authorized repair and retain sensitive tests |
+| B37 | Handoff transfers a task whose implementation approval is pending | Preserve the pending checkpoint through an actual handoff record and fresh session; context restoration does not authorize implementation |
+| B38 | Handoff transfers an approved task before implementation | Preserve approved scope in the actual handoff record; a fresh session implements and verifies without restarting approval |
+| B39 | A complete integer-string contract expands a numeric API | Preserve unrestricted exact integer-string semantics and both approval boundaries; retain range- and precision-sensitive tests |
+| B40 | A pending checkpoint survives native context compaction | Resume the same thread and wait for missing approval without changing the workspace |
+| B41 | Approved implementation survives native context compaction | Resume the same thread and implement the approved scope without another approval checkpoint |
+| B42 | Chinese Python Develop proceeds from a checkpoint to approved implementation | Preserve the approval boundary, reject `bool`, keep unrestricted integer semantics and existing `add` coverage, and leave meaningful unittest evidence without extra local records |
 
-The executable corpus implements B01-B17 through the original fixtures. B19 is `develop-question-batching`; B18 and B20 are `develop-lifecycle`; B21 is `diagnose-continuation`; B22 is `develop-requirement-lifecycle`. B23-B28 are `develop-scope-in-approval`, `develop-workflow-termination`, `review-develop-overlap`, `diagnose-no-reproduction`, `python-clear-task`, and `develop-durable-resume`. B29-B31 are `develop-fact-solution-alignment`, `justified-novelty`, and `diagnose-cleanup`; B32 is `develop-durable-validator-holdout`; B33 is `develop-durable-command-holdout`; and B34 is `post-implementation-testing`. Existing explicit Develop scenarios include an approval follow-up so they exercise the same gate.
+The executable corpus implements B01-B17 through the original fixtures. B19 is `develop-question-batching`; B18 and B20 are `develop-lifecycle`; B21 is `diagnose-continuation`; B22 is `develop-requirement-lifecycle`. B23-B28 are `develop-scope-in-approval`, `develop-workflow-termination`, `review-develop-overlap`, `diagnose-no-reproduction`, `python-clear-task`, and `develop-durable-resume`. B29-B31 are `develop-fact-solution-alignment`, `justified-novelty`, and `diagnose-cleanup`; B32 is `develop-durable-validator-holdout`; B33 is `develop-durable-command-holdout`; and B34 is the unchanged historical `post-implementation-testing` scenario. B35-B38 are `design-develop-transition`, `review-repair-transition`, `handoff-pending-resume`, and `handoff-approved-resume`. Existing explicit Develop scenarios include an approval follow-up so they exercise the same gate.
+
+`design-develop-transition` reuses the balance fixture and its executable invariant and mutation checks. It checks that distinguishing accepted examples are recorded before implementation and retained tests detect overdraft and exact-balance errors. Feature-test edit order is recorded only as an observation. This gives the revised testing policy a separate benchmark fingerprint without rewriting historical results. Output-shape heuristics support trajectory review; they do not prove every aspect of requirement understanding or the absence of redundant questions.
+
+B39 is `develop-contract-fidelity`; B40-B41 are `develop-compacted-pending` and
+`develop-compacted-approved`. The two compaction variants receive the same continuation prompt, which
+grants no new authority. Their earlier approval messages supply the only authorization difference.
+
+B42 is `develop-python-clear-task`, a two-turn Chinese/Python variant of `develop-lifecycle`.
+The original Core-only `python-clear-task` remains an unchanged holdout. Python-specific scoring checks
+the complete unittest discovery result and actual model command separately, then tests contract and
+coverage sensitivity in a temporary copy without bytecode caches. `-B` prevents cache writes but does
+not prevent reads, so pre-existing fixture caches are excluded from the copy and preserved in place.
+The verification record includes the actual Python interpreter version; this bounded sample does not
+establish portability across Python versions.
 
 ## Scoring
 
@@ -159,19 +193,41 @@ Use model judging only for dimensions that resist deterministic scoring, such as
 4. Compare correctness first, then unwanted side effects, maintainability, approval/clarification fidelity, time, tokens, and diff size.
 5. Remove guidance that does not improve outcomes or creates a larger regression elsewhere.
 
-Use `scripts/summarize-benchmarks.js` to aggregate clean reports. It excludes contaminated runs by default, keeps provider, model, and reasoning levels in separate groups, and reports pass rate, trigger precision/recall, configured collisions, ceremony, tools, tokens, duration, and unauthorized commits. At least three clean runs per arm are required before treating a stochastic comparison as evidence.
+Use `scripts/summarize-benchmarks.js` to aggregate clean reports. It excludes contaminated runs by default and groups complete execution identities, including CLI and Node versions, platform, architecture, provider, model, reasoning, timeout, and relevant configuration. It reports pass rate, trigger precision/recall, configured collisions, ceremony counts, tools, business-turn tokens, duration, and unauthorized commits. Native compaction costs remain in each report's separate operation records. At least three completed, uncontaminated runs per arm and scenario under matching fingerprints are required for a release-level stochastic comparison. Smaller development smokes can expose regressions but do not establish a success-rate improvement.
+
+Environment capture stores an allowlisted configuration digest rather than credentials, authentication
+files, or temporary HOME paths. An unresolved provider/model or unsupported configuration is marked
+incomplete and may be used for diagnostics only. Cohort filling cannot treat missing identity fields as
+wildcards. Summaries show legacy or invalid identities separately per report; they do not infer the
+current CLI version or aggregate historical unknown environments into a current cohort.
 
 For release evidence, `npm run benchmark:release-summary` filters raw reports through `config/evidence-manifest.json`. Each manifest selector fixes the exact report files, benchmark and plugin fingerprints, provider, model, reasoning level, arm, and target completed count. Later runs in the same cohort cannot silently change a published summary. The manifest does not make a cohort complete by declaration; the filtered summary and manual trajectory review still establish whether enough usable samples exist.
 
-`npm test` validates the frozen manifest's structure and cohort accounting without requiring an in-progress worktree to match the last release. Before a release, `npm run benchmark:release-verify` separately requires the package version, candidate plugin fingerprint, and every selected benchmark fingerprint to match the current tree. A changed skill therefore keeps deterministic development checks usable while the explicit release gate remains strict.
+`npm test` validates the frozen manifest's structure, historical release identity, and cohort accounting
+without requiring the current package to match that historical release. When claiming current-cohort
+statistical evidence, `npm run benchmark:release-verify` requires the package version, candidate plugin
+fingerprint, and every selected benchmark fingerprint to match the current tree. A maintainer may
+explicitly approve a release using existing verification and documented limitations without further
+sampling or this statistical-evidence gate. Record that decision without relabeling old reports or
+claiming new statistical evidence.
 
-After filling the cohorts named by a reviewed template, generate their report lists with `npm run benchmark:evidence-generate -- --template config/evidence-manifest.json`. The generator retains the template's scenario, arm, environment, target, and baseline-plugin choices; refreshes current benchmark and candidate fingerprints; and selects completed, uncontaminated model samples. It deliberately retains scorer, public-test, and unauthorized-commit failures because excluding real behavioral failures would bias the release rate. It prints to stdout unless an explicit `--output` path is supplied, so generation does not silently replace published evidence.
+After filling the cohorts named by a reviewed **schemaVersion 2** template, generate their report lists
+with `npm run benchmark:evidence-generate -- --template <new-template.json>`. Every cohort must select
+an explicit `environmentFingerprint` from a complete, matching report identity. The generator retains
+the template's scenario, arm, environment, target, and baseline-plugin choices; refreshes current
+benchmark and candidate fingerprints; and selects completed, uncontaminated model samples. It
+deliberately retains scorer, public-test, and unauthorized-commit failures because excluding real
+behavioral failures would bias the release rate. It prints to stdout unless an explicit `--output`
+path is supplied. Frozen schema 1 manifests remain historical records and are not templates for new
+evidence or certification of the current tree; no existing manifest is automatically migrated.
 
 The manually dispatched `release-evidence.yml` workflow runs deterministic tests, semantic coverage, and the strict current-tree evidence check. It does not run or fill stochastic cohorts in CI.
 
 Use `scripts/report-benchmark-coverage.js` separately to inspect semantic coverage. Result aggregation answers whether configured trials passed; the coverage report answers which behavior, risk, workflow, transition, stack, language, and holdout dimensions those trials represent. Neither metric substitutes for the other.
 
-Every run records a fingerprint of the behavior fixture and scorer. Plugin arms fingerprint the released Claude/Codex manifest files, Core, skill registry, and skill contents; ignored editor metadata and other unpublished files do not affect the plugin fingerprint. Aggregation separates fixture and plugin fingerprints into cohorts, then separates execution environments inside those cohorts; results from before and after an instruction, scorer, provider, model, or reasoning change must never be averaged together.
+Every run records a fingerprint of the behavior fixture and scorer. Plugin arms fingerprint the released Claude/Codex manifest files, Core, skill registry, and skill contents; ignored editor metadata and other unpublished files do not affect the plugin fingerprint. Aggregation separates fixture and plugin fingerprints into cohorts, then validates execution identities inside those cohorts; results from before and after an instruction, scorer, CLI, configuration, timeout, provider, model, or reasoning change must never be averaged together.
+
+New transition scenarios declare `fingerprintInputs` for the runner, conversation/isolation code, verification helpers, and shared scorers on which their evidence depends. The existing fresh-context scenarios also include these isolation dependencies, so later runs cannot share a cohort with the former same-HOME behavior. Changes to these files invalidate the affected scenario fingerprints. Historical reports and frozen release manifests remain unchanged; new reports are selected explicitly and are not pooled with historical runs from another harness state.
 
 Saved Codex authentication is sufficient for local runs. A real model A/B does not require a separate API key when the CLI is signed in, but it consumes the signed-in Codex/ChatGPT usage allowance; an OpenAI-compatible provider consumes that provider's configured quota. Deterministic tests run first and do not consume model quota.
 
@@ -189,10 +245,30 @@ The harness borrows evaluation ideas without adding runtime workflow stages or f
 
 These influences belong only to the test system. They do not add a sixth user-visible workflow, make full skills implicit, or expand the always-on Core.
 
-## Claude validation status
+## Historical Claude validation
 
-Claude Code 2.1.197 is available as a Windows executable from WSL. Isolated live runs use a Windows-local temporary workspace, `--plugin-dir` for the candidate, `--setting-sources project`, and `--no-session-persistence`. Provider variables read from the user's settings are passed only to the child process; when launching Win32 from WSL, their names must also be listed in that process's `WSLENV`. Values must never be printed or copied into repository files.
+Historical Claude Code 2.1.197 runs used a Windows executable from WSL. Isolated live runs use a
+Windows-local temporary workspace, a separate configuration directory, `--plugin-dir` for the
+candidate, and `--setting-sources project`. Use `--no-session-persistence` only for single-turn checks;
+session-continuation tests retain the session and use `--resume`. Provider variables read from the
+user's settings are passed only to the child process; when launching Win32 from WSL, their names must
+also be listed in that process's `WSLENV`. Values must never be printed or copied into repository files.
+Do not copy the user's complete settings, plugins, or MCP configuration into an isolated run.
 
-The current plugin passes `claude plugin validate . --strict`, loads all five released workflows, and runs SessionStart and UserPromptSubmit. One explicit `/engineering-flow:develop` ambiguity sample loaded the complete workflow, asked for the related-order policy, and left the worktree clean. Exploratory Core-only samples selected a `RESTRICT` policy and edited code despite the injected Core. Therefore Claude explicit routing is live-validated, but Core-only behavioral parity with Codex is not established and cross-platform release claims must remain qualified.
+The previously validated plugin passed `claude plugin validate . --strict`, loaded all five released workflows, and ran SessionStart and UserPromptSubmit. One explicit `/engineering-flow:develop` ambiguity sample loaded the complete workflow, asked for the related-order policy, and left the worktree clean. Exploratory Core-only samples selected a `RESTRICT` policy and edited code despite the injected Core. These historical samples validate routing for their recorded candidate; they do not establish behavioral parity or validate later wording changes. New cross-platform claims require current isolated evidence.
 
 On 2026-08-27, Claude Code 2.1.223 first loaded the current candidate, Core, and all five workflows for the new post-implementation testing fixture, but its OAuth refresh failed before inference because the Windows executable had not received the API-provider variables from WSL. That zero-token attempt is infrastructure evidence only. Forwarding only the variable names through `WSLENV` allowed the existing `ANTHROPIC_AUTH_TOKEN`, base URL, and model settings to reach the isolated child without loading user plugins or printing credentials. Two manually reviewed failures then drove narrow Develop corrections: candidate `88a32553e6de` invented `no test edits` from unrelated restrictions, and `a6bcbf86a446` treated an ad-hoc probe as a substitute for selected money-integrity coverage. Final candidate `a1d44ed59b97` wrote production code before the established test file and left mutation-sensitive overdraft and exact-balance coverage. These are separate single samples, not one stochastic cohort.
+
+On 2026-09-12, one isolated two-turn Claude Code 2.1.223 smoke used candidate `932976d966bc` and the
+configured Kimi model `kimi-k3[1M]` (reported by the client as `kimi-k3[1m]`), with requested effort `low`
+and Windows Node v20.17.0. Core and the explicit Develop workflow loaded; the pending checkpoint
+preserved every fixture file, and approval resumed the same session to implement and pass four tests.
+Independent contract checks and zero/negative-even and invalid-input mutants also passed. Edit and
+write tools were available in both turns. Only the candidate external plugin and no MCP servers were
+loaded; client-bundled skills remained part of the recorded CLI environment. Raw streams, the persistent
+rollout, final files, frozen plan, and manual audit are retained in
+`benchmark-results/claude-develop-smoke-21fd1d45/`.
+
+This is current Claude Code client evidence using Kimi, not Anthropic Claude-model evidence or a
+matched-model comparison with Codex. It does not exercise native compaction or support a reliability
+claim. Keep this manual smoke separate from Codex evidence-manifest cohorts.

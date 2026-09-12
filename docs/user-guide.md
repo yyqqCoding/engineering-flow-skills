@@ -48,13 +48,15 @@ Enter these tokens in the Codex or Claude Code conversation, not in Bash or Powe
 
 ## Choose a workflow
 
+Choose by the outcome you need. Each workflow owns its task through completion; the five entries are available independently. Develop includes necessary design, debugging, self-review, and delivery.
+
 | Scenario | Workflow | Edits code? |
 |---|---|---|
 | Feature, refactor, tests, or maintainability work | `develop` | After approval |
 | Bug, regression, incorrect output, intermittent fault, or slowdown | `diagnose` | When a fix is requested |
 | Create a solution from scratch or refine an existing design | `code-design` | No |
-| Review a diff, branch, or uncommitted work | `review` | No, strictly read-only |
-| Continue in a new session or with another agent | `handoff` | No |
+| Review a diff, branch, or uncommitted work | `review` | Read-only during review; specific repairs require a request |
+| Preserve task state and authority for another session or agent | `handoff` | No |
 
 ## Detailed scenarios
 
@@ -63,12 +65,12 @@ Enter these tokens in the Codex or Claude Code conversation, not in Bash or Powe
 `develop` is the complete implementation entry point. It:
 
 1. Inspects project instructions, authoritative docs, Git state, relevant code, tests, and callers.
-2. Aligns the goal, acceptance behavior, scope, facts, and material solution decisions.
+2. Aligns the goal, concrete acceptance examples, scope, facts, and material solution decisions.
 3. Batches independent material questions, asks dependent questions in order, and stops when implementation is safe.
 4. Returns the final checkpoint and pauses for explicit implementation approval.
-5. Completes the smallest production change before adding or editing tests.
-6. Selects only necessary tests and applicable boundary evidence, then improves structure under demonstrated design pressure.
-7. Verifies with fresh evidence and updates authoritative documentation only for changed facts.
+5. Implements and verifies one coherent, observable behavior at a time, choosing test timing by risk.
+6. Handles the design, diagnosis, fixes, and self-review needed for that implementation within the same task.
+7. Checks the accepted examples against fresh evidence and updates authoritative documentation only for changed facts.
 
 There is one Develop mode:
 
@@ -89,6 +91,12 @@ Answers, approval, corrections, and omitted original acceptance items remain in 
 
 A result explicitly described as `undefined`, unknown, or not established does not silently become out of scope. For delete and write operations in particular, unknown-resource behavior cannot be inferred from the success result, absent precedent, or a neighboring read API; it belongs in the independent question batch. After that batch is answered, the next response is the checkpoint unless an answer creates a dependent question or authoritative evidence exposes a contradiction.
 
+Acceptance examples connect the requirement to verification. For example, if the agreed behavior is to export orders newest first, an example should name two orders with different creation times and show the newer one first. Merely checking that a file was produced would miss a misunderstanding of the order.
+
+Before implementation, the agent derives expected results from the accepted behavior and repository contracts. During implementation, it verifies each meaningful behavior as it becomes available. Critical assertions can be fixed early; reproducible regressions with a stable test seam still require an observed failure before the fix. Mechanical or presentation changes may use build, type, smoke, or visual checks. A test-only task validates the sensitivity of its coverage without inventing a production change.
+
+Each slice continues under the existing implementation approval. Additional tests for an established risk are normal verification; a change to expected product behavior or approved scope returns to alignment. Before completion, the agent checks overall acceptance and relevant interactions, including any item still lacking evidence.
+
 Maintainability work and extreme tests also belong to `develop`:
 
 ```text
@@ -107,7 +115,7 @@ $engineering-flow:diagnose
 Fix calculateRenewalDate moving January 31 into March. Reproduce it first, locate the root cause, and leave a test that detects the regression.
 ```
 
-Diagnosis is read-only until the initial request or a later same-task message authorizes a fix. If the diagnosis is rejected, an ordinary follow-up keeps Diagnose active and read-only. Once the user says "fix it" or equivalent, Diagnose continues through the owning-boundary repair and regression verification without a separate Develop invocation. When a correct test seam exists, it observes failure before applying the fix.
+The example above already authorizes a repair: Diagnose proceeds through reproduction, root-cause analysis, the fix, regression verification, and completion. A diagnosis-only request stays read-only until a later message such as "fix it" authorizes repair. If the diagnosis is rejected, the same task returns to read-only investigation. No separate Develop invocation is required. When a stable test seam exists, it observes failure before applying the fix. Undefined product behavior or material additional scope still needs alignment.
 
 ### `code-design`
 
@@ -118,7 +126,7 @@ $engineering-flow:code-design
 We need multi-channel notifications, but the modules and interfaces are unsettled. Use this repository to propose the lowest necessary complexity, trade-offs, open questions, and implementation sequence. Do not code.
 ```
 
-It returns a proposal by default. It does not implement production code or silently edit design documents. Use `develop` after the design is accepted.
+It returns a proposal by default. It does not implement production code or silently edit design documents. If you choose Develop for implementation, it reuses the settled goals, boundaries, decisions, and examples. Only missing items, changes, or contradictory repository evidence need further alignment before Develop presents its implementation checkpoint. Accepting a design proposal alone does not approve implementation.
 
 ### `review`
 
@@ -129,18 +137,18 @@ $engineering-flow:review
 Review the current access-control changes against docs/access-policy.md. Report findings by severity with files and lines. Do not edit anything.
 ```
 
-It checks requirements, correctness, safety, design, readability, tests, documentation, and scope. Finding a defect does not grant permission to fix it.
+It checks requirements, correctness, safety, design, readability, tests, documentation, and scope. Finding a defect does not grant permission to fix it. A follow-up such as "fix findings 1 and 3" authorizes verification of those findings, the necessary repairs, and fresh validation within the same task, subject to any existing task approval gate. There is no need to invoke Develop again; findings outside the request remain unchanged.
 
 ### `handoff`
 
-`handoff` captures the minimum state needed by a new session or another agent.
+`handoff` captures the minimum state needed by a new session or another agent, including the active workflow, phase, accepted behavior, existing authority, and pending approvals.
 
 ```text
 $engineering-flow:handoff
-Create a continuation record with the objective, completed state, key files, decisions, latest verification, remaining work, risks, and Git status.
+Create a continuation record with the objective, active workflow and phase, existing authority, completed state, key files, decisions, latest verification, remaining work, risks, and Git status.
 ```
 
-Without an output path, it returns the handoff in the response and does not silently create a file.
+Without an output path, it returns the handoff in the response and does not silently create a file. The record transfers task state; it grants no new authority. A receiving session checks that state against the current repository and continues the authorized phase, keeping any pending approval pending.
 
 ## Installation
 
@@ -261,13 +269,15 @@ codex plugin marketplace remove engineering-flow
 
 ## Validation and limitations
 
+The following results are historical records from v1.0.3 and earlier cohorts, with their original fixtures, scorers, and plugin fingerprints. They do not validate the current workflow or testing-policy changes, which require a separate evidence record.
+
 - Static and deterministic tests: 84/84 passed.
-- The configured corpus contains 37 scenarios mapping all 46 behavior IDs. This is semantic coverage, not a claim that 37 model trials completed.
-- The published broad Codex cohort remains 17 scenarios and 51/51 candidate passes, including exact explicit invocation with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
+- The corpus recorded at that time contained 37 scenarios mapping all 46 behavior IDs. This is semantic coverage, not a claim that 37 model trials completed.
+- The published broad Codex cohort covered 17 scenarios and 51/51 candidate passes, including exact explicit invocation with zero false routes, missed routes, collisions, contamination, or unauthorized commits.
 - The earlier task-level paired A/B passed 0/12 on the current-release control and 12/12 on the candidate under matching model, reasoning, and final scenario fingerprints.
 - The final-fingerprint v1.0.3 paired cohort selects 36 completed reports across the six Test Contract scenarios. The candidate passed 18/18 behavior runs; the 1.0.2 control passed 17/18, with its single failure retained as control evidence. Earlier 1.0.2 and intermediate candidate results belong to older fingerprints and remain historical rather than being combined with the release cohort.
-- Claude Code 2.1.223 passed strict manifest validation; the final isolated `/engineering-flow:develop` trajectory wrote production before focused boundary tests.
-- Claude Core-only ambiguity behavior does not yet match Codex. Explicitly invoke the full workflow for material data, permission, or policy decisions.
+- Claude Code 2.1.223 passed strict manifest validation; under the historical testing policy, the final isolated `/engineering-flow:develop` trajectory wrote production before focused boundary tests.
+- The historical Claude Core-only ambiguity samples did not match Codex. Explicitly invoke the full workflow for material data, permission, or policy decisions.
 - Full workflows add context, tool calls, and latency, so they do not load for every request.
 
 See the [benchmark log](benchmark-log.md) and [testing strategy](testing-strategy.md) for complete evidence.
