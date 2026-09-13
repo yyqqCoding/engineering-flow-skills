@@ -10,13 +10,17 @@ Shortens the five workflows while preserving requirement alignment, approval bou
 
 - Simplified Core, workflow instructions, bilingual guides, and workflow diagrams; all five workflows remain explicitly invoked on both clients.
 - Develop keeps ordinary local checkpoints in the conversation and uses durable requirement records when recovery, coordination, or project conventions call for them.
-- Implementation and verification follow accepted behavior and risk; reproducible regression repair retains failing evidence before production changes.
-- Review, Handoff, contract, and command-result scorers distinguish actual failures, preserved records, and unnecessary artifacts more accurately.
+- Test Contracts remain part of alignment before implementation, with expected results derived from requirements. Functional behavior, interactions, and boundaries guide applicable coverage without mandatory category sections or one test per acceptance item.
+- After approval, implementation and tests can progress in independently verifiable behavior slices. This replaces the requirement to finish all production behavior before authoring tests; the sequence follows task risk.
+- Critical accepted behavior and established risk boundaries retain automated coverage through stable interfaces. Mechanical changes use suitable build, type, lint, integration, smoke, or visual evidence; reproducible regression repair retains observed failing evidence before production changes.
+- Review scoring distinguishes actual permission bypasses from correct organization-boundary descriptions. Handoff scoring compares each phase with its own entry state, detects content changes in carried untracked requirement records, and separates preserved records from unnecessary new artifacts.
+- Contract and command-result scorers improve checks for accepted input domains, retained test coverage, and executed test results.
 
 ### Added
 
 - Actual native-compaction diagnostics for pending and approved Develop tasks.
 - Execution-environment identities and separate evidence cohorts for different clients, configurations, and benchmark inputs.
+- A separate integer-string contract scenario covering exact behavior beyond JavaScript's safe-integer and finite-number ranges.
 - A Chinese Python Develop variant with mutation-sensitive contract and test-coverage checks.
 
 ### Release basis
