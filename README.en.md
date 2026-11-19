@@ -1,7 +1,10 @@
 <div align="center">
 
 <a href="https://engineering-flow-web.vercel.app">
+  <picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/hero-motion-mobile.svg" />
   <img src="assets/readme/hero-motion.svg" width="100%" alt="Engineering Flow: minimal Coding Agent workflows invoked on demand, with explicit human approval and verified delivery." />
+</picture>
 </a>
 
 # Engineering Flow
@@ -32,13 +35,19 @@
 
 ## How it works
 
-<img src="assets/readme/routing-motion.svg" width="100%" alt="Small, clear requests use the minimal Core; explicitly invoked Develop workflows align requirements, wait for human approval, implement and verify." />
+<picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/routing-motion-mobile.svg" />
+  <img src="assets/readme/routing-motion.svg" width="100%" alt="Small, clear requests use the minimal Core; explicitly invoked Develop workflows align requirements, wait for human approval, implement and verify." />
+</picture>
 
 **Small tasks go straight through. Full workflows are explicit. Develop never codes before approval.**
 
 ## Five workflows
 
-<img src="assets/readme/workflow-icons.svg" width="100%" alt="Five independent workflows: Develop, Diagnose, Code Design, Review and Handoff." />
+<picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/workflow-icons-mobile.svg" />
+  <img src="assets/readme/workflow-icons.svg" width="100%" alt="Five independent workflows: Develop, Diagnose, Code Design, Review and Handoff." />
+</picture>
 
 **💻 Develop** build　·　**🔍 Diagnose** debug　·　**🧠 Code Design** plan　·　**👀 Review** inspect　·　**🤝 Handoff** resume
 
@@ -75,7 +84,10 @@ Claude Code: `/engineering-flow:develop`. Same-task follow-ups continue without 
 
 ## Evaluation
 
-<img src="assets/readme/evidence-summary.svg" width="100%" alt="Historical evaluation: everyday engineering 45/51 to 51/51, task continuity 0/12 to 12/12, explicit routing 51/51." />
+<picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/evidence-summary-mobile.svg" />
+  <img src="assets/readme/evidence-summary.svg" width="100%" alt="Historical evaluation: everyday engineering 45/51 to 51/51, task continuity 0/12 to 12/12, explicit routing 51/51." />
+</picture>
 
 **Historical data from v1.0.3 and earlier. Separate cohorts; not a v1.0.4 score.**
 
