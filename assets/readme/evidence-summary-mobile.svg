@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="630" viewBox="0 0 620 630" role="img" aria-labelledby="title desc">
+<title id="title">Historical Engineering Flow evidence on mobile</title><desc id="desc">Historical cohorts before v1.0.4: Engineering 45/51 to 51/51, Continuity 0/12 to 12/12, Exact routing 51/51.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6fafc"/><stop offset="1" stop-color="#eaf3fb"/></linearGradient></defs>
+<style>.t{font-family:Inter,"Segoe UI",Arial,sans-serif}</style>
+<rect x=".5" y=".5" width="619" height="629" rx="24" fill="url(#bg)" stroke="#cbdde7"/>
+<text x="35" y="75" class="t" font-size="35" font-weight="800" fill="#1b7968">ENGINEERING</text>
+<text x="35" y="148" class="t" font-size="53" font-weight="770" fill="#7c8e9c">45/51</text>
+<path d="M213 125H273" stroke="#7c9e9a" stroke-width="5"/><path d="m262 114 15 11-15 11" stroke="#7c9e9a" stroke-width="4" fill="none"/>
+<text x="294" y="148" class="t" font-size="56" font-weight="830" fill="#168873">51/51</text>
+<path d="M35 198H585" stroke="#cfdde7" stroke-width="3"/>
+<text x="35" y="276" class="t" font-size="35" font-weight="800" fill="#356fac">CONTINUITY</text>
+<text x="35" y="349" class="t" font-size="53" font-weight="770" fill="#7c8e9c">0/12</text>
+<path d="M187 326H247" stroke="#7c9ebc" stroke-width="5"/><path d="m236 315 15 11-15 11" stroke="#7c9ebc" stroke-width="4" fill="none"/>
+<text x="271" y="349" class="t" font-size="56" font-weight="830" fill="#377ec6">12/12</text>
+<path d="M35 399H585" stroke="#cfdde7" stroke-width="3"/>
+<text x="35" y="477" class="t" font-size="35" font-weight="800" fill="#7463af">EXPLICIT ROUTING</text>
+<text x="35" y="569" class="t" font-size="91" font-weight="840" fill="#7563b4">51/51</text>
+</svg>
