@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="690" viewBox="0 0 620 690" role="img" aria-labelledby="title desc">
+<title id="title">Two paths mobile</title><desc id="desc">Default Minimal Core handles direct action. Explicit Develop aligns, waits for approval, builds, and verifies.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6fbfc"/><stop offset="1" stop-color="#edf3fb"/></linearGradient></defs>
+<style>.t{font-family:Inter,"Segoe UI",Arial,sans-serif}.flow{stroke-dasharray:9 13;animation:run 5s linear infinite}@keyframes run{to{stroke-dashoffset:-132}}@media(prefers-reduced-motion:reduce){.flow{animation:none!important}}</style>
+<rect x=".5" y=".5" width="619" height="689" rx="25" fill="url(#bg)" stroke="#d2e3ed"/>
+<text x="36" y="65" class="t" font-size="36" font-weight="800" fill="#195549">DEFAULT</text>
+<rect x="35" y="97" width="548" height="89" rx="18" fill="#dbf4e9" stroke="#95d4bb"/>
+<text x="309" y="153" class="t" text-anchor="middle" font-size="35" font-weight="800" fill="#166e58">Minimal Core</text>
+<path d="M309 187V221" stroke="#228a73" stroke-width="5" class="flow"/>
+<rect x="35" y="227" width="548" height="87" rx="18" fill="#fff" stroke="#bddbce"/>
+<text x="309" y="284" class="t" text-anchor="middle" font-size="35" font-weight="750" fill="#176f59">Direct action</text>
+<path d="M35 348H585" stroke="#b8cbd9" stroke-width="2"/>
+<text x="36" y="403" class="t" font-size="36" font-weight="800" fill="#396fb4">EXPLICIT · DEVELOP</text>
+<g class="t" text-anchor="middle" font-size="31" font-weight="790">
+<rect x="35" y="435" width="260" height="94" rx="18" fill="#fff" stroke="#bdcfe2"/>
+<text x="165" y="493" fill="#255578">ALIGN</text>
+<rect x="325" y="435" width="260" height="94" rx="18" fill="#ffeed3" stroke="#e5ac58" stroke-width="3"/>
+<text x="455" y="493" fill="#9c601d">APPROVE</text>
+<rect x="35" y="560" width="260" height="95" rx="18" fill="#fff" stroke="#bdcfe2"/>
+<text x="165" y="618" fill="#255578">BUILD</text>
+<rect x="325" y="560" width="260" height="95" rx="18" fill="#dbf4e9" stroke="#9bcfbf"/>
+<text x="455" y="618" fill="#196b59">VERIFY</text>
+</g>
+</svg>
