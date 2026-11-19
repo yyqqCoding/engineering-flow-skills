@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="520" viewBox="0 0 1280 520" role="img" aria-labelledby="title description">
+<title id="title">Engineering Flow — Less ceremony, more confidence</title>
+<desc id="description">Animated illustration of a lightweight coding-agent core and an explicitly invoked Develop workflow. The workflow progresses through discovery, clarification and a required human approval checkpoint before implementation and verification.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#070d19"/><stop offset=".53" stop-color="#0b1730"/><stop offset="1" stop-color="#111b33"/></linearGradient>
+  <radialGradient id="halo"><stop stop-color="#3d6bf4" stop-opacity=".26"/><stop offset="1" stop-color="#3d6bf4" stop-opacity="0"/></radialGradient>
+  <radialGradient id="halo2"><stop stop-color="#0de0bc" stop-opacity=".16"/><stop offset="1" stop-color="#0de0bc" stop-opacity="0"/></radialGradient>
+  <linearGradient id="type" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#7af7d8"/><stop offset="1" stop-color="#83b7ff"/></linearGradient>
+  <linearGradient id="rail" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#4b7e9d"/><stop offset=".5" stop-color="#71d5c3"/><stop offset="1" stop-color="#5d91df"/></linearGradient>
+  <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#16253c"/><stop offset="1" stop-color="#101b2c"/></linearGradient>
+  <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="#a5c5ff" stroke-opacity=".055"/></pattern>
+  <filter id="drop" x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".4"/></filter>
+</defs>
+<style>
+  .sans {font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+  .mono {font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace}
+  .travel {stroke-dasharray:5 13;animation:travel 4.4s linear infinite}
+  .slow-travel {stroke-dasharray:3 11;animation:travel 8s linear infinite}
+  .pulse {animation:pulse 3.2s ease-in-out infinite;transform-origin:923px 240px}
+  .blink {animation:blink 2.2s ease-in-out infinite}
+  .rise {animation:rise 5s ease-in-out infinite}
+  .glow {animation:glow 6s ease-in-out infinite}
+  @keyframes travel {to{stroke-dashoffset:-144}}
+  @keyframes pulse {0%,100%{opacity:.34;transform:scale(.88)}50%{opacity:.85;transform:scale(1.14)}}
+  @keyframes blink {0%,100%{opacity:.28}48%,58%{opacity:1}}
+  @keyframes rise {0%,100%{opacity:.45}50%{opacity:.86}}
+  @keyframes glow {0%,100%{opacity:.58}50%{opacity:.9}}
+  @media(prefers-reduced-motion:reduce){.travel,.slow-travel,.pulse,.blink,.rise,.glow{animation:none!important}}
+</style>
+<rect width="1280" height="520" rx="24" fill="url(#bg)"/>
+<rect width="1280" height="520" rx="24" fill="url(#grid)"/>
+<circle cx="942" cy="128" r="366" fill="url(#halo)" class="glow"/>
+<circle cx="304" cy="495" r="325" fill="url(#halo2)" class="rise"/>
+<path d="M0 454C213 381 328 555 520 484S1055 397 1280 466" fill="none" stroke="#5ca8b6" stroke-width="1" opacity=".15"/>
+<rect x="62" y="58" width="228" height="35" rx="17.5" fill="#172b39" stroke="#3b756f" stroke-opacity=".8"/>
+<circle cx="82" cy="75.5" r="4" fill="#70efd2" class="blink"/>
+<text x="96" y="81" class="sans" fill="#b8e5db" font-size="13" font-weight="750" letter-spacing="1.7">AI CODING WORKFLOWS</text>
+<text x="61" y="180" class="sans" font-size="64" fill="#f0f5ff" font-weight="850" letter-spacing="-3">ENGINEERING</text>
+<text x="62" y="259" class="sans" font-size="88" fill="url(#type)" font-weight="850" letter-spacing="-4">FLOW<tspan fill="#8fb2df">.</tspan></text>
+<rect x="65" y="288" width="61" height="4" rx="2" fill="#69ebcc"/>
+<text x="62" y="337" class="sans" font-size="22" fill="#d7e4f5" font-weight="580">Less ceremony. More confidence.</text>
+<text x="62" y="370" class="sans" font-size="15" fill="#9db3cb">Understand the task. Respect approval. Prove the result.</text>
+<g class="sans" font-size="12" font-weight="700" letter-spacing=".7">
+  <rect x="62" y="415" width="133" height="34" rx="17" fill="#17263b" stroke="#324c65"/>
+  <text x="128.5" y="436.5" fill="#c4d8eb" text-anchor="middle">CODEX CLI</text>
+  <rect x="206" y="415" width="144" height="34" rx="17" fill="#17263b" stroke="#324c65"/>
+  <text x="278" y="436.5" fill="#c4d8eb" text-anchor="middle">CLAUDE CODE</text>
+  <rect x="361" y="415" width="92" height="34" rx="17" fill="#13332f" stroke="#3d8174"/>
+  <text x="407" y="436.5" fill="#8af5d8" text-anchor="middle">v1.0.4</text>
+</g>
+<g filter="url(#drop)">
+ <rect x="624" y="54" width="594" height="414" rx="20" fill="url(#screen)" stroke="#3a5268" stroke-width="1.3"/>
+ <path d="M644 54H1198A20 20 0 0 1 1218 74V110H624V74A20 20 0 0 1 644 54Z" fill="#1a2c41"/>
+ <path d="M624 110H1218" stroke="#3c5369"/>
+ <circle cx="651" cy="81" r="5" fill="#ed848b"/><circle cx="669" cy="81" r="5" fill="#dcb97e"/><circle cx="687" cy="81" r="5" fill="#75d6ac"/>
+ <text x="710" y="85" class="mono" font-size="14" fill="#d7e3f2">engineering-flow / session</text>
+ <rect x="1051" y="68" width="145" height="27" rx="13.5" fill="#183e38" stroke="#397d69"/>
+ <text x="1123.5" y="85.5" class="sans" font-size="11" font-weight="750" text-anchor="middle" fill="#8ef2cc" letter-spacing=".5">EXPLICIT ONLY</text>
+ <circle cx="655" cy="148" r="5" fill="#80f1d3" class="blink"/>
+ <text x="672" y="152" class="sans" fill="#a5c5d3" font-weight="750" font-size="12" letter-spacing="1.5">ACTIVE WORKFLOW</text>
+ <text x="650" y="192" class="sans" fill="#ecf8ff" font-size="29" font-weight="770">Develop</text>
+ <text x="819" y="191" class="sans" fill="#7793b0" font-size="13">One task · one approval gate</text>
+ <path d="M672 240H1169" stroke="#3a536b" stroke-width="5" stroke-linecap="round"/>
+ <path d="M672 240H1169" stroke="url(#rail)" stroke-width="3.3" stroke-linecap="round" class="travel"/>
+ <circle cx="923" cy="240" r="26" fill="none" stroke="#f8b867" stroke-width="3" class="pulse"/>
+ <g>
+  <circle cx="678" cy="240" r="13" fill="#203a4d" stroke="#6ee8ce" stroke-width="2"/>
+  <path d="m673 240 3.5 3.5 6-7" fill="none" stroke="#92f5d9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="801" cy="240" r="13" fill="#203a4d" stroke="#6ee8ce" stroke-width="2"/>
+  <path d="m796 240 3.5 3.5 6-7" fill="none" stroke="#92f5d9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="923" cy="240" r="17" fill="#493725" stroke="#ffc47f" stroke-width="2.5"/>
+  <path d="M918 239v-4a5 5 0 0 1 10 0v4m-11 0h12v10h-12z" fill="none" stroke="#ffd19a" stroke-width="1.7" stroke-linejoin="round"/>
+  <circle cx="1046" cy="240" r="13" fill="#182c43" stroke="#7ba3d6" stroke-width="2"/>
+  <path d="M1041 240h10m-5-5v10" stroke="#b3d3ff" stroke-width="1.8" stroke-linecap="round"/>
+  <circle cx="1169" cy="240" r="13" fill="#182c43" stroke="#7ba3d6" stroke-width="2"/>
+  <path d="m1164 240 3.5 3.5 6-7" stroke="#b3d3ff" fill="none" stroke-width="2" stroke-linecap="round"/>
+ </g>
+ <g class="sans" font-size="12" fill="#aec2d5" font-weight="610" text-anchor="middle">
+  <text x="678" y="274">Discover</text>
+  <text x="801" y="274">Clarify</text>
+  <text x="923" y="280" fill="#ffc57e">Approval</text>
+  <text x="1046" y="274">Implement</text>
+  <text x="1169" y="274">Verify</text>
+ </g>
+ <rect x="651" y="312" width="540" height="127" rx="13" fill="#0b1526" stroke="#2a4358"/>
+ <circle cx="675" cy="336" r="4" fill="#69f3d1"/>
+ <text x="691" y="341" class="mono" font-size="14" fill="#b9d3ee">$engineering-flow:develop</text>
+ <path d="M671 354H1172" stroke="#223449"/>
+ <text x="672" y="380" class="mono" font-size="13" fill="#91a7c2">✓ discovery &amp; acceptance criteria aligned</text>
+ <text x="672" y="407" class="mono" font-size="13" fill="#ffd090">● awaiting an explicit approval to code</text>
+ <rect x="1127" y="393" width="2" height="16" fill="#ffd090" class="blink"/>
+</g>
+<path d="M0 513H1280" stroke="url(#type)" stroke-width="7" opacity=".72"/>
+</svg>
