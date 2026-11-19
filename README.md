@@ -1,7 +1,10 @@
 <div align="center">
 
 <a href="https://engineering-flow-web.vercel.app">
+  <picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/hero-motion-mobile.svg" />
   <img src="assets/readme/hero-motion.svg" width="100%" alt="Engineering Flow：轻量 Coding Agent 工作流，按需调用，在明确批准后实施，并验证结果。" />
+</picture>
 </a>
 
 # Engineering Flow
@@ -32,13 +35,19 @@
 
 ## 它如何工作？
 
-<img src="assets/readme/routing-motion.svg" width="100%" alt="普通请求直接通过精简 Core 处理；显式 Develop 请求先对齐、等待人工批准，再实施和验证。" />
+<picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/routing-motion-mobile.svg" />
+  <img src="assets/readme/routing-motion.svg" width="100%" alt="普通请求直接通过精简 Core 处理；显式 Develop 请求先对齐、等待人工批准，再实施和验证。" />
+</picture>
 
 **普通任务直接做。复杂任务点名工作流。Develop 必须获得明确批准才编码。**
 
 ## 五个工作流
 
-<img src="assets/readme/workflow-icons.svg" width="100%" alt="Develop 开发、Diagnose 诊断、Code Design 设计、Review 评审、Handoff 交接，五个独立入口。" />
+<picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/workflow-icons-mobile.svg" />
+  <img src="assets/readme/workflow-icons.svg" width="100%" alt="Develop 开发、Diagnose 诊断、Code Design 设计、Review 评审、Handoff 交接，五个独立入口。" />
+</picture>
 
 **💻 Develop** 开发　·　**🔍 Diagnose** 诊断　·　**🧠 Code Design** 设计　·　**👀 Review** 评审　·　**🤝 Handoff** 交接
 
@@ -75,7 +84,10 @@ Claude Code 调用：`/engineering-flow:develop`。后续同一任务不需要�
 
 ## 验证结果
 
-<img src="assets/readme/evidence-summary.svg" width="100%" alt="历史评测：工程行为 45/51 提升至 51/51，多轮连续性 0/12 提升至 12/12，显式路由 51/51。" />
+<picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/evidence-summary-mobile.svg" />
+  <img src="assets/readme/evidence-summary.svg" width="100%" alt="历史评测：工程行为 45/51 提升至 51/51，多轮连续性 0/12 提升至 12/12，显式路由 51/51。" />
+</picture>
 
 **历史数据：v1.0.3 及更早版本，各评测组独立统计，并非 v1.0.4 成绩。**
 
