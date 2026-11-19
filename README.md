@@ -7,9 +7,9 @@
 </picture>
 </a>
 
-# Engineering Flow
+<h1>Engineering Flow</h1>
 
-### 轻量启动 · 按需工作流 · 用证据交付
+<h3>轻量启动 · 按需工作流 · 用证据交付</h3>
 
 <p>
   <a href="#快速开始"><img src="https://img.shields.io/badge/快速开始-GET_STARTED-167C73?style=for-the-badge" alt="快速开始" /></a>
@@ -17,7 +17,7 @@
   <a href="README.en.md"><img src="https://img.shields.io/badge/English-README-334155?style=for-the-badge" alt="English README" /></a>
 </p>
 
-**Codex CLI** · **Claude Code** · **v1.0.4** · **MIT**
+<strong>Codex CLI</strong> · <strong>Claude Code</strong> · <strong>v1.0.4</strong> · <strong>MIT</strong>
 
 </div>
 
@@ -27,9 +27,9 @@
 
 <div align="center">
 
-### 🪶 轻量默认　　🎯 显式调用　　🔁 任务不断线
+<h3>🪶 轻量默认　　🎯 显式调用　　🔁 任务不断线</h3>
 
-### 🛑 人工批准　　✅ 验证交付
+<h3>🛑 人工批准　　✅ 验证交付</h3>
 
 </div>
 
@@ -97,10 +97,10 @@ Claude Code 调用：`/engineering-flow:develop`。后续同一任务不需要�
 
 <div align="center">
 
-### Build with intent. Ship with evidence.
+<h3>Build with intent. Ship with evidence.</h3>
 
-[用户指南](docs/user-guide.zh-CN.md) · [产品设计](docs/product-design.md) · [触发模型](docs/trigger-model.md) · [在线文档](https://engineering-flow-web.vercel.app)
+<p><a href="docs/user-guide.zh-CN.md">用户指南</a> · <a href="docs/product-design.md">产品设计</a> · <a href="docs/trigger-model.md">触发模型</a> · <a href="https://engineering-flow-web.vercel.app">在线文档</a></p>
 
-[MIT License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md)
+<p><a href="LICENSE">MIT License</a> · <a href="THIRD_PARTY_NOTICES.md">Third-party notices</a></p>
 
 </div>
