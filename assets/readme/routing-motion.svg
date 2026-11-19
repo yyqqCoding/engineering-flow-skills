@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="330" viewBox="0 0 1200 330" role="img" aria-labelledby="title desc">
+<title id="title">Routing: lightweight Core by default, full workflow only when named</title>
+<desc id="desc">Two distinct routes. A normal request passes through the minimal Core and goes directly to focused action. A named Develop request passes through discovery and clarification, waits for explicit human approval, then implements and verifies. Animated arrows visually illustrate the route, not an automatic approval.</desc>
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f8fbff"/><stop offset="1" stop-color="#f2f8fa"/></linearGradient>
+ <linearGradient id="shine" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#087f73"/><stop offset="1" stop-color="#477cd2"/></linearGradient>
+ <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#0d3450" flood-opacity=".09"/></filter>
+ <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#347c92" opacity=".13"/></pattern>
+</defs>
+<style>
+ .sans{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+ .mono{font-family:"SFMono-Regular",Consolas,monospace}
+ .track{stroke-dasharray:5 12;animation:move 5s linear infinite}
+ .breathe{animation:breathe 2.8s ease-in-out infinite}
+ .pin{animation:pin 2.8s ease-in-out infinite}
+ @keyframes move{to{stroke-dashoffset:-136}}
+ @keyframes breathe{0%,100%{opacity:.38}50%{opacity:1}}
+ @keyframes pin{0%,100%{opacity:.36}50%{opacity:.8}}
+ @media(prefers-reduced-motion:reduce){.track,.breathe,.pin{animation:none!important}}
+</style>
+<rect x=".5" y=".5" width="1199" height="329" rx="18" fill="url(#bg)" stroke="#d3e2ed"/>
+<rect width="1200" height="330" rx="18" fill="url(#dots)"/>
+<text x="34" y="43" class="sans" font-size="13" font-weight="800" letter-spacing="1.5" fill="#227f77">TWO ROUTES · ONE CLEAR BOUNDARY</text>
+<text x="34" y="70" class="sans" font-size="21" font-weight="730" fill="#152c44">Stay lightweight until you explicitly choose a workflow.</text>
+<!-- default lane -->
+<rect x="34" y="102" width="170" height="78" rx="13" fill="#e4f4ee" stroke="#a7d9c7"/>
+<circle cx="56" cy="126" r="5" fill="#148c72"/>
+<text x="70" y="131" class="sans" font-size="12" font-weight="800" letter-spacing=".6" fill="#0c7661">DEFAULT</text>
+<text x="51" y="156" class="sans" font-size="20" font-weight="790" fill="#123e39">Minimal Core</text>
+<path d="M207 141H400" stroke="#9fcabe" stroke-width="3" stroke-linecap="round"/>
+<path d="M207 141H400" stroke="#168c7f" stroke-width="3" class="track"/>
+<path d="m391 135 10 6-10 6" fill="none" stroke="#168c7f" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="410" y="102" width="340" height="78" rx="13" fill="#fff" stroke="#d0dfeb" filter="url(#shadow)"/>
+<text x="433" y="131" class="sans" font-size="13" font-weight="700" fill="#6a8392">CLEAR, SMALL TASK</text>
+<text x="433" y="158" class="sans" font-size="20" font-weight="750" fill="#17354a">Direct action · focused verification</text>
+<rect x="770" y="102" width="392" height="78" rx="13" fill="#effaf5" stroke="#b8dfcc"/>
+<text x="791" y="132" class="sans" font-size="13" font-weight="760" fill="#16816a">NO UNNECESSARY CEREMONY</text>
+<text x="791" y="159" class="sans" font-size="16" fill="#385969">No automatic full skill injection</text>
+<!-- explicit lane -->
+<rect x="34" y="207" width="170" height="87" rx="13" fill="#ebf2fd" stroke="#adc6ed"/>
+<circle cx="56" cy="231" r="5" fill="#3b77cb"/>
+<text x="70" y="236" class="sans" font-size="12" font-weight="800" letter-spacing=".6" fill="#366fc0">EXPLICIT</text>
+<text x="51" y="266" class="sans" font-size="18" font-weight="760" fill="#21436e">Develop</text>
+<path d="M207 251H1115" stroke="#bdcfe0" stroke-width="3" stroke-linecap="round"/>
+<path d="M207 251H1115" stroke="url(#shine)" stroke-width="3" class="track"/>
+<g class="sans" font-size="14" font-weight="700" text-anchor="middle">
+ <rect x="251" y="211" width="167" height="82" rx="12" fill="#fff" stroke="#cedeea"/>
+ <text x="334" y="244" fill="#27526b">Discover</text><text x="334" y="266" fill="#71889b" font-size="12">read context</text>
+ <rect x="431" y="211" width="166" height="82" rx="12" fill="#fff" stroke="#cedeea"/>
+ <text x="514" y="244" fill="#27526b">Clarify</text><text x="514" y="266" fill="#71889b" font-size="12">acceptance examples</text>
+ <rect x="610" y="202" width="187" height="100" rx="13" fill="#fff5e8" stroke="#d99b4d" stroke-width="2"/>
+ <rect x="625" y="213" width="157" height="20" rx="10" fill="#fae0b9"/>
+ <text x="703.5" y="227.5" font-size="10" font-weight="800" fill="#a35e15" letter-spacing=".6">HUMAN CHECKPOINT</text>
+ <text x="703.5" y="252" font-size="17" fill="#8e4f10">Approval</text><text x="703.5" y="276" font-size="12" fill="#a57137">wait for action</text>
+ <rect x="810" y="211" width="154" height="82" rx="12" fill="#fff" stroke="#cedeea"/>
+ <text x="887" y="244" fill="#27526b">Implement</text><text x="887" y="266" fill="#71889b" font-size="12">accepted scope</text>
+ <rect x="977" y="211" width="187" height="82" rx="12" fill="#effaf6" stroke="#b0ddcd"/>
+ <text x="1070.5" y="244" fill="#176c59">Verify</text><text x="1070.5" y="266" fill="#4b8476" font-size="12">evidence &amp; docs</text>
+</g>
+<circle cx="703.5" cy="252" r="52" stroke="#f5bb6b" fill="none" stroke-width="2" class="pin" opacity=".6"/>
+</svg>
