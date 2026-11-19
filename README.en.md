@@ -7,9 +7,9 @@
 </picture>
 </a>
 
-# Engineering Flow
+<h1>Engineering Flow</h1>
 
-### Minimal by default · Workflows on demand · Ship with evidence
+<h3>Minimal by default · Workflows on demand · Ship with evidence</h3>
 
 <p>
   <a href="#quick-start"><img src="https://img.shields.io/badge/Quick_Start-GET_STARTED-167C73?style=for-the-badge" alt="Quick start" /></a>
@@ -17,7 +17,7 @@
   <a href="README.md"><img src="https://img.shields.io/badge/简体中文-README-334155?style=for-the-badge" alt="中文 README" /></a>
 </p>
 
-**Codex CLI** · **Claude Code** · **v1.0.4** · **MIT**
+<strong>Codex CLI</strong> · <strong>Claude Code</strong> · <strong>v1.0.4</strong> · <strong>MIT</strong>
 
 </div>
 
@@ -27,9 +27,9 @@
 
 <div align="center">
 
-### 🪶 Minimal Core　　🎯 Explicit invocation　　🔁 Task continuity
+<h3>🪶 Minimal Core　　🎯 Explicit invocation　　🔁 Task continuity</h3>
 
-### 🛑 Human approval　　✅ Verified results
+<h3>🛑 Human approval　　✅ Verified results</h3>
 
 </div>
 
@@ -97,10 +97,10 @@ Claude Code: `/engineering-flow:develop`. Same-task follow-ups continue without 
 
 <div align="center">
 
-### Build with intent. Ship with evidence.
+<h3>Build with intent. Ship with evidence.</h3>
 
-[User guide](docs/user-guide.md) · [Product design](docs/product-design.md) · [Routing model](docs/trigger-model.md) · [Documentation](https://engineering-flow-web.vercel.app)
+<p><a href="docs/user-guide.md">User guide</a> · <a href="docs/product-design.md">Product design</a> · <a href="docs/trigger-model.md">Routing model</a> · <a href="https://engineering-flow-web.vercel.app">Documentation</a></p>
 
-[MIT License](LICENSE) · [Third-party notices](THIRD_PARTY_NOTICES.md)
+<p><a href="LICENSE">MIT License</a> · <a href="THIRD_PARTY_NOTICES.md">Third-party notices</a></p>
 
 </div>
