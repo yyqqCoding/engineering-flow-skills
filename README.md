@@ -1,182 +1,106 @@
 <div align="center">
-  <a href="https://engineering-flow-web.vercel.app">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="assets/readme/hero-zh-dark.png">
-      <source media="(prefers-color-scheme: light)" srcset="assets/readme/hero-zh-light.png">
-      <img alt="Engineering Flow：先对齐，再动手，最后用证据说话。Develop 生命周期从发现、澄清、检查点、批准到实施、验证与完成，批准是必须经过的人工关卡" src="assets/readme/hero-zh-light.png" width="100%">
-    </picture>
-  </a>
-  <br><br>
-  <strong>🧭 用验收实例对齐理解，逐段实现与验证</strong>
-  <br><br>
-  <a href="https://engineering-flow-web.vercel.app"><strong>📖 在线文档</strong></a>
-  &nbsp;&nbsp;·&nbsp;&nbsp;
-  <a href="#快速开始">🚀 快速开始</a>
-  &nbsp;&nbsp;·&nbsp;&nbsp;
-  <a href="#五个工作流">🧩 工作流</a>
-  &nbsp;&nbsp;·&nbsp;&nbsp;
-  <a href="#验证结果">📊 验证结果</a>
-  &nbsp;&nbsp;·&nbsp;&nbsp;
-  <a href="docs/user-guide.zh-CN.md">用户指南</a>
-  <br><br>
-  <a href="README.md">简体中文</a>&nbsp;·&nbsp;<a href="README.en.md">English</a>
-  <br><br>
-  <img alt="Codex CLI" src="https://img.shields.io/badge/Codex_CLI-supported-111820?style=flat-square">
-  <img alt="Claude Code" src="https://img.shields.io/badge/Claude_Code-supported-D97757?style=flat-square">
-  <img alt="Release 1.0.4" src="https://img.shields.io/badge/release-v1.0.4-2467CE?style=flat-square">
-  <img alt="License MIT" src="https://img.shields.io/badge/license-MIT-4C5D6B?style=flat-square">
+
+<a href="https://engineering-flow-web.vercel.app">
+  <picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/hero-motion-mobile.svg" />
+  <img src="assets/readme/hero-motion.svg" width="100%" alt="Engineering Flow：轻量 Coding Agent 工作流，按需调用，在明确批准后实施，并验证结果。" />
+</picture>
+</a>
+
+<h1>Engineering Flow</h1>
+
+<h3>轻量启动 · 按需工作流 · 用证据交付</h3>
+
+<p>
+  <a href="#快速开始"><img src="https://img.shields.io/badge/快速开始-GET_STARTED-167C73?style=for-the-badge" alt="快速开始" /></a>
+  <a href="https://engineering-flow-web.vercel.app"><img src="https://img.shields.io/badge/在线文档-DOCS-315D9D?style=for-the-badge" alt="在线文档" /></a>
+  <a href="README.en.md"><img src="https://img.shields.io/badge/English-README-334155?style=for-the-badge" alt="English README" /></a>
+</p>
+
+<strong>Codex CLI</strong> · <strong>Claude Code</strong> · <strong>v1.0.4</strong> · <strong>MIT</strong>
+
 </div>
 
 ---
 
-> [!IMPORTANT]
-> **Engineering Flow 不会接管所有任务。** 清晰的小任务直接完成；只有你显式点名时，完整工作流才会加载并持续负责同一个任务。
+## 为什么选它？
 
-## 🧭 核心思想
+<div align="center">
 
-> 先把需求理解到足以安全实施，再在正确边界写最小但清晰的代码，用有效反馈证明它工作，最后让文档反映事实、让项目规则只沉淀长期经验。
+<h3>🪶 轻量默认　　🎯 显式调用　　🔁 任务不断线</h3>
 
-| 🔎 理解 | 🎯 确认 | 💻 实施 | ✅ 证明 |
-|---|---|---|---|
-| 读项目规则、权威文档、相关代码与测试 | 用具体实例澄清影响验收的未决行为；Develop 在一个检查点等待批准 | 复用正确的领域能力，在拥有该规则的模块内逐段实现可验收行为 | 随每段行为取得与风险匹配的证据，完成前核对整体验收与文档 |
+<h3>🛑 人工批准　　✅ 验证交付</h3>
 
-强编码模型已经掌握这些工程技巧，问题在于应用不稳定。Engineering Flow 只针对其中三种反复出现、代价最高的失衡：
+</div>
 
-| 失衡 | 表现 | 本项目的处理 |
-|---|---|---|
-| **⚖️ 流程强度** | 简单任务被拖进完整流程，或复杂任务没有流程 | 清晰的小任务直接完成；完整工作流只在你点名时加载 |
-| **🔁 多轮连续性** | 换一条消息就忘了在做什么，需要重复交代 | 回答、批准、纠正、补漏都留在同一个任务里，不必重复调用 |
-| **🛑 澄清与授权** | 把"回答了问题"当成"同意开工" | 独立问题批量问完；只有检查点之后的行动指令才授权编码 |
-
-<a id="五个工作流"></a>
-
-## 🧩 五个工作流
-
-按当前目标选择入口。Develop 自身负责必要设计、诊断修复、自检和交付；需要独立方案、诊断或评审时，再选择对应工作流。
+## 它如何工作？
 
 <picture>
-  <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="assets/readme/workflow-map-mobile-dark.svg">
-  <source media="(max-width: 640px) and (prefers-color-scheme: light)" srcset="assets/readme/workflow-map-mobile-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/workflow-map-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/readme/workflow-map-light.svg">
-  <img alt="按目标选择五个独立入口：Develop 对齐后批准实施并逐段验证；Diagnose 在请求已授权时完成诊断修复；Code Design 产出可复用方案；Review 默认只读，明确要求后修复指定问题；Handoff 保存状态和已有授权。" src="assets/readme/workflow-map-light.svg" width="100%">
+  <source media="(max-width: 640px)" srcset="assets/readme/routing-motion-mobile.svg" />
+  <img src="assets/readme/routing-motion.svg" width="100%" alt="普通请求直接通过精简 Core 处理；显式 Develop 请求先对齐、等待人工批准，再实施和验证。" />
 </picture>
 
-| 工作流 | 什么时候用它 | 会改你的代码吗 | 调用 |
-|---|---|---|---|
-| **💻 Develop** | 新功能、重构、补测试、代码完善 | 你批准之后才改 | `$engineering-flow:develop` |
-| **🔍 Diagnose** | bug、回归、错误输出、间歇故障 | 初始请求或后续消息要求修复时改 | `$engineering-flow:diagnose` |
-| **🧠 Code Design** | 有目标但方案未定，或已有设计需要完善 | 不改，只产出方案 | `$engineering-flow:code-design` |
-| **👀 Review** | 评审 diff、分支、PR 或未提交改动 | 评审只读；明确要求后修复指定问题 | `$engineering-flow:review` |
-| **🤝 Handoff** | 保存任务状态与已有授权，供下一会话续接 | 不改 | `$engineering-flow:handoff` |
+**普通任务直接做。复杂任务点名工作流。Develop 必须获得明确批准才编码。**
 
-Claude Code 使用相同名称，把 `$engineering-flow:` 换成 `/engineering-flow:`。未点名时，任何完整工作流都不会加载。
+## 五个工作流
 
-## 🔁 任务级连续性
+<picture>
+  <source media="(max-width: 640px)" srcset="assets/readme/workflow-icons-mobile.svg" />
+  <img src="assets/readme/workflow-icons.svg" width="100%" alt="Develop 开发、Diagnose 诊断、Code Design 设计、Review 评审、Handoff 交接，五个独立入口。" />
+</picture>
 
-显式调用选择的是整个任务的处理方式。以 Develop 为例，后续消息决定当前任务如何继续：
+**💻 Develop** 开发　·　**🔍 Diagnose** 诊断　·　**🧠 Code Design** 设计　·　**👀 Review** 评审　·　**🤝 Handoff** 交接
 
-| 你在检查点之后说 | 会发生什么 |
-|---|---|
-| "按上述方案执行" / "开始实施" | 授权实施，进入编码与验证 |
-| "已阅读" / 回答澄清问题 | **不构成批准**，继续等待明确指令 |
-| 指出原验收项被漏掉了 | 直接恢复实施与验证，不再重新走一遍批准 |
-| 提出新的范围或改变验收行为 | 只就新增部分重新对齐，并给出增量检查点 |
-| "取消" / 切换工作流 / 开始无关的新任务 | 结束旧工作流继承；无关新任务不会沿用旧授权 |
+**权限边界：** Develop 批准后实施；Diagnose 按请求修复；Review 默认只读；Design 与 Handoff 不改代码。
 
-Diagnose 的原请求已要求修复时，会直接完成诊断、修复与回归验证。只要求诊断时保持只读，后续授权后继续修复；否定诊断会回到证据核查。Review 收到“修复第 1、3 项”等明确请求后，也会核验并完成指定修复，无需切换到 Develop，仍须满足原任务已有的批准检查点。
+## 快速开始
 
-如果从 Code Design 转入 Develop，已确定的方案会被复用，仅补缺项或变化，再给出实施检查点。Handoff 保存当前进度、已有授权和仍待批准的事项，供下一会话续接。
-
-## 🛠️ 工程判断
-
-| 关注点 | 默认决策 |
-|---|---|
-| **需求** | 产品行为由你决定；可从仓库发现的可逆实现细节由 Agent 自主处理 |
-| **代码** | 只复用应当共同演进的领域规则；不因为两段代码看起来像就强行抽象 |
-| **测试** | 先确定验收实例，按可验收行为逐段实施与验证；风险决定测试时机，稳定回归保留先红后绿 |
-| **安全** | 评审阶段只读；修复授权不扩展到提交、发布、全局配置或额外破坏性操作 |
-| **文档** | 小需求在对话里确认；大需求遵循项目约定，没有约定时落到 `docs/requirements/` |
-
-<a id="快速开始"></a>
-
-## 🚀 快速开始
-
-### Codex CLI
+**Codex CLI**
 
 ```bash
 codex plugin marketplace add yyqqCoding/engineering-flow-skills
 codex plugin add engineering-flow@engineering-flow
 ```
 
-### Claude Code
+**Claude Code**
 
 ```text
 /plugin marketplace add yyqqCoding/engineering-flow-skills
 /plugin install engineering-flow@engineering-flow
 ```
 
-安装后开启新会话。清晰的小任务直接描述即可；需要完整开发流程时显式调用：
-
-> 💡 **记住一个原则：** 不点名工作流，就只有精简 Core；点名一次后，同一任务的批准、纠正和继续都会自动继承。
+## 这样调用
 
 ```text
 $engineering-flow:develop
-实现订单批量导出。先检查现有设计、代码边界和验收行为；完成澄清后给出最终检查点并暂停。不要提交。
+
+实现订单批量导出。
+先对齐需求和验收行为，给出实施检查点并暂停。
 ```
 
-读完它给出的检查点，确认无误后回复：
+**🛑 检查点确认后回复：** `按上述方案执行。`
 
-```text
-按上述方案执行。
-```
+Claude Code 调用：`/engineering-flow:develop`。后续同一任务不需要反复点名。
 
-<a id="验证结果"></a>
-
-## 📊 验证结果
-
-以下图表与数字来自 v1.0.3 及更早的独立评测，保留为历史证据。本次工作流和测试策略调整的验证须另行记录，不能沿用这些结果。
+## 验证结果
 
 <picture>
-  <source media="(max-width: 640px) and (prefers-color-scheme: dark)" srcset="assets/readme/evidence-mobile-dark.svg">
-  <source media="(max-width: 640px) and (prefers-color-scheme: light)" srcset="assets/readme/evidence-mobile-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/readme/evidence-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="assets/readme/evidence-light.svg">
-  <img alt="Engineering Flow 历史验证结果，来自不同的早期 cohort：日常工程行为 45/51 提升至 51/51，多轮连续性 0/12 提升至 12/12，确定性测试 50/50，显式路由 51/51" src="assets/readme/evidence-light.svg" width="100%">
+  <source media="(max-width: 640px)" srcset="assets/readme/evidence-summary-mobile.svg" />
+  <img src="assets/readme/evidence-summary.svg" width="100%" alt="历史评测：工程行为 45/51 提升至 51/51，多轮连续性 0/12 提升至 12/12，显式路由 51/51。" />
 </picture>
 
-图中分别保留日常行为、多轮连续性和路由的早期结果；下表单列 v1.0.3 旧发布版与候选版的对照。每个 cohort 单独固定场景、模型、推理等级和环境，依据实际文件变更与测试输出评分；不同指纹的结果分别保留。
+**历史数据：v1.0.3 及更早版本，各评测组独立统计，并非 v1.0.4 成绩。**
 
-### v1.0.3 发布门禁（历史）
+[评测方法](docs/testing-strategy.md) · [完整记录](docs/benchmark-log.md) · [在线证据](https://engineering-flow-web.vercel.app/zh-CN/evidence)
 
-| 证据 | 结果 |
-|---|---:|
-| 🧪 静态与确定性测试 | **84/84 通过** |
-| 🗺️ 行为覆盖 | **37 个场景，47/47 行为 ID** |
-| 🎯 最终指纹配对 cohort | **candidate 18/18，control 17/18** |
-| 🔒 污染与未授权提交 | **0** |
+---
 
-该版本的最终配对 cohort 精确选择当时 Test Contract 变更直接相关的六个场景、共 36 个完整报告。candidate 六个场景均为 3/3；control 为 17/18，其中唯一失败属于旧版本 control 的初始批准措辞。所有入选样本的调用与 fixture 验证均通过。
+<div align="center">
 
-此前的 1.0.2 及中间 candidate cohort 属于更早的候选指纹，保留为历史证据但不与最终发布结果合并。
+<h3>Build with intent. Ship with evidence.</h3>
 
-历史行为对照组中，安装工作流的一组平均工具调用多约 17.6%、输入 token 多约 16.5%。这些成本记录支持按需调用工作流；当前版本的成本需要重新测量。
+<p><a href="docs/user-guide.zh-CN.md">用户指南</a> · <a href="docs/product-design.md">产品设计</a> · <a href="docs/trigger-model.md">触发模型</a> · <a href="https://engineering-flow-web.vercel.app">在线文档</a></p>
 
-[评测方法](docs/testing-strategy.md) · [完整记录](docs/benchmark-log.md) · [在线查看](https://engineering-flow-web.vercel.app/zh-CN/evidence)
+<p><a href="LICENSE">MIT License</a> · <a href="THIRD_PARTY_NOTICES.md">Third-party notices</a></p>
 
-## 📚 文档
-
-| 使用 | 设计 | 证据 |
-|---|---|---|
-| [用户指南](docs/user-guide.zh-CN.md) | [产品设计](docs/product-design.md) | [基准记录](docs/benchmark-log.md) |
-| [触发模型](docs/trigger-model.md) | [行为规范](docs/behavior-spec.md) | [测试策略](docs/testing-strategy.md) |
-
-同样的内容也有一份可浏览的在线版本，含五个工作流的逐条详解、设计原则对照和流程回放演示：
-
-**<https://engineering-flow-web.vercel.app>**
-
-Engineering Flow 聚焦 Coding Agent 的工作流、上下文、多轮交互和可靠性评测，不是通用 Agent Runtime，也不接管项目的 Issue、分支、提交和发布流程。
-
-## 📄 许可
-
-项目采用 [MIT License](LICENSE)。相关项目归属见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+</div>

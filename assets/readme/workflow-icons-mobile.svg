@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="840" viewBox="0 0 620 840" role="img" aria-labelledby="title desc">
+<title id="title">Five workflows mobile</title><desc id="desc">Develop, Diagnose, Code Design, Review, and Handoff presented as large icon cards.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0e1d30"/><stop offset="1" stop-color="#162a46"/></linearGradient></defs>
+<style>.t{font-family:Inter,"Segoe UI",Arial,sans-serif}.p{animation:rise 4s ease-in-out infinite}@keyframes rise{0%,100%{opacity:1}50%{opacity:.8}}@media(prefers-reduced-motion:reduce){.p{animation:none!important}}</style>
+<rect width="620" height="840" rx="24" fill="url(#bg)"/>
+<g>
+<rect x="32" y="31" width="556" height="139" rx="21" fill="#16362f" stroke="#48ad8c" stroke-width="2"/>
+<circle cx="113" cy="100" r="49" fill="#1a5143" stroke="#86ebc7" stroke-width="3"/><path d="m104 80-20 20 20 20m18-40 20 20-20 20" stroke="#c1ffe8" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="202" y="112" class="t" fill="#e2fff3" font-size="45" font-weight="790">Develop</text>
+<rect x="32" y="191" width="556" height="139" rx="21" fill="#392b21" stroke="#b78246" stroke-width="2"/>
+<circle cx="113" cy="260" r="49" fill="#54351f" stroke="#ffc277" stroke-width="3"/><circle cx="107" cy="251" r="18" fill="none" stroke="#ffe2b6" stroke-width="5"/><path d="m120 264 18 18" stroke="#ffe2b6" stroke-width="5" stroke-linecap="round"/>
+<text x="202" y="272" class="t" fill="#fff1dd" font-size="45" font-weight="790">Diagnose</text>
+<rect x="32" y="351" width="556" height="139" rx="21" fill="#302949" stroke="#9175d4" stroke-width="2"/>
+<circle cx="113" cy="420" r="49" fill="#423363" stroke="#c3a9ff" stroke-width="3"/><circle cx="96" cy="405" r="8" fill="#e2d5ff"/><circle cx="133" cy="420" r="8" fill="#e2d5ff"/><circle cx="96" cy="440" r="8" fill="#e2d5ff"/><path d="M104 408 125 417M104 438 125 423" stroke="#e2d5ff" stroke-width="4"/>
+<text x="202" y="432" class="t" fill="#f5edff" font-size="43" font-weight="790">Code Design</text>
+<rect x="32" y="511" width="556" height="139" rx="21" fill="#20344c" stroke="#679acd" stroke-width="2"/>
+<circle cx="113" cy="580" r="49" fill="#254a6b" stroke="#abd0fa" stroke-width="3"/><rect x="94" y="556" width="39" height="47" rx="5" fill="none" stroke="#dbebff" stroke-width="4"/><path d="m102 574 5 5 9-11m-14 21h22" stroke="#dbebff" stroke-width="3" fill="none" stroke-linecap="round"/>
+<text x="202" y="592" class="t" fill="#e9f5ff" font-size="45" font-weight="790">Review</text>
+<rect x="32" y="671" width="556" height="139" rx="21" fill="#2d3c50" stroke="#8495b0" stroke-width="2"/>
+<circle cx="113" cy="740" r="49" fill="#3d5066" stroke="#c2d6e9" stroke-width="3"/><path d="M93 730h41m-13-13 13 13-13 13m16 10H96m13-13-13 13 13 13" fill="none" stroke="#e1efff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="202" y="752" class="t" fill="#f2f8ff" font-size="45" font-weight="790">Handoff</text>
+</g></svg>

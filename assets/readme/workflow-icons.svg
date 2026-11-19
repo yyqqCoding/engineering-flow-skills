@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="270" viewBox="0 0 1200 270" role="img" aria-labelledby="title desc">
+<title id="title">Five user-invoked workflows</title><desc id="desc">Five visual cards: Develop, Diagnose, Code Design, Review and Handoff.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0e1c2f"/><stop offset="1" stop-color="#172a44"/></linearGradient>
+<filter id="s"><feDropShadow dx="0" dy="10" stdDeviation="11" flood-color="#020916" flood-opacity=".28"/></filter></defs>
+<style>
+.t{font-family:Inter,"Segoe UI",Arial,sans-serif}
+.card{animation:up 5s ease-in-out infinite}
+.card2{animation-delay:.45s}.card3{animation-delay:.9s}.card4{animation-delay:1.35s}.card5{animation-delay:1.8s}
+@keyframes up{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:.92;transform:translateY(-5px)}}
+@media(prefers-reduced-motion:reduce){.card{animation:none!important}}
+</style>
+<rect width="1200" height="270" rx="20" fill="url(#bg)"/>
+<g class="card" filter="url(#s)">
+<rect x="24" y="22" width="214" height="225" rx="17" fill="#142d33" stroke="#247f71" stroke-width="1.5"/>
+<circle cx="131" cy="104" r="45" fill="#163f38" stroke="#53cfac" stroke-width="2"/>
+<path d="m121 88-16 16 16 16m19-32 16 16-16 16" fill="none" stroke="#84f0cf" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="131" y="199" class="t" fill="#e5fff6" font-size="27" font-weight="760" text-anchor="middle">Develop</text>
+</g>
+<g class="card card2" filter="url(#s)">
+<rect x="257" y="22" width="214" height="225" rx="17" fill="#31271d" stroke="#aa713e" stroke-width="1.5"/>
+<circle cx="364" cy="104" r="45" fill="#4d321f" stroke="#ecaa5b" stroke-width="2"/>
+<circle cx="359" cy="100" r="17" fill="none" stroke="#ffd19d" stroke-width="5"/>
+<path d="m371 113 16 16" stroke="#ffd19d" stroke-width="5" stroke-linecap="round"/>
+<text x="364" y="199" class="t" fill="#fff0d8" font-size="27" font-weight="760" text-anchor="middle">Diagnose</text>
+</g>
+<g class="card card3" filter="url(#s)">
+<rect x="490" y="22" width="214" height="225" rx="17" fill="#272440" stroke="#7562c5" stroke-width="1.5"/>
+<circle cx="597" cy="104" r="45" fill="#39305e" stroke="#a998fc" stroke-width="2"/>
+<circle cx="581" cy="90" r="7" fill="#d4caff"/><circle cx="614" cy="105" r="7" fill="#d4caff"/><circle cx="581" cy="121" r="7" fill="#d4caff"/>
+<path d="M587 92 608 103M587 119 608 107" stroke="#d4caff" stroke-width="4" stroke-linecap="round"/>
+<text x="597" y="199" class="t" fill="#f0eaff" font-size="27" font-weight="760" text-anchor="middle">Code Design</text>
+</g>
+<g class="card card4" filter="url(#s)">
+<rect x="723" y="22" width="214" height="225" rx="17" fill="#1b2e43" stroke="#4d83be" stroke-width="1.5"/>
+<circle cx="830" cy="104" r="45" fill="#213f60" stroke="#7eb9f0" stroke-width="2"/>
+<rect x="811" y="83" width="38" height="43" rx="4" fill="none" stroke="#b4d9ff" stroke-width="4"/>
+<path d="m819 97 4 4 7-8m-11 19h18" fill="none" stroke="#b4d9ff" stroke-width="3" stroke-linecap="round"/>
+<text x="830" y="199" class="t" fill="#e8f4ff" font-size="27" font-weight="760" text-anchor="middle">Review</text>
+</g>
+<g class="card card5" filter="url(#s)">
+<rect x="956" y="22" width="220" height="225" rx="17" fill="#283447" stroke="#73849a" stroke-width="1.5"/>
+<circle cx="1066" cy="104" r="45" fill="#30435a" stroke="#a8c0d9" stroke-width="2"/>
+<path d="M1045 96h35m-12-12 12 12-12 12M1087 114h-35m12-12-12 12 12 12" fill="none" stroke="#d3e3f4" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="1066" y="199" class="t" fill="#ecf4fc" font-size="27" font-weight="760" text-anchor="middle">Handoff</text>
+</g>
+</svg>
