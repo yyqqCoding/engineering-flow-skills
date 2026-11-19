@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="620" height="625" viewBox="0 0 620 625" role="img" aria-labelledby="title desc">
+<title id="title">Engineering Flow mobile cover</title><desc id="desc">A minimal animated Engineering Flow cover: Align, Approve, Build, Verify.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#081221"/><stop offset="1" stop-color="#172a4a"/></linearGradient><linearGradient id="te"><stop stop-color="#8af1d5"/><stop offset="1" stop-color="#86bcff"/></linearGradient><radialGradient id="rad"><stop stop-color="#4485e5" stop-opacity=".29"/><stop offset="1" stop-color="#4485e5" stop-opacity="0"/></radialGradient></defs>
+<style>.t{font-family:Inter,"Segoe UI",Arial,sans-serif}.run{stroke-dasharray:9 12;animation:run 4s linear infinite}.pulse{animation:pulse 3s ease-in-out infinite}@keyframes run{to{stroke-dashoffset:-126}}@keyframes pulse{0%,100%{opacity:.28}50%{opacity:.85}}@media(prefers-reduced-motion:reduce){.run,.pulse{animation:none!important}}</style>
+<rect width="620" height="625" rx="26" fill="url(#bg)"/><circle cx="410" cy="380" r="300" fill="url(#rad)" class="pulse"/>
+<rect x="40" y="45" width="274" height="53" rx="26" fill="#173f38" stroke="#448d78"/>
+<circle cx="68" cy="71" r="8" fill="#89f8d9"/><text x="94" y="81" class="t" font-size="26" font-weight="760" fill="#d9fff2">CODING AGENT</text>
+<text x="39" y="195" class="t" font-size="58" fill="#f0f7ff" font-weight="830" letter-spacing="-2">ENGINEERING</text>
+<text x="38" y="296" class="t" font-size="112" fill="url(#te)" font-weight="850" letter-spacing="-3">FLOW.</text>
+<text x="42" y="356" class="t" fill="#d7e8f9" font-size="30" font-weight="680">Build with intent.</text>
+<text x="42" y="401" class="t" fill="#d7e8f9" font-size="30" font-weight="680">Ship with evidence.</text>
+<rect x="39" y="446" width="543" height="131" rx="19" fill="#102137" stroke="#45637f"/>
+<path d="M89 500H531" stroke="#506c8b" stroke-width="6" stroke-linecap="round"/>
+<path d="M89 500H531" stroke="#83ead1" stroke-width="4" class="run"/>
+<circle cx="96" cy="500" r="13" fill="#254d45" stroke="#88f2d4" stroke-width="4"/>
+<circle cx="239" cy="500" r="22" fill="#55432b" stroke="#f6c57a" stroke-width="4"/>
+<circle cx="381" cy="500" r="13" fill="#214265" stroke="#9fcdff" stroke-width="4"/>
+<circle cx="522" cy="500" r="13" fill="#214265" stroke="#9fcdff" stroke-width="4"/>
+<g class="t" fill="#deebfa" text-anchor="middle" font-size="24" font-weight="750">
+<text x="96" y="550">ALIGN</text><text x="239" y="550" fill="#ffd397">APPROVE</text><text x="381" y="550">BUILD</text><text x="522" y="550">VERIFY</text>
+</g></svg>
